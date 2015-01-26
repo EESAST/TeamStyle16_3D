@@ -1,0 +1,254 @@
+﻿#region
+
+using GameStatics;
+using UnityEngine;
+
+#endregion
+
+public class LoadMap : MonoBehaviour
+{
+	public Texture2D[] detailTextures;
+	private Vector2 realMapSize;
+	public Texture2D[] splatTextures;
+	public GameObject[] treePrefabs;
+
+	private void CreateLand()
+	{
+		#region Preparations
+
+		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
+		var worldSize = realMapSize * Settings.ScaleFactor;
+		var resolution = Mathf.RoundToInt(Mathf.Sqrt(realMapSize.x * realMapSize.y) * Settings.Terrain.Smoothness);
+		var terrainData = new TerrainData
+		{
+			heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1,
+			size = new Vector3(worldSize.y, Settings.HeightOfLayer[1], worldSize.x),
+			alphamapResolution = resolution,
+			baseMapResolution = resolution
+		};
+
+		#endregion
+
+		#region Set Heights
+
+		float landArea = 0;
+		var heights = new float[terrainData.heightmapHeight, terrainData.heightmapWidth];
+		var mapRect = new Rect(0, 0, Data.MapSize.x, Data.MapSize.y);
+		var omega = new Vector2(realMapSize.x / terrainData.heightmapHeight, realMapSize.y / terrainData.heightmapWidth);
+		for (var x = 0; x < terrainData.heightmapHeight; x++)
+			for (var y = 0; y < terrainData.heightmapWidth; y++)
+			{
+				float i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.x, j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.z;
+				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
+				float ul = 0, ur = 0, br = 0, bl = 0, di = i - i0, dj = j - j0;
+				if (mapRect.Contains(new Vector2(i0, j0)))
+					ul = mapData[i0][j0].n;
+				if (mapRect.Contains(new Vector2(i0, j0 + 1)))
+					ur = mapData[i0][j0 + 1].n;
+				if (mapRect.Contains(new Vector2(i0 + 1, j0 + 1)))
+					br = mapData[i0 + 1][j0 + 1].n;
+				if (mapRect.Contains(new Vector2(i0 + 1, j0)))
+					bl = mapData[i0 + 1][j0].n;
+				heights[x, y] = (1 - di) * (1 - dj) * ul + (1 - di) * dj * ur + di * (1 - dj) * bl + di * dj * br;
+				float[] heightCandidates = { Mathf.Sign(heights[x, y] - 0.5f) * Mathf.Pow(Mathf.Abs(heights[x, y] * 2 - 1), 0.25f) / 2 + 0.5f, Mathf.Sin(omega.x * x) * Mathf.Cos(omega.y * y) * 0.16f };
+				landArea += heightCandidates[0];
+				heights[x, y] = Mathf.Max(heightCandidates[0], heightCandidates[1]);
+			}
+		terrainData.SetHeights(0, 0, heights);
+		landArea *= realMapSize.x * realMapSize.y / (terrainData.heightmapHeight * terrainData.heightmapWidth);
+
+		#endregion
+
+		#region Paint Texture
+
+		var splatPrototypes = new SplatPrototype[splatTextures.Length];
+		for (var i = 0; i < splatPrototypes.Length; i++)
+		{
+			var splatPrototype = new SplatPrototype
+			{
+				texture = splatTextures[i],
+				tileSize = Vector2.one * Settings.ScaleFactor * 4
+			};
+			splatPrototypes[i] = splatPrototype;
+		}
+		terrainData.splatPrototypes = splatPrototypes;
+		var alphamapResolution = terrainData.alphamapResolution;
+		var alphamaps = new float[alphamapResolution, alphamapResolution, splatPrototypes.Length];
+		for (var i = 0; i < alphamapResolution; i++)
+			for (var j = 0; j < alphamapResolution; j++)
+			{
+				var height = heights[Mathf.RoundToInt((float)i / (alphamapResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (alphamapResolution - 1) * (terrainData.heightmapWidth - 1))];
+				if (height > Data.SeaLevel / Settings.HeightOfLayer[1] + 0.1f)
+					alphamaps[i, j, 0] = 1;
+				else if (height > Settings.HeightOfLayer[0] / Settings.HeightOfLayer[1])
+					alphamaps[i, j, 1] = 1;
+				else
+					alphamaps[i, j, 2] = 1;
+			}
+		terrainData.SetAlphamaps(0, 0, alphamaps);
+
+		#endregion
+
+		#region Place Trees
+
+		var treePrototypes = new TreePrototype[treePrefabs.Length];
+		for (var i = 0; i < treePrototypes.Length; i++)
+		{
+			var treePrototype = new TreePrototype
+			{
+				prefab = treePrefabs[i],
+				bendFactor = 1
+			};
+			treePrototypes[i] = treePrototype;
+		}
+		terrainData.treePrototypes = treePrototypes;
+		var treeInstances = new TreeInstance[Mathf.RoundToInt(landArea * Settings.Terrain.Tree.Density)];
+		var range = new Vector4(Settings.MapSizeOffset.w / realMapSize.y, 1 - Settings.MapSizeOffset.z / realMapSize.y, Settings.MapSizeOffset.x / realMapSize.x, 1 - Settings.MapSizeOffset.y / realMapSize.x);
+		for (var i = 0; i < treeInstances.Length; i++)
+		{
+			var treeScale = Random.Range(0.08f, 0.16f) * Settings.ScaleFactor;
+			Vector3 treePosition;
+			do
+				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
+			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.8f));
+			var treeInstance = new TreeInstance
+			{
+				prototypeIndex = Random.Range(0, treePrototypes.Length),
+				position = treePosition + Vector3.up * Settings.Terrain.Tree.VerticalPositionOffset * treeScale,
+				color = new Color(0, 0.8f, 0, 1),
+				lightmapColor = new Color(1, 1, 1, 1),
+				heightScale = treeScale,
+				widthScale = treeScale
+			};
+			treeInstances[i] = treeInstance;
+		}
+		terrainData.treeInstances = treeInstances;
+
+		#endregion
+
+		#region Paint Details
+
+		var detailPrototypes = new DetailPrototype[detailTextures.Length];
+		for (var i = 0; i < detailPrototypes.Length; i++)
+		{
+			var detailPrototype = new DetailPrototype
+			{
+				prototypeTexture = detailTextures[i],
+				minWidth = Settings.Terrain.Detail.MinDimension,
+				minHeight = Settings.Terrain.Detail.MinDimension,
+				maxWidth = Settings.Terrain.Detail.MaxDimension,
+				maxHeight = Settings.Terrain.Detail.MaxDimension,
+				renderMode = DetailRenderMode.GrassBillboard
+			};
+			detailPrototypes[i] = detailPrototype;
+		}
+		terrainData.detailPrototypes = detailPrototypes;
+		terrainData.SetDetailResolution(resolution, Mathf.Clamp(resolution, 8, 128));
+		var detailLayers = new int[detailPrototypes.Length][,];
+		for (var i = 0; i < detailPrototypes.Length; i++)
+			detailLayers[i] = new int[terrainData.detailResolution, terrainData.detailResolution];
+		for (var i = 0; i < terrainData.detailResolution; i++)
+			for (var j = 0; j < terrainData.detailResolution; j++)
+			{
+				var layer = Random.Range(0, detailPrototypes.Length);
+				var height = heights[Mathf.RoundToInt((float)i / (terrainData.detailResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (terrainData.detailResolution - 1) * (terrainData.heightmapWidth - 1))];
+				if (height > Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.4f))
+					detailLayers[layer][i, j] = 1;
+			}
+		for (var i = 0; i < detailPrototypes.Length; i++)
+			terrainData.SetDetailLayer(0, 0, i, detailLayers[i]);
+		terrainData.wavingGrassAmount = Settings.Terrain.Detail.Waving.Amount;
+		terrainData.wavingGrassSpeed = Settings.Terrain.Detail.Waving.Speed;
+		terrainData.wavingGrassStrength = Settings.Terrain.Detail.Waving.Strength;
+
+		#endregion
+
+		#region Final Settings
+
+		var terrain = Terrain.CreateTerrainGameObject(terrainData).GetComponent<Terrain>();
+		terrain.castShadows = Settings.Terrain.CastShadows;
+		terrain.treeBillboardDistance = Settings.Terrain.Tree.BillboardDistance;
+		terrain.detailObjectDistance = Settings.Terrain.Detail.MaxVisibleDistance;
+		terrain.detailObjectDensity = Settings.Terrain.Detail.Density;
+
+		#endregion
+	}
+
+	private void CreateSea()
+	{
+		var sea = Instantiate(Resources.Load("Sea")) as GameObject;
+		sea.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z)) + Vector3.up * Settings.Sea.VerticalPositionOffset;
+		sea.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
+		var seaMaterial = sea.GetComponent<WaterBase>().sharedMaterial;
+		seaMaterial.SetColor("_BaseColor", Settings.Sea.RefractionColor);
+		seaMaterial.SetColor("_ReflectionColor", Settings.Sea.ReflectionColor);
+	}
+
+	private void LoadEntities()
+	{
+		var mapElements = Data.BattleData["gamebody"]["map_info"]["elements"];
+		for (var i = 0; i < mapElements.Count; i++)
+		{
+			var o = mapElements[i];
+			switch (o["__class__"].str)
+			{
+				case "Fort":
+					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = o;
+					break;
+				case "Base":
+					{
+						(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = o;
+						/*	Debug.Log("类型：Fort或Base");
+												Debug.Log("index:" + o["index"]);
+												Debug.Log("ammo:" + o["ammo"]);
+												Debug.Log("ammo_max:" + o["ammo_max"]);
+												Debug.Log("ammo_once:" + o["ammo_once"]);
+												Debug.Log("attacks:" + o["attacks"]);
+												Debug.Log("build_round:" + o["build_round"]);
+												Debug.Log("cost:" + o["cost"]);
+												Debug.Log("defences:" + o["defences"]);
+												Debug.Log("fire_ranges:" + o["fire_ranges"]);
+												Debug.Log("fuel:" + o["fuel"]);
+												Debug.Log("fuel_max:" + o["fuel_max"]);
+												Debug.Log("health:" + o["health"]);
+												Debug.Log("health_max:" + o["health_max"]);
+												Debug.Log("metal:" + o["metal"]);
+												Debug.Log("metal_max:" + o["metal_max"]);
+												Debug.Log("population:" + o["population"]);
+												Debug.Log("jsonPos:" + o["pos"]);
+												Debug.Log("sight_ranges:" + o["sight_ranges"]);
+												Debug.Log("speed:" + o["speed"]);
+												Debug.Log("team:" + o["team"]);*/
+					}
+					break;
+				case "Oilfield":
+					{
+						(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = o;
+						/*	Debug.Log("类型：Oilfield");
+												Debug.Log("index:" + o["index"]);
+												Debug.Log("fuel:" + o["fuel"]);
+												Debug.Log("jsonPos:" + o["pos"]);	// is pos Position class*/
+					}
+					break;
+				case "Mine":
+					{
+						(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = o;
+						//m.transform.position = Methods.Coordinates.JSONToInternal(o["pos"]);
+						/*	Debug.Log("类型：Mine");
+												Debug.Log("index:" + o["index"]);
+												Debug.Log("metal:" + o["metal"]);
+												Debug.Log("jsonPos:" + o["pos"]);*/
+					}
+					break;
+			}
+		}
+	}
+
+	private void Start()
+	{
+		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.x + Settings.MapSizeOffset.y, Settings.MapSizeOffset.z + Settings.MapSizeOffset.w) - Vector2.one;
+		CreateSea();
+		CreateLand();
+		LoadEntities();
+	}
+}
