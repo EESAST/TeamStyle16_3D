@@ -12,15 +12,16 @@ public abstract class Entity : MonoBehaviour
 {
 	protected JSONObject _info;
 	private Canvas hbCanvas;
+	private int hbHorizontalPixelNumber;
 	private RawImage hbImage;
+	private Color32[] hbPixels;
 	private RectTransform hbRect;
 	private Text hbText;
 	private Texture2D hbTexture;
 	private Highlighter highlighter;
-	private int horizontalPixelNumber;
 	private int HP;
 	private bool isDead;
-	private int lastHP;
+	private int lastHPIndex;
 	private RectTransform markRect;
 	public int team;
 	protected virtual Quaternion DefaultRotation { get { return Quaternion.Euler(0, Random.Range(-180, 180), 0); } }
@@ -35,7 +36,7 @@ public abstract class Entity : MonoBehaviour
 	}
 
 	public Vector3 Position { get { return Methods.Coordinates.InternalToExternal(transform.position); } set { transform.position = Methods.Coordinates.ExternalToInternal(value); } }
-	protected virtual float RelativeSize { get { return 1; } }
+	protected virtual int RelativeSize { get { return 1; } }
 
 	protected virtual void Awake()
 	{
@@ -48,7 +49,7 @@ public abstract class Entity : MonoBehaviour
 		markRect = (Instantiate(Resources.Load("Mark")) as GameObject).GetComponent<RectTransform>();
 		markRect.SetParent(GameObject.Find("MiniMap").transform);
 		markRect.SetSiblingIndex(markRect.GetSiblingIndex() - 1);
-		horizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 20);
+		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.3f) * 20);
 		highlighter = gameObject.AddComponent<Highlighter>();
 		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 		gameObject.ChangeLayer(LayerMask.NameToLayer("Entity"));
@@ -137,7 +138,7 @@ public abstract class Entity : MonoBehaviour
 		cameraSettings.lockTargetTransform = transform;
 		cameraSettings.cameraLocked = true;
 		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
-		Destruct();
+		//Destruct();
 	}
 
 	protected virtual void Start()
@@ -145,20 +146,22 @@ public abstract class Entity : MonoBehaviour
 		transform.rotation = DefaultRotation;
 		transform.localScale = Vector3.one * RelativeSize * Settings.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		var hbImageRect = hbImage.GetComponent<RectTransform>();
-		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, horizontalPixelNumber);
+		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, hbHorizontalPixelNumber);
 		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 10);
 		var hbTextRect = hbText.GetComponent<RectTransform>();
-		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.TextGranularity * horizontalPixelNumber);
+		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.TextGranularity * hbHorizontalPixelNumber);
 		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.TextGranularity * 10);
 		hbTextRect.localScale = Vector2.one / Settings.TextGranularity;
-		hbImage.texture = hbTexture = new Texture2D(horizontalPixelNumber, Settings.HealthBar.VerticalPixelNumber)
+		hbImage.texture = hbTexture = new Texture2D(hbHorizontalPixelNumber, 4)
 		{
 			wrapMode = TextureWrapMode.Clamp
 		};
-		for (var i = 0; i < hbTexture.width; i++)
-			for (var j = 0; j < hbTexture.height; j++)
+		hbPixels = hbTexture.GetPixels32();
+		for (var i = 0; i < hbHorizontalPixelNumber; i++)
+			for (var j = 0; j < 4; j++)
 				if (j != 1)
-					hbTexture.SetPixel(i, j, Settings.HealthBar.EmptyColor);
+					hbPixels[i + hbHorizontalPixelNumber * j] = Settings.HealthBar.EmptyColor;
+		hbTexture.SetPixels32(hbPixels);
 		hbTexture.Apply();
 	}
 
@@ -168,14 +171,16 @@ public abstract class Entity : MonoBehaviour
 
 		#region Update Health Bar
 
-		if (HP != lastHP)
+		var hpIndex = Mathf.RoundToInt((float)HP / MaxHP() * hbHorizontalPixelNumber);
+		if (hpIndex != lastHPIndex)
 		{
-			for (var i = Mathf.RoundToInt((float)Mathf.Min(HP, lastHP) / MaxHP() * horizontalPixelNumber); i < Mathf.RoundToInt((float)Mathf.Max(HP, lastHP) / MaxHP() * horizontalPixelNumber); i++)
-				for (var j = 0; j < Settings.HealthBar.VerticalPixelNumber; j++)
+			for (var i = Mathf.Min(hpIndex, lastHPIndex); i < Mathf.Max(hpIndex, lastHPIndex); i++)
+				for (var j = 0; j < 4; j++)
 					if (j != 1)
-						hbTexture.SetPixel(i, j, HP < lastHP ? Settings.HealthBar.EmptyColor : Settings.HealthBar.FullColor);
+						hbPixels[i + hbHorizontalPixelNumber * j] = hpIndex < lastHPIndex ? Settings.HealthBar.EmptyColor : Settings.HealthBar.FullColor;
+			hbTexture.SetPixels32(hbPixels);
 			hbTexture.Apply();
-			lastHP = HP;
+			lastHPIndex = hpIndex;
 		}
 		var hbPos = Camera.main.WorldToScreenPoint(rigidbody.worldCenterOfMass + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
@@ -187,18 +192,28 @@ public abstract class Entity : MonoBehaviour
 
 		#endregion
 
-		HP = (HP + 1) % MaxHP();
+		HP = (HP + 1) % (MaxHP() + 1);
 	}
 
 	protected virtual void UpdateInfo()
 	{
-		if (_info["pos"]["__class__"].str == "Rectangle")
+		var pos = _info["pos"];
+		float posX, posY, posZ;
+		if (pos["__class__"].str == "Rectangle")
 		{
-			var lowerRight = Methods.Coordinates.JSONToExternal(_info["pos"]["lower_right"]);
-			var upperLeft = Methods.Coordinates.JSONToExternal(_info["pos"]["upper_left"]);
-			Position = (lowerRight + upperLeft) / 2;
+			posX = (pos["upper_left"]["x"].n + pos["lower_right"]["x"].n) / 2;
+			posY = (pos["upper_left"]["y"].n + pos["lower_right"]["y"].n) / 2;
+			posZ = (pos["upper_left"]["z"].n + pos["lower_right"]["z"].n) / 2;
 		}
 		else
-			Position = Methods.Coordinates.JSONToExternal(_info["pos"]);
+		{
+			posX = pos["x"].n;
+			posY = pos["y"].n;
+			posZ = pos["z"].n;
+		}
+		Position = new Vector3(posX, posY, posZ);
+		for (var x = Mathf.RoundToInt(posX - RelativeSize / 2); x <= Mathf.RoundToInt(posX + RelativeSize / 2); x++)
+			for (var y = Mathf.RoundToInt(posY - RelativeSize / 2); y <= Mathf.RoundToInt(posY + RelativeSize / 2); y++)
+				Data.IsOccupied[x, y] = true;
 	}
 }

@@ -28,16 +28,19 @@ public class MiniMap : MonoBehaviour
 	private void Start()
 	{
 		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
-		var rows = Mathf.RoundToInt(Data.MapSize.x);
 		var cols = Mathf.RoundToInt(Data.MapSize.y);
-		var granularity = Settings.MiniMap.Granularity;
-		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(cols * granularity, rows * granularity)
+		var rows = Mathf.RoundToInt(Data.MapSize.x);
+		var width = cols * Settings.MiniMap.Granularity;
+		var height = rows * Settings.MiniMap.Granularity;
+		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(width, height)
 		{
 			wrapMode = TextureWrapMode.Clamp
 		};
-		for (var i = 0; i < cols * granularity; i++)
-			for (var j = 0; j < rows * granularity; j++)
-				miniMapTexture.SetPixel(i, j, mapData[rows - j / granularity - 1][i / granularity].n < Mathf.Epsilon ? Settings.MiniMap.SeaColor : Settings.MiniMap.LandColor);
+		var tmpPixels = miniMapTexture.GetPixels32();
+		for (var i = 0; i < width; i++)
+			for (var j = 0; j < height; j++)
+				tmpPixels[i + width * j] = mapData[rows - j / Settings.MiniMap.Granularity - 1][i / Settings.MiniMap.Granularity].n < Mathf.Epsilon ? Settings.MiniMap.SeaColor : Settings.MiniMap.LandColor;
+		miniMapTexture.SetPixels32(tmpPixels);
 		miniMapTexture.Apply();
 	}
 }

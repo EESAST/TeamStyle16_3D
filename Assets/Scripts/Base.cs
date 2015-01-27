@@ -9,7 +9,7 @@ public class Base : Unit
 {
 	private static readonly Material[][] materials = new Material[2][];
 	protected override Quaternion DefaultRotation { get { return Quaternion.Euler(0, 45, 0); } }
-	protected override float RelativeSize { get { return 3; } }
+	protected override int RelativeSize { get { return 3; } }
 
 	protected override Vector3 Dimensions() { return new Vector3(6.23f, 5.25f, 6.23f); }
 

@@ -54,7 +54,7 @@ public abstract class Unit : Entity
 					meshCollider.convex = true;
 					var rigidBody = fragment.AddComponent<Rigidbody>();
 					rigidBody.isKinematic = true;
-					rigidBody.SetDensity(Mathf.Pow(8 / RelativeSize, 4));
+					rigidBody.SetDensity(Mathf.Pow(12 / RelativeSize, 3));
 					fragment.transform.parent = dummy.transform;
 					var smokeTrail = Instantiate(Resources.Load("Smoke Trail")) as GameObject;
 					smokeTrail.transform.SetParent(fragment.transform, false);

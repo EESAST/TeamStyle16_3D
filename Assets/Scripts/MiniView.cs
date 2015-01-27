@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class MiniView : MonoBehaviour
 {
-	private Color[] clearPixels;
+	private Color32[] clearPixels;
 	private Texture2D miniViewTexture;
 	private RectTransform viewRect;
 
@@ -33,7 +33,7 @@ public class MiniView : MonoBehaviour
 		{
 			wrapMode = TextureWrapMode.Clamp
 		};
-		clearPixels = new Color[miniViewTexture.width * miniViewTexture.height];
+		clearPixels = new Color32[miniViewTexture.width * miniViewTexture.height];
 	}
 
 	private void Update()
@@ -41,7 +41,7 @@ public class MiniView : MonoBehaviour
 		var origin = Camera.main.transform.position;
 		var directions = new[] { Camera.main.ScreenPointToRay(new Vector2(0, 0)).direction, Camera.main.ScreenPointToRay(new Vector2(0, Screen.height)).direction, Camera.main.ScreenPointToRay(new Vector2(Screen.width, Screen.height)).direction, Camera.main.ScreenPointToRay(new Vector2(Screen.width, 0)).direction };
 		var groundPoints = Methods.Coordinates.IntersectToGround(origin, Methods.Array.Add(Methods.Array.Multiply(directions, Methods.Array.Divide(Camera.main.farClipPlane, Methods.Array.Dot(directions, Camera.main.transform.forward))), origin));
-		miniViewTexture.SetPixels(clearPixels);
+		miniViewTexture.SetPixels32(clearPixels);
 		if (groundPoints != null)
 		{
 			var miniMapBasedPoints = new Vector2[4];

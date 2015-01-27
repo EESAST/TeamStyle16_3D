@@ -76,8 +76,9 @@ namespace GameStatics
 
 		public static void Line(this Texture2D texture, Vector2 lhs, Vector2 rhs, Color lineColor, float lineThickness)
 		{
-			var pixels = texture.GetPixels();
-			var textureRect = new Rect(0, 0, texture.width, texture.height);
+			var tmpPixels = texture.GetPixels32();
+			var width = texture.width;
+			var textureRect = new Rect(0, 0, width, texture.height);
 			var deltaX = rhs.x - lhs.x;
 			var deltaY = rhs.y - lhs.y;
 			var k = deltaY / deltaX;
@@ -93,7 +94,7 @@ namespace GameStatics
 						var posX = Mathf.RoundToInt(x);
 						var posY = Mathf.RoundToInt(y + yp);
 						if (textureRect.Contains(new Vector2(posX, posY)))
-							pixels[posX + texture.width * posY] = lineColor;
+							tmpPixels[posX + width * posY] = lineColor;
 					}
 			}
 			else
@@ -108,10 +109,10 @@ namespace GameStatics
 						var posX = Mathf.RoundToInt(x + xp);
 						var posY = Mathf.RoundToInt(y);
 						if (textureRect.Contains(new Vector2(posX, posY)))
-							pixels[posX + texture.width * posY] = lineColor;
+							tmpPixels[posX + width * posY] = lineColor;
 					}
 			}
-			texture.SetPixels(pixels);
+			texture.SetPixels32(tmpPixels);
 		}
 
 		public static void Polygon(this Texture2D texture, Vector2[] points, Color lineColor, float lineThickness)
@@ -232,9 +233,7 @@ namespace GameStatics
 				return new[] { IntersectToGround(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToGround(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToGround(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToGround(flags[0] ? origin : farCorners[2], farCorners[3]) };
 			}
 
-			public static Vector3 JSONToExternal(JSONObject jsonPos) { return new Vector3(jsonPos["x"].n, jsonPos["y"].n, jsonPos["z"].n); }
-
-			public static Vector3 JSONToInternal(JSONObject jsonPos) { return ExternalToInternal(JSONToExternal(jsonPos)); }
+			public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
 
 			public static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.BorderOffset - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.BorderOffset - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
 

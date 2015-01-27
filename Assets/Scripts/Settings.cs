@@ -53,8 +53,7 @@ namespace GameStatics
 		public static class HealthBar
 		{
 			public static Color EmptyColor = Color.gray;
-			public static Color FullColor = new Color(0, 0.5f, 0);
-			public static int VerticalPixelNumber = 4;
+			public static Color FullColor = new Color(0.6f, 0, 0);
 			public static float VerticalPositionOffset = 1;
 		}
 
@@ -113,7 +112,7 @@ namespace GameStatics
 			public static class Tree
 			{
 				private static readonly float _billboardDistance = 50;
-				public static float Density = 0.15f;
+				public static float Density =0.15f;
 				public static float VerticalPositionOffset = -0.1f;
 				public static float BillboardDistance { get { return _billboardDistance * ScaleFactor; } }
 			}

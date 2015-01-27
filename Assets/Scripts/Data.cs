@@ -13,6 +13,7 @@ namespace GameStatics
 		public static bool GamePaused;
 		public static Vector2 MapSize;
 		public static float SeaLevel;
+		public static bool[,] IsOccupied;
 
 		public static class MiniMap
 		{

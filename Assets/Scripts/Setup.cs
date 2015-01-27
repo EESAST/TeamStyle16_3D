@@ -15,7 +15,10 @@ public class Setup : MonoBehaviour
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
 		Physics.gravity = Vector3.down * Settings.ScaleFactor;
 
-		Data.MapSize = new Vector2(Data.BattleData["gamebody"]["map_info"]["x_max"].n, Data.BattleData["gamebody"]["map_info"]["y_max"].n);
+		var xMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["x_max"].n);
+		var yMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["y_max"].n);
+		Data.MapSize = new Vector2(xMax, yMax);
+		Data.IsOccupied = new bool[xMax, yMax];
 		Data.SeaLevel = Settings.HeightOfLayer[0] + Settings.Sea.VerticalPositionOffset;
 		Data.TeamColor.Current = new Color[4];
 

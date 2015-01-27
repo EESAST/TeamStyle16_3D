@@ -1,7 +1,9 @@
 ﻿#region
 
+using System;
 using GameStatics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 #endregion
 
@@ -110,7 +112,7 @@ public class LoadMap : MonoBehaviour
 			Vector3 treePosition;
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
-			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.8f));
+			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.8f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
 			var treeInstance = new TreeInstance
 			{
 				prototypeIndex = Random.Range(0, treePrototypes.Length),
@@ -166,7 +168,7 @@ public class LoadMap : MonoBehaviour
 		#region Final Settings
 
 		var terrain = Terrain.CreateTerrainGameObject(terrainData).GetComponent<Terrain>();
-		terrain.castShadows = Settings.Terrain.CastShadows;
+		//terrain.castShadows = Settings.Terrain.CastShadows;
 		terrain.treeBillboardDistance = Settings.Terrain.Tree.BillboardDistance;
 		terrain.detailObjectDistance = Settings.Terrain.Detail.MaxVisibleDistance;
 		terrain.detailObjectDensity = Settings.Terrain.Detail.Density;
@@ -189,15 +191,15 @@ public class LoadMap : MonoBehaviour
 		var mapElements = Data.BattleData["gamebody"]["map_info"]["elements"];
 		for (var i = 0; i < mapElements.Count; i++)
 		{
-			var o = mapElements[i];
-			switch (o["__class__"].str)
+			var info = mapElements[i];
+			switch (info["__class__"].str)
 			{
 				case "Fort":
-					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = o;
+					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = info;
 					break;
 				case "Base":
 					{
-						(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = o;
+						(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = info;
 						/*	Debug.Log("类型：Fort或Base");
 												Debug.Log("index:" + o["index"]);
 												Debug.Log("ammo:" + o["ammo"]);
@@ -223,7 +225,7 @@ public class LoadMap : MonoBehaviour
 					break;
 				case "Oilfield":
 					{
-						(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = o;
+						(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = info;
 						/*	Debug.Log("类型：Oilfield");
 												Debug.Log("index:" + o["index"]);
 												Debug.Log("fuel:" + o["fuel"]);
@@ -232,7 +234,7 @@ public class LoadMap : MonoBehaviour
 					break;
 				case "Mine":
 					{
-						(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = o;
+						(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = info;
 						//m.transform.position = Methods.Coordinates.JSONToInternal(o["pos"]);
 						/*	Debug.Log("类型：Mine");
 												Debug.Log("index:" + o["index"]);
@@ -247,8 +249,8 @@ public class LoadMap : MonoBehaviour
 	private void Start()
 	{
 		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.x + Settings.MapSizeOffset.y, Settings.MapSizeOffset.z + Settings.MapSizeOffset.w) - Vector2.one;
-		CreateSea();
-		CreateLand();
 		LoadEntities();
+		CreateLand();
+		CreateSea();
 	}
 }
