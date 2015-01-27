@@ -4,6 +4,7 @@ using UnityEngine;
 
 #endregion
 
+<<<<<<< HEAD
 public class Mine : EntityBehaviour
 {
 	private static readonly Vector3 dimensions = new Vector3(3.98f, 3.11f, 2.71f);
@@ -20,4 +21,17 @@ public class Mine : EntityBehaviour
 	protected override Vector3 Dimensions() { return dimensions; }
 
 	protected override int MaxHP() { return maxHP; }
+=======
+public class Mine : Entity
+{
+	protected override void Awake()
+	{
+		base.Awake();
+		team = 3;
+	}
+
+	protected override Vector3 Dimensions() { return new Vector3(3.98f, 3.11f, 2.71f); }
+
+	protected override int MaxHP() { return 100; }
+>>>>>>> initial commit on another computer
 }

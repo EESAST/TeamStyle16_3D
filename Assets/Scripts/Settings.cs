@@ -12,6 +12,10 @@ namespace GameStatics
 		public static int CloudNumber = 50;
 		public static Vector4 MapSizeOffset = new Vector4(30, 10, 45, 45); //-x x -y y, in external space
 		public static float ScaleFactor = 4;
+<<<<<<< HEAD
+=======
+		public static int TextGranularity = 3;
+>>>>>>> initial commit on another computer
 		public static float DeltaHeight { get { return _deltaHeight * ScaleFactor; } }
 		public static float GroundHeight { get { return _groundHeight * ScaleFactor; } }
 		public static float[] HeightOfLayer { get { return Methods.Array.Multiply(_heightOfLayer, ScaleFactor); } }
@@ -53,7 +57,12 @@ namespace GameStatics
 		{
 			public static Color EmptyColor = Color.gray;
 			public static Color FullColor = new Color(0, 0.5f, 0);
+<<<<<<< HEAD
 			public static float VerticalPositionOffset = 2;
+=======
+			public static int VerticalPixelNumber = 4;
+			public static float VerticalPositionOffset = 1;
+>>>>>>> initial commit on another computer
 		}
 
 		public static class MiniMap
@@ -117,12 +126,15 @@ namespace GameStatics
 			}
 		}
 
+<<<<<<< HEAD
 		public static class UI
 		{
 			public static int FontSize = 20;
 			public static int TextGranularity = 3;
 		}
 
+=======
+>>>>>>> initial commit on another computer
 		private static readonly float _deltaHeight = 1;
 		private static readonly float _groundHeight = 1.5f;
 		private static readonly float[] _heightOfLayer = { _groundHeight - _deltaHeight, _groundHeight, _groundHeight + _deltaHeight };

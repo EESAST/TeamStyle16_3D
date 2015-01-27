@@ -15,7 +15,11 @@ public class EventMonitor : MonoBehaviour
 
 		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Desired))
 		{
+<<<<<<< HEAD
 			for (var i = 0; i < 3; i++)
+=======
+			for (var i = 0; i < 4; i++)
+>>>>>>> initial commit on another computer
 				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Desired[i], Settings.TeamColor.TransitionRate * Time.timeScale);
 			Delegates.TeamColorChanged();
 		}

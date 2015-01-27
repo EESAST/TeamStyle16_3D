@@ -5,6 +5,7 @@ using UnityEngine;
 
 #endregion
 
+<<<<<<< HEAD
 public class Fort : EntityBehaviour
 {
 	private static readonly Vector3 dimensions = new Vector3(2.47f, 1.53f, 2.47f);
@@ -12,6 +13,13 @@ public class Fort : EntityBehaviour
 	private static readonly int maxHP = 100;
 
 	protected override Vector3 Dimensions() { return dimensions; }
+=======
+public class Fort : Unit
+{
+	private static readonly Material[][] materials = new Material[3][];
+
+	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.53f, 2.47f); }
+>>>>>>> initial commit on another computer
 
 	public static void LoadMaterial()
 	{
@@ -24,7 +32,11 @@ public class Fort : EntityBehaviour
 		}
 	}
 
+<<<<<<< HEAD
 	protected override int MaxHP() { return maxHP; }
+=======
+	protected override int MaxHP() { return 800; }
+>>>>>>> initial commit on another computer
 
 	public static void RefreshMaterialColor()
 	{
@@ -50,10 +62,13 @@ public class Fort : EntityBehaviour
 		transform.FindChild("Base").GetComponent<MeshRenderer>().material = materials[0][team];
 		transform.FindChild("Cannon").GetComponent<MeshRenderer>().materials = new[] { materials[1][team], materials[2][team] };
 	}
+<<<<<<< HEAD
 
 	protected override void UpdateInfo()
 	{
 		base.UpdateInfo();
 		team = Mathf.RoundToInt(_info["team"].n);
 	}
+=======
+>>>>>>> initial commit on another computer
 }

@@ -7,7 +7,11 @@ using UnityEngine;
 
 public class TeamColorManager : MonoBehaviour
 {
+<<<<<<< HEAD
 	private void Awake() { Data.TeamColor.Desired = new[] { Color.magenta, Color.cyan, Color.white }; }
+=======
+	private void Awake() { Data.TeamColor.Desired = new[] { Color.magenta, Color.cyan, Color.yellow, Color.white }; }
+>>>>>>> initial commit on another computer
 
 	public void Randomize()
 	{

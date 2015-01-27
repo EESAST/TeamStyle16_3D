@@ -54,7 +54,11 @@ Material:
       data:
         first:
           name: _Color
+<<<<<<< HEAD
         second: {r: .995361686, g: .995361686, b: .995361686, a: .995361686}
+=======
+        second: {r: .995361686, g: .917294085, b: .0156135168, a: .995361686}
+>>>>>>> initial commit on another computer
       data:
         first:
           name: _SpecColor

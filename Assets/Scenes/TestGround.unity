@@ -2135,7 +2135,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53336248ba069f548b442126425c9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   HP: 50
+=======
+>>>>>>> initial commit on another computer
   team: 0
 --- !u!1 &1045981016
 GameObject:

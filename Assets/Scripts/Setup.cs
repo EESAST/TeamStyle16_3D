@@ -17,7 +17,11 @@ public class Setup : MonoBehaviour
 
 		Data.MapSize = new Vector2(Data.BattleData["gamebody"]["map_info"]["x_max"].n, Data.BattleData["gamebody"]["map_info"]["y_max"].n);
 		Data.SeaLevel = Settings.HeightOfLayer[0] + Settings.Sea.VerticalPositionOffset;
+<<<<<<< HEAD
 		Data.TeamColor.Current = new Color[3];
+=======
+		Data.TeamColor.Current = new Color[4];
+>>>>>>> initial commit on another computer
 
 		var cameraBoundary = GameObject.Find("CameraBoundary").GetComponent<BoxCollider>();
 		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.ScaleFactor + Vector3.up * Settings.DeltaHeight * 2;

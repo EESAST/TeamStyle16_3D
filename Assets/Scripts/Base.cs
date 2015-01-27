@@ -5,6 +5,7 @@ using UnityEngine;
 
 #endregion
 
+<<<<<<< HEAD
 public class Base : EntityBehaviour
 {
 	private static readonly Quaternion _defaultRotation = Quaternion.Euler(0, 45, 0);
@@ -16,6 +17,15 @@ public class Base : EntityBehaviour
 	protected override float RelativeSize { get { return _relativeSize; } }
 
 	protected override Vector3 Dimensions() { return dimensions; }
+=======
+public class Base : Unit
+{
+	private static readonly Material[][] materials = new Material[2][];
+	protected override Quaternion DefaultRotation { get { return Quaternion.Euler(0, 45, 0); } }
+	protected override float RelativeSize { get { return 3; } }
+
+	protected override Vector3 Dimensions() { return new Vector3(6.23f, 5.25f, 6.23f); }
+>>>>>>> initial commit on another computer
 
 	public static void LoadMaterial()
 	{
@@ -28,7 +38,11 @@ public class Base : EntityBehaviour
 		}
 	}
 
+<<<<<<< HEAD
 	protected override int MaxHP() { return maxHP; }
+=======
+	protected override int MaxHP() { return 2000; }
+>>>>>>> initial commit on another computer
 
 	public static void RefreshMaterialColor()
 	{
@@ -47,10 +61,13 @@ public class Base : EntityBehaviour
 		head.FindChild("BigGuns").GetComponent<MeshRenderer>().material = materials[1][team];
 		head.FindChild("SmallGuns").GetComponent<MeshRenderer>().material = materials[1][team];
 	}
+<<<<<<< HEAD
 
 	protected override void UpdateInfo()
 	{
 		base.UpdateInfo();
 		team = Mathf.RoundToInt(_info["team"].n);
 	}
+=======
+>>>>>>> initial commit on another computer
 }
