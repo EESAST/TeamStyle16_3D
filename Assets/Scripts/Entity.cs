@@ -212,8 +212,9 @@ public abstract class Entity : MonoBehaviour
 			posZ = pos["z"].n;
 		}
 		Position = new Vector3(posX, posY, posZ);
-		for (var x = Mathf.RoundToInt(posX - RelativeSize / 2); x <= Mathf.RoundToInt(posX + RelativeSize / 2); x++)
-			for (var y = Mathf.RoundToInt(posY - RelativeSize / 2); y <= Mathf.RoundToInt(posY + RelativeSize / 2); y++)
+		var delta = Mathf.CeilToInt((RelativeSize - 1) / 2f);
+		for (var x = Mathf.RoundToInt(posX - delta); x <= Mathf.RoundToInt(posX + delta); x++)
+			for (var y = Mathf.RoundToInt(posY - delta); y <= Mathf.RoundToInt(posY + delta); y++)
 				Data.IsOccupied[x, y] = true;
 	}
 }

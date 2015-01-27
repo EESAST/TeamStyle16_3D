@@ -112,7 +112,7 @@ namespace GameStatics
 			public static class Tree
 			{
 				private static readonly float _billboardDistance = 50;
-				public static float Density =0.15f;
+				public static float Density = 0.15f;
 				public static float VerticalPositionOffset = -0.1f;
 				public static float BillboardDistance { get { return _billboardDistance * ScaleFactor; } }
 			}

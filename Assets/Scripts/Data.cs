@@ -11,9 +11,9 @@ namespace GameStatics
 	{
 		public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/success.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 		public static bool GamePaused;
+		public static bool[,] IsOccupied;
 		public static Vector2 MapSize;
 		public static float SeaLevel;
-		public static bool[,] IsOccupied;
 
 		public static class MiniMap
 		{

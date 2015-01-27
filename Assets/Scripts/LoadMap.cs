@@ -1,9 +1,7 @@
 ﻿#region
 
-using System;
 using GameStatics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 #endregion
 
