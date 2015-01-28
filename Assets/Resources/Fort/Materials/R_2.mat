@@ -19,8 +19,19 @@ Material:
         second:
           m_Texture: {fileID: 2800000, guid: 235fa60b94d5da94a85a8b9389662f74, type: 3}
           m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: .0441346429}
-    m_Floats: {}
+          m_Offset: {x: 0, y: .400532544}
+      data:
+        first:
+          name: _Illum
+        second:
+          m_Texture: {fileID: 2800000, guid: 235fa60b94d5da94a85a8b9389662f74, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _EmissionLM
+        second: 0
     m_Colors:
       data:
         first:

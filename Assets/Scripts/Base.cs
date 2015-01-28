@@ -8,10 +8,12 @@ using UnityEngine;
 public class Base : Unit
 {
 	private static readonly Material[][] materials = new Material[2][];
-	protected override Quaternion DefaultRotation { get { return Quaternion.Euler(0, 45, 0); } }
+	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
 	protected override int RelativeSize { get { return 3; } }
 
-	protected override Vector3 Dimensions() { return new Vector3(6.23f, 5.25f, 6.23f); }
+	protected override Vector3 Center() { return new Vector3(0.01f, 2.541f, -0.01f); }
+
+	protected override Vector3 Dimensions() { return new Vector3(6.22f, 5.25f, 6.23f); }
 
 	public static void LoadMaterial()
 	{
@@ -32,6 +34,8 @@ public class Base : Unit
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
+
+	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 2); }
 
 	protected override void Start()
 	{

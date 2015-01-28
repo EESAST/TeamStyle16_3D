@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class IdleRotation : MonoBehaviour, IEntityFX
 {
+	//Currently implements alpha rotation in self space combined with beta rotation in parent sapce. Additionally, the pivots in both spaces should be the same, thus are only calculated once using translationOffsetToLocal.
 	public float alphaMax;
 	public float alphaMin;
 	public bool alphaRotationEnabled;
@@ -20,11 +21,11 @@ public class IdleRotation : MonoBehaviour, IEntityFX
 	private float nextAlpha;
 	private float nextBeta;
 	private float nextTime;
-	public Vector3 rotationOffsetToLocal;
-	public Vector3 rotationOffsetToParent;
+	public Vector3 rotationOffsetInParentSpace;
+	public Vector3 rotationOffsetInSelfSpace;
 	public float rotationSpeed;
 	private float transitionTime;
-	public Vector3 translationOffsetToLocal;
+	public Vector3 translationOffsetInSelfSpace;
 
 	public void Disable() { enabled = false; }
 
@@ -34,9 +35,9 @@ public class IdleRotation : MonoBehaviour, IEntityFX
 			return;
 		if (Time.time < lastTime + transitionTime)
 		{
-			var pivot = transform.TransformPoint(translationOffsetToLocal);
-			transform.RotateAround(pivot, transform.TransformDirection(Quaternion.Euler(rotationOffsetToLocal) * Vector3.left), alphaSpeed * Time.deltaTime);
-			transform.RotateAround(pivot, transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetToParent) * Vector3.up), betaSpeed * Time.deltaTime);
+			var pivot = transform.TransformPoint(translationOffsetInSelfSpace);
+			transform.RotateAround(pivot, transform.TransformDirection(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.left), alphaSpeed * Time.deltaTime);
+			transform.RotateAround(pivot, transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up), betaSpeed * Time.deltaTime);
 		}
 		else if (Time.time > nextTime)
 		{
@@ -45,7 +46,7 @@ public class IdleRotation : MonoBehaviour, IEntityFX
 			if (alphaRotationEnabled)
 			{
 				lastAlpha = nextAlpha;
-				if (alphaMax - alphaMin + Mathf.Epsilon < 360f)
+				if (alphaMax - alphaMin < 360)
 					nextAlpha = Random.Range(alphaMin, alphaMax);
 				else
 					nextAlpha = lastAlpha + Random.Range(-180f, 180f);
@@ -54,10 +55,10 @@ public class IdleRotation : MonoBehaviour, IEntityFX
 			if (betaRotationEnabled)
 			{
 				lastBeta = nextBeta;
-				if (betaMax - betaMin + Mathf.Epsilon < 360f)
+				if (betaMax - betaMin < 360)
 					nextBeta = Random.Range(betaMin, betaMax);
 				else
-					nextBeta = lastBeta + Random.Range(-180f, 180f);
+					nextBeta = lastBeta + Random.Range(-180f, 180);
 				deltaBeta = nextBeta - lastBeta;
 			}
 			transitionTime = (Mathf.Abs(deltaAlpha) + Mathf.Abs(deltaBeta)) / rotationSpeed;

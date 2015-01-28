@@ -153,7 +153,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: d6cdc79ec19714fcd980ca3f6ac01a0a, type: 3}
   splatTextures:
   - {fileID: 2800000, guid: c6e0767b1f8c34890ac245217f4b9731, type: 3}
-  - {fileID: 2800000, guid: 440eb36db91ca410f800ff3cfe43572f, type: 3}
   - {fileID: 2800000, guid: 18214e9d6af6248559d501391856f1c7, type: 3}
   treePrefabs:
   - {fileID: 100000, guid: 283746c560beb6145a5409c8e486d6d9, type: 2}

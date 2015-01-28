@@ -20,7 +20,7 @@ public abstract class Unit : Entity
 		var dummy = new GameObject(name);
 		var fragments = new ArrayList();
 		var count = GetComponentsInChildren<MeshFilter>().Sum(meshFilter => meshFilter.mesh.triangles.Length);
-		var threshold = 300 * RelativeSize / count;
+		var threshold = 300f * RelativeSize / count;
 		count = 0;
 		foreach (var meshFilter in GetComponentsInChildren<MeshFilter>())
 		{
@@ -54,7 +54,7 @@ public abstract class Unit : Entity
 					meshCollider.convex = true;
 					var rigidBody = fragment.AddComponent<Rigidbody>();
 					rigidBody.isKinematic = true;
-					rigidBody.SetDensity(Mathf.Pow(12 / RelativeSize, 3));
+					rigidBody.SetDensity(Mathf.Pow(12f / RelativeSize, 3));
 					fragment.transform.parent = dummy.transform;
 					var smokeTrail = Instantiate(Resources.Load("Smoke Trail")) as GameObject;
 					smokeTrail.transform.SetParent(fragment.transform, false);
@@ -66,7 +66,7 @@ public abstract class Unit : Entity
 		}
 		foreach (GameObject fragment in fragments)
 			fragment.AddComponent<FragmentManager>();
-		Instantiate(Resources.Load("Detonator"), rigidbody.worldCenterOfMass, Quaternion.identity);
+		Instantiate(Resources.Load("Detonator"), transform.TransformPoint(Center()) , Quaternion.identity);
 		Destroy(gameObject);
 	}
 

@@ -22,7 +22,7 @@ public class LoadMap : MonoBehaviour
 		var terrainData = new TerrainData
 		{
 			heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1,
-			size = new Vector3(worldSize.y, Settings.HeightOfLayer[1], worldSize.x),
+			size = new Vector3(worldSize.y, Settings.HeightOfLayer[2], worldSize.x),
 			alphamapResolution = resolution,
 			baseMapResolution = resolution
 		};
@@ -78,12 +78,14 @@ public class LoadMap : MonoBehaviour
 			for (var j = 0; j < alphamapResolution; j++)
 			{
 				var height = heights[Mathf.RoundToInt((float)i / (alphamapResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (alphamapResolution - 1) * (terrainData.heightmapWidth - 1))];
-				if (height > Data.SeaLevel / Settings.HeightOfLayer[1] + 0.1f)
+				alphamaps[i, j, 0] = height;
+				alphamaps[i, j, 1] = 1 - height;
+				/*if (height > Settings.HeightOfLayer[0] / Settings.HeightOfLayer[1] + 0.1f)
 					alphamaps[i, j, 0] = 1;
 				else if (height > Settings.HeightOfLayer[0] / Settings.HeightOfLayer[1])
 					alphamaps[i, j, 1] = 1;
 				else
-					alphamaps[i, j, 2] = 1;
+					alphamaps[i, j, 2] = 1;*/
 			}
 		terrainData.SetAlphamaps(0, 0, alphamaps);
 
@@ -110,7 +112,7 @@ public class LoadMap : MonoBehaviour
 			Vector3 treePosition;
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
-			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.8f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
+			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.HeightOfLayer[1] / Settings.HeightOfLayer[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
 			var treeInstance = new TreeInstance
 			{
 				prototypeIndex = Random.Range(0, treePrototypes.Length),
@@ -152,7 +154,7 @@ public class LoadMap : MonoBehaviour
 			{
 				var layer = Random.Range(0, detailPrototypes.Length);
 				var height = heights[Mathf.RoundToInt((float)i / (terrainData.detailResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (terrainData.detailResolution - 1) * (terrainData.heightmapWidth - 1))];
-				if (height > Mathf.Lerp(Data.SeaLevel / Settings.HeightOfLayer[1], 1, 0.4f))
+				if (height > Mathf.Lerp(Settings.HeightOfLayer[1] / Settings.HeightOfLayer[2], 1, 0.4f))
 					detailLayers[layer][i, j] = 1;
 			}
 		for (var i = 0; i < detailPrototypes.Length; i++)
@@ -166,7 +168,6 @@ public class LoadMap : MonoBehaviour
 		#region Final Settings
 
 		var terrain = Terrain.CreateTerrainGameObject(terrainData).GetComponent<Terrain>();
-		//terrain.castShadows = Settings.Terrain.CastShadows;
 		terrain.treeBillboardDistance = Settings.Terrain.Tree.BillboardDistance;
 		terrain.detailObjectDistance = Settings.Terrain.Detail.MaxVisibleDistance;
 		terrain.detailObjectDensity = Settings.Terrain.Detail.Density;
@@ -177,7 +178,7 @@ public class LoadMap : MonoBehaviour
 	private void CreateSea()
 	{
 		var sea = Instantiate(Resources.Load("Sea")) as GameObject;
-		sea.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z)) + Vector3.up * Settings.Sea.VerticalPositionOffset;
+		sea.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z), 1);
 		sea.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
 		var seaMaterial = sea.GetComponent<WaterBase>().sharedMaterial;
 		seaMaterial.SetColor("_BaseColor", Settings.Sea.RefractionColor);
@@ -192,53 +193,35 @@ public class LoadMap : MonoBehaviour
 			var info = mapElements[i];
 			switch (info["__class__"].str)
 			{
+				case "Base":
+					(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = info;
+					break;
+				case "Cargo":
+					(Instantiate(Resources.Load("CargoShip/CargoShip")) as GameObject).GetComponent<CargoShip>().Info = info;
+					break;
+				case "Carrier":
+					(Instantiate(Resources.Load("Carrier/Carrier")) as GameObject).GetComponent<Carrier>().Info = info;
+					break;
+				case "Destroyer":
+					(Instantiate(Resources.Load("Destroyer/Destroyer")) as GameObject).GetComponent<Destroyer>().Info = info;
+					break;
+				case "Fighter":
+					(Instantiate(Resources.Load("Fighter/Fighter")) as GameObject).GetComponent<Fighter>().Info = info;
+					break;
 				case "Fort":
 					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = info;
 					break;
-				case "Base":
-					{
-						(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = info;
-						/*	Debug.Log("类型：Fort或Base");
-												Debug.Log("index:" + o["index"]);
-												Debug.Log("ammo:" + o["ammo"]);
-												Debug.Log("ammo_max:" + o["ammo_max"]);
-												Debug.Log("ammo_once:" + o["ammo_once"]);
-												Debug.Log("attacks:" + o["attacks"]);
-												Debug.Log("build_round:" + o["build_round"]);
-												Debug.Log("cost:" + o["cost"]);
-												Debug.Log("defences:" + o["defences"]);
-												Debug.Log("fire_ranges:" + o["fire_ranges"]);
-												Debug.Log("fuel:" + o["fuel"]);
-												Debug.Log("fuel_max:" + o["fuel_max"]);
-												Debug.Log("health:" + o["health"]);
-												Debug.Log("health_max:" + o["health_max"]);
-												Debug.Log("metal:" + o["metal"]);
-												Debug.Log("metal_max:" + o["metal_max"]);
-												Debug.Log("population:" + o["population"]);
-												Debug.Log("jsonPos:" + o["pos"]);
-												Debug.Log("sight_ranges:" + o["sight_ranges"]);
-												Debug.Log("speed:" + o["speed"]);
-												Debug.Log("team:" + o["team"]);*/
-					}
+				case "Scout":
+					(Instantiate(Resources.Load("Scout/Scout")) as GameObject).GetComponent<Scout>().Info = info;
 					break;
-				case "Oilfield":
-					{
-						(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = info;
-						/*	Debug.Log("类型：Oilfield");
-												Debug.Log("index:" + o["index"]);
-												Debug.Log("fuel:" + o["fuel"]);
-												Debug.Log("jsonPos:" + o["pos"]);	// is pos Position class*/
-					}
+				case "Submarine":
+					(Instantiate(Resources.Load("Submarine/Submarine")) as GameObject).GetComponent<Submarine>().Info = info;
 					break;
 				case "Mine":
-					{
-						(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = info;
-						//m.transform.position = Methods.Coordinates.JSONToInternal(o["pos"]);
-						/*	Debug.Log("类型：Mine");
-												Debug.Log("index:" + o["index"]);
-												Debug.Log("metal:" + o["metal"]);
-												Debug.Log("jsonPos:" + o["pos"]);*/
-					}
+					(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = info;
+					break;
+				case "Oilfield":
+					(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = info;
 					break;
 			}
 		}

@@ -205,13 +205,7 @@ namespace GameStatics
 
 			public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2(externalCoordinates.y / (Data.MapSize.y - 1), 1 - externalCoordinates.x / (Data.MapSize.x - 1)); }
 
-			public static Vector3 InternalToExternal(Vector3 internalCoordinates)
-			{
-				var layer = 0;
-				while (layer < Settings.HeightOfLayer.Length - 1 && Mathf.Abs(internalCoordinates.y - Settings.HeightOfLayer[layer]) > Mathf.Epsilon)
-					layer++;
-				return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.x, Data.MapSize.y - 1 + Settings.MapSizeOffset.w - internalCoordinates.x / Settings.ScaleFactor, layer);
-			}
+			public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.x, Data.MapSize.y - 1 + Settings.MapSizeOffset.w - internalCoordinates.x / Settings.ScaleFactor); }
 
 			public static Vector2 InternalToMiniMapBasedScreen(Vector3 internalCoordinates) { return ExternalToMiniMapBasedScreen(InternalToExternal(internalCoordinates)); }
 
@@ -219,7 +213,7 @@ namespace GameStatics
 
 			public static Vector3 IntersectToGround(Vector3 lhs, Vector3 rhs)
 			{
-				var t = (Settings.GroundHeight - lhs.y) / (rhs.y - lhs.y);
+				var t = (Settings.HeightOfLayer[2] - lhs.y) / (rhs.y - lhs.y);
 				return (1 - t) * lhs + t * rhs;
 			}
 
@@ -227,7 +221,7 @@ namespace GameStatics
 			{
 				var flags = new bool[2];
 				for (var i = 0; i < 2; i++)
-					flags[i] = (origin.y - Settings.GroundHeight) * (farCorners[i].y - Settings.GroundHeight) < 0;
+					flags[i] = (origin.y - Settings.HeightOfLayer[2]) * (farCorners[i].y - Settings.HeightOfLayer[2]) < 0;
 				if (!flags[0] && !flags[1])
 					return null;
 				return new[] { IntersectToGround(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToGround(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToGround(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToGround(flags[0] ? origin : farCorners[2], farCorners[3]) };

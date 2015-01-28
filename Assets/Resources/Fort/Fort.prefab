@@ -217,7 +217,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300016, guid: 41d88ff3b136545419ca2e62d6407a9f, type: 3}
 --- !u!64 &6478414
 MeshCollider:
@@ -230,7 +230,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300010, guid: 41d88ff3b136545419ca2e62d6407a9f, type: 3}
 --- !u!64 &6478416
 MeshCollider:
@@ -256,16 +256,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7b5f29598110c41be811ca5cfd93be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaMax: 40
-  alphaMin: -40
+  alphaMax: 45
+  alphaMin: -45
   alphaRotationEnabled: 1
   betaMax: 180
   betaMin: -180
   betaRotationEnabled: 1
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 0, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
   rotationSpeed: 100
-  translationOffsetToLocal: {x: 0, y: 0, z: 0}
+  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11452190
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -277,11 +277,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f62b9ec672da841819b195d50f65a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaSpeed: 0
-  betaSpeed: 100
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 0, y: 0, z: 0}
-  translationOffsetToLocal: {x: 0, y: 0, z: 0}
+  enableInParentSpace: 0
+  enableInSelfSpace: 1
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
+  speedAlpha: 0
+  speedBeta: -150
+  speedGamma: 0
+  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11470454
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -293,7 +297,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0ad2b3d4704e64d803e8943f8cf4b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 50
   team: 0
 --- !u!114 &11475332
 MonoBehaviour:

@@ -133,7 +133,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116034}
-  m_LocalRotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
+  m_LocalRotation: {x: -.653281569, y: .270598024, z: .270598084, w: .653281391}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -172,7 +172,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197228}
-  m_LocalRotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
+  m_LocalRotation: {x: -.653281569, y: .270598024, z: .270598084, w: .653281391}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -184,7 +184,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197230}
-  m_LocalRotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
+  m_LocalRotation: {x: .65328151, y: -.270598084, z: -.270598084, w: -.65328151}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -464,11 +464,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f62b9ec672da841819b195d50f65a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaSpeed: 0
-  betaSpeed: 100
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 0, y: 0, z: 0}
-  translationOffsetToLocal: {x: 0, y: 0, z: 2.79999995}
+  enableInParentSpace: 0
+  enableInSelfSpace: 1
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
+  speedAlpha: 0
+  speedBeta: 100
+  speedGamma: 0
+  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11419736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -480,10 +484,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 713002583b14399459fc364739d70de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 1
+  amplitude: 2
   offset: 0
   omega: 3.14159274
-  translationOffsetToLocal: {x: -.879999995, y: -.00999999978, z: 5.17999983}
+  translationOffsetToLocal: {x: -.879999995, y: -.00999999978, z: 5.19999981}
 --- !u!114 &11419740
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -495,16 +499,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7b5f29598110c41be811ca5cfd93be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaMax: 20
+  alphaMax: 30
   alphaMin: -10
   alphaRotationEnabled: 1
   betaMax: 0
   betaMin: 0
   betaRotationEnabled: 0
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 90, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
   rotationSpeed: 10
-  translationOffsetToLocal: {x: 0, y: 0, z: 3.5}
+  translationOffsetInSelfSpace: {x: .109999999, y: -.560000002, z: 3.58999991}
 --- !u!114 &11419742
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -516,16 +520,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7b5f29598110c41be811ca5cfd93be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaMax: 15
-  alphaMin: -15
+  alphaMax: 10
+  alphaMin: -30
   alphaRotationEnabled: 1
   betaMax: 0
   betaMin: 0
   betaRotationEnabled: 0
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 90, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
   rotationSpeed: 10
-  translationOffsetToLocal: {x: 0, y: 0, z: 3.5}
+  translationOffsetInSelfSpace: {x: .00999999978, y: .0700000003, z: 3.47000003}
 --- !u!114 &11425090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -543,10 +547,10 @@ MonoBehaviour:
   betaMax: -180
   betaMin: 180
   betaRotationEnabled: 1
-  rotationOffsetToLocal: {x: 90, y: 0, z: 0}
-  rotationOffsetToParent: {x: 0, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
   rotationSpeed: 100
-  translationOffsetToLocal: {x: 0, y: 0, z: 3.5}
+  translationOffsetInSelfSpace: {x: 0, y: 0, z: 3.31999993}
 --- !u!114 &11497236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -558,7 +562,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53336248ba069f548b442126425c9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 50
   team: 0
 --- !u!1001 &100100000
 Prefab:

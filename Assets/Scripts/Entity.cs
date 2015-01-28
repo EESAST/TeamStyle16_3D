@@ -18,13 +18,16 @@ public abstract class Entity : MonoBehaviour
 	private RectTransform hbRect;
 	private Text hbText;
 	private Texture2D hbTexture;
-	private Highlighter highlighter;
+	protected Highlighter highlighter;
 	private int HP;
 	private bool isDead;
 	private int lastHPIndex;
 	private RectTransform markRect;
+
+	[HideInInspector]
 	public int team;
-	protected virtual Quaternion DefaultRotation { get { return Quaternion.Euler(0, Random.Range(-180, 180), 0); } }
+
+	protected virtual Quaternion DefaultRotation { get { return Quaternion.Euler(0, Random.Range(-180f, 180), 0); } }
 
 	public JSONObject Info
 	{
@@ -35,7 +38,6 @@ public abstract class Entity : MonoBehaviour
 		}
 	}
 
-	public Vector3 Position { get { return Methods.Coordinates.InternalToExternal(transform.position); } set { transform.position = Methods.Coordinates.ExternalToInternal(value); } }
 	protected virtual int RelativeSize { get { return 1; } }
 
 	protected virtual void Awake()
@@ -55,7 +57,13 @@ public abstract class Entity : MonoBehaviour
 		gameObject.ChangeLayer(LayerMask.NameToLayer("Entity"));
 	}
 
-	public void Deselect() { highlighter.ConstantOff(); }
+	protected abstract Vector3 Center();
+
+	public void Deselect()
+	{
+		Camera.main.GetComponentInParent<Moba_Camera>().settings.lockTargetTransform = null;
+		highlighter.ConstantOff();
+	}
 
 	protected virtual void Destruct()
 	{
@@ -124,7 +132,7 @@ public abstract class Entity : MonoBehaviour
 		#endregion*/
 	}
 
-	private void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
+	protected  virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
 
 	private void RefreshMarkRect()
 	{
@@ -138,8 +146,10 @@ public abstract class Entity : MonoBehaviour
 		cameraSettings.lockTargetTransform = transform;
 		cameraSettings.cameraLocked = true;
 		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
-		//Destruct();
+		Destruct();
 	}
+
+	protected abstract void SetPosition(float externalX, float externalY);
 
 	protected virtual void Start()
 	{
@@ -182,7 +192,7 @@ public abstract class Entity : MonoBehaviour
 			hbTexture.Apply();
 			lastHPIndex = hpIndex;
 		}
-		var hbPos = Camera.main.WorldToScreenPoint(rigidbody.worldCenterOfMass + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
+		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) /*rigidbody.worldCenterOfMass*/+ Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
 		hbRect.localScale = Vector2.one * 10 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
@@ -198,20 +208,18 @@ public abstract class Entity : MonoBehaviour
 	protected virtual void UpdateInfo()
 	{
 		var pos = _info["pos"];
-		float posX, posY, posZ;
+		float posX, posY;
 		if (pos["__class__"].str == "Rectangle")
 		{
 			posX = (pos["upper_left"]["x"].n + pos["lower_right"]["x"].n) / 2;
 			posY = (pos["upper_left"]["y"].n + pos["lower_right"]["y"].n) / 2;
-			posZ = (pos["upper_left"]["z"].n + pos["lower_right"]["z"].n) / 2;
 		}
 		else
 		{
 			posX = pos["x"].n;
 			posY = pos["y"].n;
-			posZ = pos["z"].n;
 		}
-		Position = new Vector3(posX, posY, posZ);
+		SetPosition(posX, posY);
 		var delta = Mathf.CeilToInt((RelativeSize - 1) / 2f);
 		for (var x = Mathf.RoundToInt(posX - delta); x <= Mathf.RoundToInt(posX + delta); x++)
 			for (var y = Mathf.RoundToInt(posY - delta); y <= Mathf.RoundToInt(posY + delta); y++)

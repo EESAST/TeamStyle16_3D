@@ -11,7 +11,13 @@ public class MaterialManager : MonoBehaviour
 	{
 		Delegates.TeamColorChanged += RefreshMaterialColor;
 		Base.LoadMaterial();
+		CargoShip.LoadMaterial();
+		Carrier.LoadMaterial();
+		Destroyer.LoadMaterial();
+		Fighter.LoadMaterial();
 		Fort.LoadMaterial();
+		Scout.LoadMaterial();
+		Submarine.LoadMaterial();
 	}
 
 	private void OnDestroy() { Delegates.TeamColorChanged -= RefreshMaterialColor; }
@@ -19,8 +25,18 @@ public class MaterialManager : MonoBehaviour
 	private void RefreshMaterialColor()
 	{
 		Base.RefreshMaterialColor();
+		CargoShip.RefreshMaterialColor();
+		Carrier.RefreshMaterialColor();
+		Destroyer.RefreshMaterialColor();
+		Fighter.RefreshMaterialColor();
 		Fort.RefreshMaterialColor();
+		Scout.RefreshMaterialColor();
+		Submarine.RefreshMaterialColor();
 	}
 
-	private void Update() { Fort.RefreshRibbonTextureOffset(); }
+	private void Update()
+	{
+		Fort.RefreshRibbonTextureOffset();
+		Scout.RefreshRibbonTextureOffset();
+	}
 }

@@ -9,7 +9,9 @@ public class Fort : Unit
 {
 	private static readonly Material[][] materials = new Material[3][];
 
-	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.53f, 2.47f); }
+	protected override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }
+
+	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
 
 	public static void LoadMaterial()
 	{
@@ -40,6 +42,8 @@ public class Fort : Unit
 			materials[2][team].mainTextureOffset = offset;
 		}
 	}
+
+	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 2); }
 
 	protected override void Start()
 	{

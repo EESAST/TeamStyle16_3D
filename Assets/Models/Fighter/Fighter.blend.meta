@@ -1,0 +1,139 @@
+fileFormatVersion: 2
+guid: 4f944714bcc505b459311bacc52cdd69
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: Barrel_FR
+    100002: Barrel_RL
+    100004: Barrel_RR
+    100006: //RootNode
+    100008: Fighter_014
+    100010: Fighter_065
+    100012: Tube_FL
+    100014: Tube_FR
+    100016: Tube_RLB
+    100018: Tube_RLU
+    100020: Tube_RRB
+    100022: Tube_RRU
+    100024: Airframe
+    100026: Barrel_FL
+    400000: Barrel_FR
+    400002: Barrel_RL
+    400004: Barrel_RR
+    400006: //RootNode
+    400008: Fighter_014
+    400010: Fighter_065
+    400012: Tube_FL
+    400014: Tube_FR
+    400016: Tube_RLB
+    400018: Tube_RLU
+    400020: Tube_RRB
+    400022: Tube_RRU
+    400024: Airframe
+    400026: Barrel_FL
+    2300000: Barrel_FR
+    2300002: Barrel_RL
+    2300004: Barrel_RR
+    2300006: Fighter_014
+    2300008: Fighter_065
+    2300010: Tube_FL
+    2300012: Tube_FR
+    2300014: Tube_RLB
+    2300016: Tube_RLU
+    2300018: Tube_RRB
+    2300020: Tube_RRU
+    2300022: Airframe
+    2300024: Barrel_FL
+    3300000: Barrel_FR
+    3300002: Barrel_RL
+    3300004: Barrel_RR
+    3300006: Fighter_014
+    3300008: Fighter_065
+    3300010: Tube_FL
+    3300012: Tube_FR
+    3300014: Tube_RLB
+    3300016: Tube_RLU
+    3300018: Tube_RRB
+    3300020: Tube_RRU
+    3300022: Airframe
+    3300024: Barrel_FL
+    4300000: Barrel_RL
+    4300002: Barrel_RR
+    4300004: Tube_FR
+    4300006: Tube_FL
+    4300008: Fighter_065
+    4300010: Tube_RRB
+    4300012: Tube_RLB
+    4300014: Tube_RRU
+    4300016: Tube_RLU
+    4300018: Fighter_014
+    4300020: Barrel_FR
+    4300022: Airframe
+    4300024: Barrel_FL
+    6400000: Airframe
+    6400002: Barrel_FL
+    6400004: Barrel_FR
+    6400006: Barrel_RL
+    6400008: Barrel_RR
+    6400010: Tube_FL
+    6400012: Tube_FR
+    6400014: Tube_RLB
+    6400016: Tube_RLU
+    6400018: Tube_RRB
+    6400020: Tube_RRU
+    7400000: Default Take
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 1
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 

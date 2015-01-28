@@ -8,13 +8,12 @@ namespace GameStatics
 {
 	public static class Settings
 	{
+		private static readonly float[] _heightOfLayer = { 1, 1.8f, 2, 5 }; //stands for undersea, sea surface, ground and air in sequence
 		private static readonly float _shadowDistance = 50;
 		public static int CloudNumber = 50;
 		public static Vector4 MapSizeOffset = new Vector4(30, 10, 45, 45); //-x x -y y, in external space
 		public static float ScaleFactor = 4;
 		public static int TextGranularity = 3;
-		public static float DeltaHeight { get { return _deltaHeight * ScaleFactor; } }
-		public static float GroundHeight { get { return _groundHeight * ScaleFactor; } }
 		public static float[] HeightOfLayer { get { return Methods.Array.Multiply(_heightOfLayer, ScaleFactor); } }
 		public static float ShadowDistance { get { return _shadowDistance * ScaleFactor; } }
 
@@ -25,9 +24,8 @@ namespace GameStatics
 
 			public static class Movement
 			{
-				private static readonly float _defaultHeight = _groundHeight;
 				private static readonly float _rate = 10;
-				public static float DefaultHeight { get { return _defaultHeight * ScaleFactor; } }
+				public static float DefaultHeight = (HeightOfLayer[0] + HeightOfLayer[3]) / 2;
 				public static float Rate { get { return _rate * ScaleFactor; } }
 			}
 
@@ -41,7 +39,7 @@ namespace GameStatics
 			{
 				private static readonly float _default = 8;
 				private static readonly float _max = 12;
-				private static readonly float _min = 4;
+				private static readonly float _min = 1;
 				private static readonly float _rate = 600;
 				public static float Default { get { return _default * ScaleFactor; } }
 				public static float Max { get { return _max * ScaleFactor; } }
@@ -75,10 +73,8 @@ namespace GameStatics
 
 		public static class Sea
 		{
-			private static readonly float _verticalPositionOffset = _deltaHeight * 0.75f;
 			public static Color ReflectionColor = new Color(0.5f, 0.5f, 1, 0.5f);
 			public static Color RefractionColor = new Color(0, 0, 0.4f, 0.6f);
-			public static float VerticalPositionOffset { get { return _verticalPositionOffset * ScaleFactor; } }
 		}
 
 		public static class TeamColor
@@ -89,7 +85,6 @@ namespace GameStatics
 
 		public static class Terrain
 		{
-			public static bool CastShadows = false;
 			public static float Smoothness = 8;
 
 			public static class Detail
@@ -117,9 +112,5 @@ namespace GameStatics
 				public static float BillboardDistance { get { return _billboardDistance * ScaleFactor; } }
 			}
 		}
-
-		private static readonly float _deltaHeight = 1;
-		private static readonly float _groundHeight = 1.5f;
-		private static readonly float[] _heightOfLayer = { _groundHeight - _deltaHeight, _groundHeight, _groundHeight + _deltaHeight };
 	}
 }

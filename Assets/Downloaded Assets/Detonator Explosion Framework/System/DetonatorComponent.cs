@@ -21,14 +21,31 @@ public abstract class DetonatorComponent : MonoBehaviour
 	public Vector3 localPosition = Vector3.zero;
 	public bool on = true;
 	public float size = 1f;
-	[HideInInspector] public Color startColor = Color.white;
-	[HideInInspector] public float startDetail = 1f;
-	[HideInInspector] public float startDuration = 2f;
-	[HideInInspector] public Vector3 startForce = Vector3.zero;
-	[HideInInspector] public Vector3 startLocalPosition = Vector3.zero;
-	[HideInInspector] public float startSize = 1f;
-	[HideInInspector] public Vector3 startVelocity = Vector3.zero;
-	[HideInInspector] public float timeScale = 1f;
+
+	[HideInInspector]
+	public Color startColor = Color.white;
+
+	[HideInInspector]
+	public float startDetail = 1f;
+
+	[HideInInspector]
+	public float startDuration = 2f;
+
+	[HideInInspector]
+	public Vector3 startForce = Vector3.zero;
+
+	[HideInInspector]
+	public Vector3 startLocalPosition = Vector3.zero;
+
+	[HideInInspector]
+	public float startSize = 1f;
+
+	[HideInInspector]
+	public Vector3 startVelocity = Vector3.zero;
+
+	[HideInInspector]
+	public float timeScale = 1f;
+
 	public Vector3 velocity = Vector3.zero;
 
 	public abstract void Explode();
