@@ -76,7 +76,7 @@ MonoBehaviour:
   smokeAMaterial: {fileID: 0}
   smokeBMaterial: {fileID: 0}
   sparksMaterial: {fileID: 0}
-  upwardsBias: 0
+  upwardsBiasFX: 0
   useWorldSpace: 1
 --- !u!1002 &11400001
 EditorExtensionImpl:

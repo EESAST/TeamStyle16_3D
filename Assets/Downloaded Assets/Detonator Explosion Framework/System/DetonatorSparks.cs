@@ -31,7 +31,7 @@ public class DetonatorSparks : DetonatorComponent
 		_sparksEmitter.force = Physics.gravity / 3; //don't fall fast - these are sparks
 		_sparksEmitter.useExplicitColorAnimation = false;
 		_sparksEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_sparksEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_sparksEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public override void Explode()

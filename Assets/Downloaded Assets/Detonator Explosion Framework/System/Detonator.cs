@@ -99,7 +99,7 @@ public class Detonator : MonoBehaviour
 	public Material smokeAMaterial;
 	public Material smokeBMaterial;
 	public Material sparksMaterial;
-	public float upwardsBias = 0f;
+	public float upwardsBiasFX = 0f;
 	public bool useWorldSpace = true;
 
 	private void Awake()

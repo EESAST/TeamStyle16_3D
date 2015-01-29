@@ -33,7 +33,7 @@ public class DetonatorSmoke : DetonatorComponent
 		_smokeAEmitter.exponentialGrowth = false;
 		_smokeAEmitter.sizeGrow = 0.095f;
 		_smokeAEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_smokeAEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_smokeAEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public void BuildSmokeB()
@@ -47,7 +47,7 @@ public class DetonatorSmoke : DetonatorComponent
 		_smokeBEmitter.exponentialGrowth = false;
 		_smokeBEmitter.sizeGrow = 0.095f;
 		_smokeBEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_smokeBEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_smokeBEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public override void Explode()

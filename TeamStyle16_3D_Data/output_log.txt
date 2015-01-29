@@ -1,0 +1,52 @@
+Initialize engine version: 4.6.1f1 (d1db7a1b5196)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: AMD Radeon HD 5500 Series (ID=0x68da)
+    Vendor:   ATI
+    VRAM:     502 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-Boo.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-Boo.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-UnityScript-firstpass.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-UnityScript-firstpass.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.158 seconds
+desktop: 1360x768 60Hz; virtual: 1360x768 at 0,0
+<RI> Initializing input.
+XInput1_3.dll not found.
+<RI> Input initialized.
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\System.Core.dll (this message is harmless)
+ArgumentException: Getting control 5's position in a group with only 5 controls when doing Repaint
+Aborting
+  at UnityEngine.GUILayoutGroup.GetNext () [0x00038] in C:\BuildAgent\work\d63dfc6385190b60\artifacts\StandalonePlayerGenerated\GUILayoutUtility.cs:513 
+  at UnityEngine.GUILayoutUtility.DoGetRect (Single minWidth, Single maxWidth, Single minHeight, Single maxHeight, UnityEngine.GUIStyle style, UnityEngine.GUILayoutOption[] options) [0x00047] in C:\BuildAgent\work\d63dfc6385190b60\artifacts\StandalonePlayerGenerated\GUILayoutUtility.cs:306 
+  at UnityEngine.GUILayoutUtility.GetRect (Single width, Single height, UnityEngine.GUIStyle style, UnityEngine.GUILayoutOption[] options) [0x00000] in C:\BuildAgent\work\d63dfc6385190b60\artifacts\StandalonePlayerGenerated\GUILayoutUtility.cs:285 
+  at UnityEngine.GUILayout.Space (Single pixels) [0x0003e] in C:\BuildAgent\work\d63dfc6385190b60\artifacts\StandalonePlayerGenerated\GUILayout.cs:206 
+  at FileBrowser.draw () [0x000da] in D:\GitHub\TeamStyle16_3D\Assets\Downloaded Assets\File Browser\Script\FileBrowser.cs:130 
+  at InterfaceManager.OnGUI () [0x0027c] in D:\GitHub\TeamStyle16_3D\Assets\Scripts\InterfaceManager.cs:67 
+ 
+(Filename: C Line: 0)
+
+WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\System.dll (this message is harmless)
+UnloadTime: 0.529920 ms
+System memory in use before: 49.9 MB.
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+System memory in use after: 49.7 MB.
+
+Unloading 16 unused Assets to reduce memory usage. Loaded Objects now: 544.
+Total: 40.557114 ms (FindLiveObjects: 0.079471 ms CreateObjectMapping: 0.032389 ms MarkObjects: 38.870186 ms  DeleteObjects: 0.097502 ms)
+
+WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
+Platform assembly: D:\GitHub\TeamStyle16_3D\TeamStyle16_3D_Data\Managed\Boo.Lang.dll (this message is harmless)
+Waiting for finish

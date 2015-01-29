@@ -37,7 +37,7 @@ public class DetonatorFireball : DetonatorComponent
 		_fireballA.transform.localRotation = Quaternion.identity;
 		_fireballAEmitter.material = fireballAMaterial;
 		_fireballAEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_fireballAEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_fireballAEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public void BuildFireballB()
@@ -48,7 +48,7 @@ public class DetonatorFireball : DetonatorComponent
 		_fireballB.transform.localRotation = Quaternion.identity;
 		_fireballBEmitter.material = fireballBMaterial;
 		_fireballBEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_fireballBEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_fireballBEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public void BuildFireShadow()
@@ -59,7 +59,7 @@ public class DetonatorFireball : DetonatorComponent
 		_fireShadow.transform.localRotation = Quaternion.identity;
 		_fireShadowEmitter.material = fireShadowMaterial;
 		_fireShadowEmitter.useWorldSpace = MyDetonator().useWorldSpace;
-		_fireShadowEmitter.upwardsBias = MyDetonator().upwardsBias;
+		_fireShadowEmitter.upwardsBias = MyDetonator().upwardsBiasFX;
 	}
 
 	public override void Explode()

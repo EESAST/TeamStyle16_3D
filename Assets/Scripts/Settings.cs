@@ -12,7 +12,7 @@ namespace GameStatics
 		private static readonly float _shadowDistance = 50;
 		public static int CloudNumber = 50;
 		public static Vector4 MapSizeOffset = new Vector4(30, 10, 45, 45); //-x x -y y, in external space
-		public static float ScaleFactor = 4;
+		public static float ScaleFactor = 5;
 		public static int TextGranularity = 3;
 		public static float[] HeightOfLayer { get { return Methods.Array.Multiply(_heightOfLayer, ScaleFactor); } }
 		public static float ShadowDistance { get { return _shadowDistance * ScaleFactor; } }
@@ -38,14 +38,23 @@ namespace GameStatics
 			public static class Zoom
 			{
 				private static readonly float _default = 8;
-				private static readonly float _max = 12;
-				private static readonly float _min = 1;
+				private static readonly float _max = 16;
+				private static readonly float _min = 2;
 				private static readonly float _rate = 600;
 				public static float Default { get { return _default * ScaleFactor; } }
 				public static float Max { get { return _max * ScaleFactor; } }
 				public static float Min { get { return _min * ScaleFactor; } }
 				public static float Rate { get { return _rate * ScaleFactor; } }
 			}
+		}
+
+		public static class Fragment
+		{
+			public static float AttenuationFast = 0.6f;
+			public static float AttenuationSlow = 0.9f;
+			public static float MaxLifeSpan = 16;
+			public static float MinLifeSpan = 8;
+			public static float ThicknessPerUnitSize = 0.03f;
 		}
 
 		public static class HealthBar

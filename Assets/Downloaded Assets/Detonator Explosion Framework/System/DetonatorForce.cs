@@ -21,6 +21,7 @@ public class DetonatorForce : DetonatorComponent
 	public float fireObjectLife;
 	public float power;
 	public float radius;
+	public float upwardsBiasForce = 10;
 
 	public override void Explode()
 	{
@@ -35,7 +36,7 @@ public class DetonatorForce : DetonatorComponent
 		{
 			//tweak the position such that the explosion center is related to the explosion's direction
 			_explosionPosition = transform.position; //- Vector3.Normalize(MyDetonator().direction);
-			_colliders = Physics.OverlapSphere(_explosionPosition, radius);
+			_colliders = Physics.OverlapSphere(_explosionPosition, radius * size);
 
 			foreach (var hit in _colliders)
 			{
@@ -47,7 +48,7 @@ public class DetonatorForce : DetonatorComponent
 					//align the force along the object's rotation
 					//this is wrong - need to attenuate the velocity according to distance from the explosion center			
 					//offsetting the explosion force position by the negative of the explosion's direction may help
-					hit.rigidbody.AddExplosionForce((power * size), _explosionPosition, (radius * size), (4f * MyDetonator().upwardsBias * size));
+					hit.rigidbody.AddExplosionForce((power * size), _explosionPosition, radius * size, upwardsBiasForce * size);
 
 					//fixed 6/15/2013 - didn't work before, was sending message to this script instead :)
 					hit.gameObject.SendMessage("OnDetonatorForceHit", null, SendMessageOptions.DontRequireReceiver);

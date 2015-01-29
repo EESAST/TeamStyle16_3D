@@ -29,7 +29,7 @@ GameObject:
   - 4: {fileID: 470456}
   - 33: {fileID: 3370456}
   - 23: {fileID: 2370456}
-  - 64: {fileID: 6478416}
+  - 135: {fileID: 13588128}
   - 114: {fileID: 11448272}
   - 114: {fileID: 11475332}
   m_Layer: 0
@@ -232,19 +232,6 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300010, guid: 41d88ff3b136545419ca2e62d6407a9f, type: 3}
---- !u!64 &6478416
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 170456}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 0
-  m_Mesh: {fileID: 4300012, guid: 41d88ff3b136545419ca2e62d6407a9f, type: 3}
 --- !u!114 &11448272
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -311,6 +298,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amplitude: .400000006
   omega: 3.14159274
+--- !u!135 &13588128
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170456}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .40289709
+  m_Center: {x: 0, y: .000101000092, z: -5.89937117e-05}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

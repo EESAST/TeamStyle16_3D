@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class IdleRotation : MonoBehaviour, IEntityFX
 {
-	//Currently implements alpha rotation in self space combined with beta rotation in parent sapce. Additionally, the pivots in both spaces should be the same, thus are only calculated once using translationOffsetToLocal.
+	//Currently implements alpha rotation in self space combined with beta rotation in parent sapce. Additionally, the pivots in both spaces should be the same, thus are only calculated once using transform.TransformPoint(translationOffsetInSelfSpace).
 	public float alphaMax;
 	public float alphaMin;
 	public bool alphaRotationEnabled;

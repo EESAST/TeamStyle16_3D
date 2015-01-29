@@ -132,7 +132,7 @@ public abstract class Entity : MonoBehaviour
 		#endregion*/
 	}
 
-	protected  virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
+	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
 
 	private void RefreshMarkRect()
 	{
