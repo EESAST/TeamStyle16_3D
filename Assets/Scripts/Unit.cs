@@ -22,6 +22,8 @@ public abstract class Unit : Entity
 		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
 		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize * Settings.ScaleFactor;
+		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.ScaleFactor * 0.12f, 3);
+		var totalMass = 0f;
 		foreach (var meshFilter in meshFilters)
 		{
 			var mesh = meshFilter.mesh;
@@ -45,7 +47,8 @@ public abstract class Unit : Entity
 					var fragment = Instantiate(Resources.Load("Fragment"), center, Quaternion.identity) as GameObject;
 					fragment.GetComponent<MeshCollider>().sharedMesh = fragment.GetComponent<MeshFilter>().sharedMesh = fragmentedMesh;
 					fragment.GetComponent<MeshRenderer>().material = material;
-					fragment.rigidbody.SetDensity(30);
+					fragment.rigidbody.SetDensity(1000);
+					totalMass += fragment.rigidbody.mass;
 					fragment.transform.parent = dummy.transform;
 					var smokeTrail = fragment.GetComponentInChildren<ParticleEmitter>();
 					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
@@ -54,8 +57,12 @@ public abstract class Unit : Entity
 				}
 			}
 		}
+		var ratio = desiredAverageMass * count / totalMass;
 		foreach (var fragmentManager in dummy.GetComponentsInChildren<FragmentManager>())
+		{
+			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
+		}
 		var detonator = Instantiate(Resources.Load("Detonator"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.ScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.ScaleFactor, 3);
