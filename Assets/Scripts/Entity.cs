@@ -59,7 +59,7 @@ public abstract class Entity : MonoBehaviour
 
 	protected abstract Vector3 Center();
 
-	public void Deselect()
+	public virtual void Deselect()
 	{
 		Camera.main.GetComponentInParent<Moba_Camera>().settings.lockTargetTransform = null;
 		highlighter.ConstantOff();
@@ -140,13 +140,13 @@ public abstract class Entity : MonoBehaviour
 		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.ScaleFactor);
 	}
 
-	public void Select()
+	public virtual void Select()
 	{
 		var cameraSettings = Camera.main.GetComponentInParent<Moba_Camera>().settings;
 		cameraSettings.lockTargetTransform = transform;
 		cameraSettings.cameraLocked = true;
 		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
-		Destruct();
+		//Destruct();
 	}
 
 	protected abstract void SetPosition(float externalX, float externalY);

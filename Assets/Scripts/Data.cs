@@ -9,7 +9,7 @@ namespace GameStatics
 {
 	public static class Data
 	{
-		public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/success.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+		public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 		public static bool GamePaused;
 		public static bool[,] IsOccupied;
 		public static Vector2 MapSize;

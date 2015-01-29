@@ -11,6 +11,12 @@ public class Submarine : Unit
 
 	protected override Vector3 Center() { return new Vector3(0.44f, 0.00f, 1.14f); }
 
+	public override void Deselect()
+	{
+		base.Deselect();
+		highlighter.FlashingOn();
+	}
+
 	protected override Vector3 Dimensions() { return new Vector3(21.10f, 34.56f, 83.97f); }
 
 	public static void LoadMaterial()
@@ -29,7 +35,7 @@ public class Submarine : Unit
 	protected override void RefreshColor()
 	{
 		base.RefreshColor();
-		highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, 0.3f);
+		highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, 0.6f);
 	}
 
 	public static void RefreshMaterialColor()
@@ -39,6 +45,12 @@ public class Submarine : Unit
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
 
+	public override void Select()
+	{
+		base.Select();
+		highlighter.FlashingOff();
+	}
+
 	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY); }
 
 	protected override void Start()
@@ -46,6 +58,6 @@ public class Submarine : Unit
 		base.Start();
 		foreach (Transform child in transform)
 			child.GetComponent<MeshRenderer>().material = materials[0][team];
-		highlighter.FlashingOn(Data.TeamColor.Current[team], Color.clear, 0.3f);
+		highlighter.FlashingOn(Data.TeamColor.Current[team], Color.clear, 0.6f);
 	}
 }

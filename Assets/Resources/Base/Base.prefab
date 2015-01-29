@@ -499,7 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7b5f29598110c41be811ca5cfd93be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaMax: 30
+  alphaMax: 20
   alphaMin: -10
   alphaRotationEnabled: 1
   betaMax: 0
@@ -521,7 +521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaMax: 10
-  alphaMin: -30
+  alphaMin: -20
   alphaRotationEnabled: 1
   betaMax: 0
   betaMin: 0
