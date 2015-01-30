@@ -7,22 +7,46 @@ ModelImporter:
     100002: Geyser
     100004: GeyserSteam
     100006: Rocks
+    100008: Pool_0
+    100010: Pool_1
+    100012: Pool_2
+    100014: Massif
     400000: //RootNode
     400002: Geyser
     400004: GeyserSteam
     400006: Rocks
+    400008: Pool_0
+    400010: Pool_1
+    400012: Pool_2
+    400014: Massif
     2300000: Geyser
     2300002: GeyserSteam
     2300004: Rocks
+    2300006: Pool_0
+    2300008: Pool_1
+    2300010: Pool_2
+    2300012: Massif
     3300000: Geyser
     3300002: GeyserSteam
     3300004: Rocks
+    3300006: Pool_0
+    3300008: Pool_1
+    3300010: Pool_2
+    3300012: Massif
     4300000: GeyserSteam
     4300002: Geyser
     4300004: Rocks
+    4300006: Pool_2
+    4300008: Pool_0
+    4300010: Pool_1
+    4300012: Massif
     6400000: Geyser
     6400002: GeyserSteam
     6400004: Rocks
+    6400006: Pool_0
+    6400008: Pool_1
+    6400010: Pool_2
+    6400012: Massif
     7400000: Default Take
     9500000: //RootNode
   materials:

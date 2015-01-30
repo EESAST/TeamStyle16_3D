@@ -271,9 +271,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: -8.10000038, y: 1.04999995, z: -178.330002}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 100
+  omega: {x: 0, y: 0, z: 100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 1.13, y: -23.3500004, z: -2.66000009}
 --- !u!114 &11456454

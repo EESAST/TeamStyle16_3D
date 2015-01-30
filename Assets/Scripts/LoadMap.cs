@@ -211,17 +211,17 @@ public class LoadMap : MonoBehaviour
 				case "Fort":
 					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = info;
 					break;
+				case "Mine":
+					(Instantiate(Resources.Load("Mine/Mine")) as GameObject).GetComponent<Mine>().Info = info;
+					break;
+				case "Oilfield":
+					(Instantiate(Resources.Load("OilField/OilField")) as GameObject).GetComponent<OilField>().Info = info;
+					break;
 				case "Scout":
 					(Instantiate(Resources.Load("Scout/Scout")) as GameObject).GetComponent<Scout>().Info = info;
 					break;
 				case "Submarine":
 					(Instantiate(Resources.Load("Submarine/Submarine")) as GameObject).GetComponent<Submarine>().Info = info;
-					break;
-				case "Mine":
-					(Instantiate(Resources.Load("Mine")) as GameObject).GetComponent<Mine>().Info = info;
-					break;
-				case "Oilfield":
-					(Instantiate(Resources.Load("Oil Field")) as GameObject).GetComponent<OilField>().Info = info;
 					break;
 			}
 		}

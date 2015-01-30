@@ -33,7 +33,7 @@ public class Scout : Unit
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
 
-	public static void RefreshRibbonTextureOffset()
+	public static void RefreshTextureOffset()
 	{
 		for (var team = 0; team < 3; team++)
 		{

@@ -834,9 +834,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: -300
+  omega: {x: 0, y: 0, z: -300}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463940
@@ -854,9 +852,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 300
+  omega: {x: 0, y: 0, z: 300}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463942
@@ -874,9 +870,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: -300
+  omega: {x: 0, y: 0, z: -300}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463944
@@ -894,9 +888,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 100
+  omega: {x: 0, y: 0, z: 0}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463946
@@ -914,9 +906,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 300
+  omega: {x: 0, y: 0, z: 300}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463948
@@ -934,9 +924,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: -100
+  omega: {x: 0, y: 0, z: -100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463950
@@ -954,9 +942,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 100
+  omega: {x: 0, y: 0, z: 100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463952
@@ -974,9 +960,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: 100
+  omega: {x: 0, y: 0, z: 100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463954
@@ -994,9 +978,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: -100
+  omega: {x: 0, y: 0, z: -100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463956
@@ -1014,9 +996,7 @@ MonoBehaviour:
   enableInSelfSpace: 1
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  speedAlpha: 0
-  speedBeta: 0
-  speedGamma: -100
+  omega: {x: 0, y: 0, z: -100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463958

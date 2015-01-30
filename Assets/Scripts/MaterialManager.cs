@@ -16,6 +16,8 @@ public class MaterialManager : MonoBehaviour
 		Destroyer.LoadMaterial();
 		Fighter.LoadMaterial();
 		Fort.LoadMaterial();
+		Mine.LoadMaterial();
+		OilField.LoadMaterial();
 		Scout.LoadMaterial();
 		Submarine.LoadMaterial();
 	}
@@ -36,7 +38,8 @@ public class MaterialManager : MonoBehaviour
 
 	private void Update()
 	{
-		Fort.RefreshRibbonTextureOffset();
-		Scout.RefreshRibbonTextureOffset();
+		Fort.RefreshTextureOffset();
+		OilField.RefreshTextureOffset();
+		Scout.RefreshTextureOffset();
 	}
 }

@@ -1,23 +1,30 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
 
-public class Mine : Entity
+public class Mine : Resource
 {
-	protected override void Awake()
-	{
-		base.Awake();
-		team = 3;
-	}
+	private static readonly Material[] materials = new Material[2];
 
 	protected override Vector3 Center() { return new Vector3(-0.15f, -0.21f, -0.22f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(3.98f, 3.11f, 2.71f); }
 
-	protected override int MaxHP() { return 35; }
+	public static void LoadMaterial()
+	{
+		string[] name = { "M", "O" };
+		for (var id = 0; id < 2; id++)
+			materials[id] = Resources.Load<Material>("Mine/Materials/" + name[id]);
+	}
 
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 2); }
+	protected override int MaxHP() { return 1000; }
+
+	protected override void Start()
+	{
+		base.Start();
+		transform.FindChild("Minerals").GetComponent<MeshRenderer>().material = materials[0];
+		transform.FindChild("Ore").GetComponent<MeshRenderer>().material = materials[1];
+	}
 }

@@ -19,7 +19,7 @@ public abstract class Entity : MonoBehaviour
 	private Text hbText;
 	private Texture2D hbTexture;
 	protected Highlighter highlighter;
-	private int HP;
+	protected int HP;
 	private bool isDead;
 	private int lastHPIndex;
 	private RectTransform markRect;
@@ -136,8 +136,8 @@ public abstract class Entity : MonoBehaviour
 
 	private void RefreshMarkRect()
 	{
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MiniMap.ScaleFactor);
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * 0.9f * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * 0.9f * Data.MiniMap.ScaleFactor);
 	}
 
 	public virtual void Select()
@@ -175,8 +175,11 @@ public abstract class Entity : MonoBehaviour
 		hbTexture.Apply();
 	}
 
-	private void Update()
+	protected virtual void Update()
 	{
+		if ((HP = (HP + 1) % (MaxHP() + 1)) <= 0)
+			Destruct();
+
 		markRect.anchoredPosition = Methods.Coordinates.InternalToMiniMapBasedScreen(transform.position);
 
 		#region Update Health Bar
@@ -201,8 +204,6 @@ public abstract class Entity : MonoBehaviour
 		hbText.text = HP + "/" + MaxHP();
 
 		#endregion
-
-		HP = (HP + 1) % (MaxHP() + 1);
 	}
 
 	protected virtual void UpdateInfo()
