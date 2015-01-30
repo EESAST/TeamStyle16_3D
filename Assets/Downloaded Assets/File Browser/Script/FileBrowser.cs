@@ -2,7 +2,9 @@
 
 #region
 
+using System.Collections;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 #if thread
 using System.Threading;
@@ -15,11 +17,11 @@ public class FileBrowser
 {
 	//public 
 	//Optional Parameters
-	public string name = "File Browser"; //Just hbPos name to identify the file browser with
+	public string name = "File Browser"; //Just a name to identify the file browser with
 	//GUI Options
 	public GUISkin guiSkin; //The GUISkin to use
 
-	public int layoutType { get { return layout; } } //returns the currentHeight Layout type
+	public int layoutType { get { return layout; } } //returns the current Layout type
 
 	public Texture2D fileTexture, directoryTexture, backTexture, driveTexture; //textures used to represent file types
 
@@ -30,13 +32,14 @@ public class FileBrowser
 	public bool isVisible { get { return visible; } } //check if the file browser is currently visible
 	//File Options
 	public string searchPattern = "*"; //search pattern used to find files
+	public string extension;
 	//Output
 	public FileInfo outputFile; //the selected output file
 	public bool forceOutput;
 	//Search
-	public bool showSearch = false; //show the search bar
+	public bool showSearch; //show the search bar
 	public bool forceSearch;
-	public bool searchRecursively = false; //search currentHeight folder and sub folders
+	public bool searchRecursively; //search current folder and sub folders
 	//Protected	
 	//GUI
 	protected Vector2 fileScroll = Vector2.zero, folderScroll = Vector2.zero, driveScroll = Vector2.zero;
@@ -79,9 +82,7 @@ public class FileBrowser
 		public FileBrowser(string directory,int layoutStyle):this(directory,layoutStyle,new Rect(0,0,Screen.width,Screen.height)){}
 		public FileBrowser(string directory):this(directory,1){}
 #else
-	public FileBrowser(string directory, int layoutStyle) : this(directory, layoutStyle, new Rect(Screen.width * 0.125f, Screen.height * 0.125f, Screen.width * 0.75f, Screen.height * 0.75f)) { }
-
-	public FileBrowser(string directory) : this(directory, 0) { }
+	public FileBrowser(string directory, int layoutStyle = 0) : this(directory, layoutStyle, new Rect(Screen.width * 0.125f, Screen.height * 0.125f, Screen.width * 0.75f, Screen.height * 0.75f)) { }
 #endif
 
 	public FileBrowser(Rect guiRect) : this() { guiSize = guiRect; }
@@ -281,19 +282,14 @@ public class FileBrowser
 			if (GUILayout.Button("ËÑË÷") || forceSearch)
 			{
 				forceSearch = false;
-				if (searchBarString.Length > 0)
-				{
-					isSearching = true;
+				isSearching = true;
 #if thread
-					startSearchTime = Time.time;
-					t = new Thread(threadSearchFileList);
-					t.Start(true);
+				startSearchTime = Time.time;
+				t = new Thread(threadSearchFileList);
+				t.Start(true);
 #else
-					searchFileList(currentDirectory);
+				searchFileList(currentDirectory);
 #endif
-				}
-				else
-					getFileList(currentDirectory);
 				forceSelectFile = true;
 			}
 		}
@@ -351,7 +347,6 @@ public class FileBrowser
 
 		//get files
 		var fia = di.GetFiles(searchPattern);
-		//FileInfo[] fia = searchDirectory(di,searchPattern);
 		files = new FileInformation[fia.Length];
 		for (var f = 0; f < fia.Length; f++)
 			if (fileTexture)
@@ -364,15 +359,17 @@ public class FileBrowser
 
 	protected void searchFileList(DirectoryInfo di, bool hasTexture)
 	{
-		//(searchBarString.IndexOf("*") >= 0)?searchBarString:"*"+searchBarString+"*"; //this allows for more intuitive searching for strings in file names
-		var fia = di.GetFiles((searchBarString.IndexOf("*") >= 0) ? searchBarString : "*" + searchBarString + "*", (searchRecursively) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-		files = new FileInformation[fia.Length];
-		for (var f = 0; f < fia.Length; f++)
+		var fileInfos = di.GetFiles("*" + searchBarString + "*", (searchRecursively) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+		var validFiles = new ArrayList();
+		foreach (var fileInfo in fileInfos.Where(fileInfo => fileInfo.Extension == extension))
+			validFiles.Add(fileInfo);
+		files = new FileInformation[validFiles.Count];
+		for (var f = 0; f < files.Length; f++)
 			if (hasTexture)
-				files[f] = new FileInformation(fia[f], fileTexture);
+				files[f] = new FileInformation(validFiles[f] as FileInfo, fileTexture);
 			else
-				files[f] = new FileInformation(fia[f]);
-		if (fia.Length == 0)
+				files[f] = new FileInformation(validFiles[f] as FileInfo);
+		if (files.Length == 0)
 			selectedFile = -1;
 		else
 			selectedFile = 0;
@@ -389,7 +386,6 @@ public class FileBrowser
 		isSearching = false;
 	}
 
-	//search hbPos directory by hbPos search pattern, this is optionally recursive
 	public static FileInfo[] searchDirectory(DirectoryInfo di, string sp, bool recursive) { return di.GetFiles(sp, (recursive) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly); }
 
 	public static FileInfo[] searchDirectory(DirectoryInfo di, string sp) { return searchDirectory(di, sp, false); }
@@ -403,6 +399,5 @@ public class FileBrowser
 		return fileName;
 	}
 
-	//to string
 	public override string ToString() { return "Name: " + name + "\nVisible: " + isVisible + "\nDirectory: " + currentDirectory + "\nLayout: " + layout + "\nGUI Size: " + guiSize + "\nDirectories: " + directories.Length + "\nFiles: " + files.Length; }
 }

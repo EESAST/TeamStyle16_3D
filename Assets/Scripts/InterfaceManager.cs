@@ -25,13 +25,14 @@ public class InterfaceManager : MonoBehaviour
 		Methods.Game.Resume();
 		fileBrowser = new FileBrowser
 		{
-			guiSkin = guiSkins[0],
-			fileTexture = file,
-			directoryTexture = folder,
 			backTexture = back,
+			directoryTexture = folder,
 			driveTexture = drive,
-			showSearch = true,
-			searchRecursively = true
+			fileTexture = file,
+			guiSkin = guiSkins[0],
+			extension = ".battle",
+			searchRecursively = true,
+			showSearch = true
 		};
 		for (var i = 0; i < clouds.Length; i++)
 		{
