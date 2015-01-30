@@ -11,6 +11,7 @@ GameObject:
   - 33: {fileID: 3303096}
   - 23: {fileID: 2303096}
   - 64: {fileID: 6403096}
+  - 114: {fileID: 11412420}
   m_Layer: 0
   m_Name: Hull
   m_TagString: Untagged
@@ -99,6 +100,27 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 3804226901ea60e40a64acd728140af2, type: 3}
+--- !u!114 &11412420
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 103096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c25915faefa956a4aa4ca0cf1ae13092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxAmplitude: .119999997
+  maxAngularAmplitude: 25
+  maxAngularOmega: .800000012
+  maxOmega: 2
+  minAmplitude: .0599999987
+  minAngularAmplitude: 15
+  minAngularOmega: .400000006
+  minOmega: 1
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: -2.49841309, y: -86.7342834, z: -142.621506}
 --- !u!114 &11489498
 MonoBehaviour:
   m_ObjectHideFlags: 1

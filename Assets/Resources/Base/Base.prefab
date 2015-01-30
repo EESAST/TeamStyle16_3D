@@ -466,9 +466,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableInParentSpace: 0
   enableInSelfSpace: 1
+  omega: {x: 0, y: 100, z: 0}
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  omega: {x: 0, y: 100, z: 0}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11419736
@@ -482,7 +482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 713002583b14399459fc364739d70de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 2
+  amplitude: 1
   offset: 0
   omega: 3.14159274
   translationOffsetToLocal: {x: -.879999995, y: -.00999999978, z: 5.19999981}

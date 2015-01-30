@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &156454
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -47,6 +47,7 @@ GameObject:
   - 33: {fileID: 3376180}
   - 23: {fileID: 2376180}
   - 64: {fileID: 6476180}
+  - 114: {fileID: 11479012}
   m_Layer: 0
   m_Name: Hull
   m_TagString: Untagged
@@ -56,7 +57,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &176184
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -79,12 +80,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 156454}
-  m_LocalRotation: {x: -.00594311533, y: -.325933665, z: -.945216835, w: -.0172350705}
-  m_LocalPosition: {x: -.107386768, y: 17.1434441, z: 0}
+  m_LocalRotation: {x: 9.52207415e-08, y: 4.56126734e-11, z: -3.44664824e-10, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 476180}
-  m_RootOrder: 2
+  m_Father: {fileID: 476182}
+  m_RootOrder: 1
 --- !u!4 &476180
 Transform:
   m_ObjectHideFlags: 1
@@ -95,9 +96,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 476184}
   - {fileID: 476182}
-  - {fileID: 456454}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &476182
@@ -109,20 +108,22 @@ Transform:
   m_LocalRotation: {x: -.0059431144, y: -.325933605, z: -.945216954, w: -.0172350723}
   m_LocalPosition: {x: -.107386768, y: 17.1434441, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 476184}
+  - {fileID: 456454}
   m_Father: {fileID: 476180}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!4 &476184
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176184}
-  m_LocalRotation: {x: -.00594311673, y: -.325933725, z: -.945216894, w: -.0172350705}
-  m_LocalPosition: {x: -.107386768, y: 17.1434441, z: 0}
+  m_LocalRotation: {x: 1.32156984e-07, y: 1.06687423e-10, z: 7.83712151e-10, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 476180}
+  m_Father: {fileID: 476182}
   m_RootOrder: 0
 --- !u!23 &2356454
 Renderer:
@@ -269,9 +270,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableInParentSpace: 0
   enableInSelfSpace: 1
+  omega: {x: 0, y: 0, z: 100}
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: -8.10000038, y: 1.04999995, z: -178.330002}
-  omega: {x: 0, y: 0, z: 100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 1.13, y: -23.3500004, z: -2.66000009}
 --- !u!114 &11456454
@@ -291,7 +292,7 @@ MonoBehaviour:
   betaMax: 60
   betaMin: -60
   betaRotationEnabled: 1
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: -38.050869, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
   rotationSpeed: 100
   translationOffsetInSelfSpace: {x: 1.13, y: -23.3500004, z: -2.66000009}
@@ -312,10 +313,31 @@ MonoBehaviour:
   betaMax: 180
   betaMin: -180
   betaRotationEnabled: 1
-  rotationOffsetInParentSpace: {x: 0, y: -58.4099998, z: 0}
+  rotationOffsetInParentSpace: {x: -38.050869, y: 0, z: -177.910797}
   rotationOffsetInSelfSpace: {x: -20.4899998, y: 65.3199997, z: 147.139999}
   rotationSpeed: 100
   translationOffsetInSelfSpace: {x: .119999997, y: 21.6599998, z: 12.1899996}
+--- !u!114 &11479012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 176182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c25915faefa956a4aa4ca0cf1ae13092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxAmplitude: .119999997
+  maxAngularAmplitude: 25
+  maxAngularOmega: .800000012
+  maxOmega: 2
+  minAmplitude: .0599999987
+  minAngularAmplitude: 15
+  minAngularOmega: .400000006
+  minOmega: 1
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: -38.050869, y: 0, z: -177.910797}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

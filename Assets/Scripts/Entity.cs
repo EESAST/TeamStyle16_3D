@@ -177,8 +177,7 @@ public abstract class Entity : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		if ((HP = (HP + 1) % (MaxHP() + 1)) <= 0)
-			Destruct();
+		HP = (HP + 1) % (MaxHP() + 1);
 
 		markRect.anchoredPosition = Methods.Coordinates.InternalToMiniMapBasedScreen(transform.position);
 

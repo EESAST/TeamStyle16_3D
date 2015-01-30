@@ -56,8 +56,8 @@ public class Submarine : Unit
 	protected override void Start()
 	{
 		base.Start();
-		foreach (Transform child in transform)
-			child.GetComponent<MeshRenderer>().material = materials[0][team];
+		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
+			meshRenderer.material = materials[0][team];
 		highlighter.FlashingOn(Data.TeamColor.Current[team], Color.clear, 0.6f);
 	}
 }

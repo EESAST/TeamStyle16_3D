@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &196570
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -31,6 +31,7 @@ GameObject:
   - 33: {fileID: 3396572}
   - 23: {fileID: 2396572}
   - 64: {fileID: 6496572}
+  - 114: {fileID: 11422502}
   m_Layer: 0
   m_Name: Hull
   m_TagString: Untagged
@@ -60,12 +61,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 196570}
-  m_LocalRotation: {x: -.75402844, y: .196632385, z: .570239604, w: .260007262}
-  m_LocalPosition: {x: -1.75552356, y: 13.0000162, z: .280170947}
+  m_LocalRotation: {x: 2.09487236e-08, y: 1.83943136e-08, z: -5.69450265e-08, w: 1}
+  m_LocalPosition: {x: 0, y: -0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 496574}
-  m_RootOrder: 1
+  m_Father: {fileID: 496572}
+  m_RootOrder: 0
 --- !u!4 &496572
 Transform:
   m_ObjectHideFlags: 1
@@ -75,7 +76,8 @@ Transform:
   m_LocalRotation: {x: -.75402838, y: .1966324, z: .570239604, w: .260007203}
   m_LocalPosition: {x: -1.75552368, y: 13.0000162, z: .280170947}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 496570}
   m_Father: {fileID: 496574}
   m_RootOrder: 0
 --- !u!4 &496574
@@ -89,7 +91,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 496572}
-  - {fileID: 496570}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!23 &2396570
@@ -172,6 +173,27 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 0cb6d83c003723c4a9c2a6fffb74d2ab, type: 3}
+--- !u!114 &11422502
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 196572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c25915faefa956a4aa4ca0cf1ae13092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxAmplitude: .119999997
+  maxAngularAmplitude: 25
+  maxAngularOmega: .800000012
+  maxOmega: 2
+  minAmplitude: .0599999987
+  minAngularAmplitude: 15
+  minAngularOmega: .400000006
+  minOmega: 1
+  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInSelfSpace: {x: 9.66285706, y: -102.564102, z: -143.015396}
 --- !u!114 &11431788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -185,9 +207,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableInParentSpace: 0
   enableInSelfSpace: 1
+  omega: {x: 0, y: 0, z: 100}
   rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   rotationOffsetInSelfSpace: {x: 34.0299988, y: -79.9400024, z: -134.300003}
-  omega: {x: 0, y: 0, z: 100}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 25.5799999, y: -20.1299992, z: 1.64999998}
 --- !u!114 &11431790
@@ -207,7 +229,7 @@ MonoBehaviour:
   betaMax: 180
   betaMin: -180
   betaRotationEnabled: 1
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
+  rotationOffsetInParentSpace: {x: 9.66285706, y: -102.564102, z: -143.015396}
   rotationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
   rotationSpeed: 100
   translationOffsetInSelfSpace: {x: 25.5799999, y: -20.1299992, z: 1.64999998}
