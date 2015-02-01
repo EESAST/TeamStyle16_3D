@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -25,7 +24,7 @@ public abstract class Resource : Entity
 		}
 	}
 
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 2); }
+	protected override int Level() { return 2; }
 
 	protected override void Update()
 	{

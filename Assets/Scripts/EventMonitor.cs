@@ -16,7 +16,7 @@ public class EventMonitor : MonoBehaviour
 		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Desired))
 		{
 			for (var i = 0; i < 4; i++)
-				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Desired[i], Settings.TeamColor.TransitionRate * Time.timeScale);
+				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Desired[i], Settings.TeamColor.TransitionRate * Time.deltaTime);
 			Delegates.TeamColorChanged();
 		}
 

@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100001
 EditorExtensionImpl:
@@ -37,7 +37,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100003
 EditorExtensionImpl:
@@ -58,7 +58,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100005
 EditorExtensionImpl:
@@ -76,11 +76,11 @@ GameObject:
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: Sea
+  m_Name: Ocean
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100007
 EditorExtensionImpl:
@@ -98,7 +98,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100013
 EditorExtensionImpl:
@@ -119,7 +119,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!1002 &100015
 EditorExtensionImpl:
@@ -393,11 +393,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clearColor: {r: 1, g: 1, b: 1, a: 1}
   clipPlaneOffset: .0700000003
-  reflectSkybox: 1
   reflectionMask:
     serializedVersion: 2
     m_Bits: 4294967295
   reflectionSampler: _ReflectionTex
+  reflectSkybox: 1
 --- !u!1002 &11400005
 EditorExtensionImpl:
   serializedVersion: 6

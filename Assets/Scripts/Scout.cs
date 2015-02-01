@@ -9,9 +9,11 @@ public class Scout : Unit
 {
 	private static readonly Material[][] materials = new Material[2][];
 
-	protected override Vector3 Center() { return new Vector3(0.00f, 0.00f, 0.07f); }
+	public override Vector3 Center() { return new Vector3(0.00f, 0.00f, 0.07f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(1.59f, 0.82f, 2.51f); }
+
+	protected override int Level() { return 3; }
 
 	public static void LoadMaterial()
 	{
@@ -42,8 +44,6 @@ public class Scout : Unit
 			materials[1][team].mainTextureOffset = offset;
 		}
 	}
-
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 3); }
 
 	protected override void Start()
 	{

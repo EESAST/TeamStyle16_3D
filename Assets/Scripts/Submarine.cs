@@ -9,7 +9,7 @@ public class Submarine : Unit
 {
 	private static readonly Material[][] materials = new Material[1][];
 
-	protected override Vector3 Center() { return new Vector3(0.44f, 0.00f, 1.14f); }
+	public override Vector3 Center() { return new Vector3(0.44f, 0.00f, 1.14f); }
 
 	public override void Deselect()
 	{
@@ -18,6 +18,8 @@ public class Submarine : Unit
 	}
 
 	protected override Vector3 Dimensions() { return new Vector3(21.10f, 34.56f, 83.97f); }
+
+	protected override int Level() { return 0; }
 
 	public static void LoadMaterial()
 	{
@@ -50,8 +52,6 @@ public class Submarine : Unit
 		base.Select();
 		highlighter.FlashingOff();
 	}
-
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY); }
 
 	protected override void Start()
 	{

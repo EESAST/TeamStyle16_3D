@@ -18,6 +18,6 @@ public class Moba_Camera_Settings_Zoom
 	public float minZoom = 10;
 	// How fast the cameraPivot zooms in and out
 	public float thresholdTime = 0.25f;
-	public float transitionRate = 0.1f;
+	public float transitionRate = 5;
 	public float zoomRate = 10;
 }

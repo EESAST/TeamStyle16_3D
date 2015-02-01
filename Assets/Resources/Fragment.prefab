@@ -11,7 +11,7 @@ GameObject:
   - 15: {fileID: 1533928}
   - 12: {fileID: 1233928}
   - 26: {fileID: 2633928}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Smoke Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}

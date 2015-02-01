@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100992
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400992}
+  - 108: {fileID: 10801128}
+  - 123: {fileID: 12300992}
+  - 114: {fileID: 11416748}
+  m_Layer: 0
+  m_Name: Flashlight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &116034
 GameObject:
   m_ObjectHideFlags: 0
@@ -14,23 +32,6 @@ GameObject:
   - 114: {fileID: 11416032}
   m_Layer: 0
   m_Name: Bearing
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &119736
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 419736}
-  - 108: {fileID: 10819736}
-  - 114: {fileID: 11419736}
-  m_Layer: 0
-  m_Name: FlashLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,6 +128,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &400992
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100992}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 497230}
+  m_RootOrder: 2
 --- !u!4 &416034
 Transform:
   m_ObjectHideFlags: 1
@@ -139,18 +152,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 497226}
   m_RootOrder: 0
---- !u!4 &419736
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119736}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 497230}
-  m_RootOrder: 2
 --- !u!4 &497226
 Transform:
   m_ObjectHideFlags: 1
@@ -190,7 +191,7 @@ Transform:
   m_Children:
   - {fileID: 497234}
   - {fileID: 497236}
-  - {fileID: 419736}
+  - {fileID: 400992}
   m_Father: {fileID: 497226}
   m_RootOrder: 2
 --- !u!4 &497234
@@ -418,12 +419,12 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300006, guid: e1902db619f32884d956c04a82e6da7e, type: 3}
---- !u!108 &10819736
+--- !u!108 &10801128
 Light:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119736}
+  m_GameObject: {fileID: 100992}
   m_Enabled: 1
   serializedVersion: 3
   m_Type: 2
@@ -442,7 +443,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 1
   m_ActuallyLightmapped: 0
-  m_Flare: {fileID: 12100000, guid: 9bdb18c49d114cb4300035184241aa39, type: 2}
+  m_Flare: {fileID: 0}
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
@@ -471,21 +472,22 @@ MonoBehaviour:
   rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
   translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
   translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
---- !u!114 &11419736
+--- !u!114 &11416748
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 119736}
+  m_GameObject: {fileID: 100992}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 713002583b14399459fc364739d70de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 1
-  offset: 0
-  omega: 3.14159274
-  translationOffsetToLocal: {x: -.879999995, y: -.00999999978, z: 5.19999981}
+  amplitude: .600000024
+  maxOmega: 2
+  minOmega: 5
+  offset: .200000003
+  translationOffsetInParentSpace: {x: -.879999995, y: -.0140000004, z: 5.17000008}
 --- !u!114 &11419740
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -561,6 +563,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+--- !u!123 &12300992
+LensFlare:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100992}
+  m_Enabled: 1
+  m_Flare: {fileID: 12100000, guid: 09ebe82dbd1113c3d000dc0b8d76c639, type: 2}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Brightness: 1
+  m_FadeSpeed: 3
+  m_IgnoreLayers:
+    serializedVersion: 2
+    m_Bits: 1792
+  m_Directional: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

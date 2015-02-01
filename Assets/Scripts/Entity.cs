@@ -51,13 +51,14 @@ public abstract class Entity : MonoBehaviour
 		markRect = (Instantiate(Resources.Load("Mark")) as GameObject).GetComponent<RectTransform>();
 		markRect.SetParent(GameObject.Find("MiniMap").transform);
 		markRect.SetSiblingIndex(markRect.GetSiblingIndex() - 1);
-		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.3f) * 20);
+		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 25);
 		highlighter = gameObject.AddComponent<Highlighter>();
 		gameObject.AddComponent<Rigidbody>().isKinematic = true;
-		gameObject.ChangeLayer(LayerMask.NameToLayer("Entity"));
+		foreach (var childCollider in GetComponentsInChildren<Collider>())
+			childCollider.gameObject.layer = LayerMask.NameToLayer("Entity");
 	}
 
-	protected abstract Vector3 Center();
+	public abstract Vector3 Center();
 
 	public virtual void Deselect()
 	{
@@ -82,14 +83,16 @@ public abstract class Entity : MonoBehaviour
 		var c1 = markImage.color;
 		var c2 = hbImage.color;
 		var c3 = hbText.color;
-		while ((c1.a *= 0.9f) + (c2.a *= 0.9f) + (c3.a *= 0.9f) > Mathf.Epsilon)
+		while ((c1.a *= 0.8f) + (c2.a *= 0.8f) + (c3.a *= 0.8f) > Mathf.Epsilon)
 		{
 			markImage.color = c1;
 			hbImage.color = c2;
 			hbText.color = c3;
-			yield return new WaitForSeconds(0.02f);
+			yield return new WaitForSeconds(0.04f);
 		}
 	}
+
+	protected abstract int Level();
 
 	protected abstract int MaxHP();
 
@@ -103,33 +106,6 @@ public abstract class Entity : MonoBehaviour
 			Destroy(hbRect.gameObject);
 		if (markRect)
 			Destroy(markRect.gameObject);
-	}
-
-	protected void OnGUI()
-	{
-		/*#region Draw Info Panel
-
-		if (!mouseOver || Screen.lockCursor)
-			return;
-		var infoPanel = new Rect(Input.mousePosition.x - 110, Screen.height - Input.mousePosition.y - 110, 100, Info.Count * Settings.UI.FontSize);
-		if (infoPanel.x < 0)
-			infoPanel.x = 0;
-		if (infoPanel.y < 0)
-			infoPanel.y = 0;
-		//infoPanel.x = Mathf.Min(Screen.width - infoPanel.width, infoPanel.x);
-		infoPanel.y = Mathf.Min(Screen.height - infoPanel.height, infoPanel.y);
-		GUI.BeginGroup(infoPanel);
-		var r = new Rect(0, 0, infoPanel.width, infoPanel.height);
-		GUI.Box(r, "");
-		r.height = Settings.UI.FontSize;
-		for (var i = 0; i < Info.Count; ++i)
-		{
-			GUI.Label(r, Info[i].ToString());
-			r.y += Settings.UI.FontSize;
-		}
-		GUI.EndGroup();
-
-		#endregion*/
 	}
 
 	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
@@ -146,10 +122,9 @@ public abstract class Entity : MonoBehaviour
 		cameraSettings.lockTargetTransform = transform;
 		cameraSettings.cameraLocked = true;
 		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
-		//Destruct();
 	}
 
-	protected abstract void SetPosition(float externalX, float externalY);
+	private void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, Level()); }
 
 	protected virtual void Start()
 	{
@@ -194,12 +169,12 @@ public abstract class Entity : MonoBehaviour
 			hbTexture.Apply();
 			lastHPIndex = hpIndex;
 		}
-		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) /*rigidbody.worldCenterOfMass*/+ Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
+		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
 		hbRect.localScale = Vector2.one * 10 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
 		if (!isDead)
-			hbText.color = Color.Lerp(Color.white, Color.clear, Mathf.Clamp01((hbPos.z / Settings.ScaleFactor - 8) / 2));
+			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.ScaleFactor / 2));
 		hbText.text = HP + "/" + MaxHP();
 
 		#endregion
