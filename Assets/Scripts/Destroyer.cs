@@ -5,11 +5,11 @@ using UnityEngine;
 
 #endregion
 
-public class Destroyer : Unit
+public class Destroyer : Vessel
 {
 	private static readonly Material[][] materials = new Material[1][];
 
-	protected override Vector3 Center() { return new Vector3(-0.62f, 17.21f, -0.01f); }
+	public override Vector3 Center() { return new Vector3(-0.62f, 17.21f, -0.01f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(36.13f, 54.69f, 85.58f); }
 
@@ -32,8 +32,6 @@ public class Destroyer : Unit
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 1); }
 
 	protected override void Start()
 	{

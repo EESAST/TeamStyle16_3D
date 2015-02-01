@@ -11,12 +11,12 @@ public class Moba_Camera_Settings_Movement
 
 	// How fast the cameraPivot moves
 	public float cameraMovementRate = 1;
-	public float defaultHeight = 0;
+	public float defaultHeight;
 	// Does cameraPivot move if mouse is near the edge of the screen
 	public bool edgeHoverMovement = true;
 	// The ObjectDistance from the edge of the screen 
 	public float edgeHoverOffset = 10;
-	public float transitionRate = 0.1f;
+	public float transitionRate = 5;
 	// The default value for the height of the pivot externalY screenPoint
 	public bool useDefaultHeight = true;
 	public bool useLockTargetHeight = true;

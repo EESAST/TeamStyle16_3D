@@ -243,8 +243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe7b5f29598110c41be811ca5cfd93be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alphaMax: 45
-  alphaMin: -45
+  alphaMax: 30
+  alphaMin: -30
   alphaRotationEnabled: 1
   betaMax: 180
   betaMin: -180

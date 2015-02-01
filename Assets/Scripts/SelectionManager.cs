@@ -8,7 +8,6 @@ public class SelectionManager : MonoBehaviour
 {
 	private Entity lastDownEntity;
 	private Entity lastSelectedEntity;
-	public LayerMask layerMask = -1;
 
 	private void Update()
 	{
@@ -16,7 +15,7 @@ public class SelectionManager : MonoBehaviour
 		{
 			Entity target = null;
 			RaycastHit hitInfo;
-			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, layerMask.value))
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, LayerMask.GetMask("Entity")))
 				target = hitInfo.transform.GetComponentInParent<Entity>();
 			if (target != null)
 			{

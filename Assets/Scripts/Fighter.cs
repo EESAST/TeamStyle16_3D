@@ -9,9 +9,11 @@ public class Fighter : Unit
 {
 	private static readonly Material[][] materials = new Material[1][];
 
-	protected override Vector3 Center() { return new Vector3(0.00f, 0.24f, -0.05f); }
+	public override Vector3 Center() { return new Vector3(0.00f, 0.24f, -0.05f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(4.78f, 1.93f, 5.82f); }
+
+	protected override int Level() { return 3; }
 
 	public static void LoadMaterial()
 	{
@@ -32,8 +34,6 @@ public class Fighter : Unit
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, 3); }
 
 	protected override void Start()
 	{

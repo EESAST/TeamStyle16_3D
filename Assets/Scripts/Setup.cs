@@ -13,6 +13,7 @@ public class Setup : MonoBehaviour
 	{
 		QualitySettings.shadowDistance = Settings.ShadowDistance;
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
+		RenderSettings.fogEndDistance = Settings.Camera.FarClipPlane;
 		Physics.gravity = Vector3.down * Settings.ScaleFactor;
 
 		var xMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["x_max"].n);
@@ -22,9 +23,10 @@ public class Setup : MonoBehaviour
 		Data.TeamColor.Current = new Color[4];
 
 		var cameraBoundary = GameObject.Find("CameraBoundary").GetComponent<BoxCollider>();
-		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.ScaleFactor + Vector3.up * (Settings.HeightOfLayer[3] - Settings.HeightOfLayer[0]);
+		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.ScaleFactor + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]);
+		Camera.main.transform.root.position = cameraBoundary.transform.position = Methods.Coordinates.ExternalToInternal((Data.MapSize - Vector2.one) / 2) + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]) / 2;
 		Camera.main.farClipPlane = Settings.Camera.FarClipPlane;
-		Camera.main.transform.root.position = cameraBoundary.transform.position = Methods.Coordinates.ExternalToInternal((Data.MapSize - Vector2.one) / 2) + Vector3.up * (Settings.HeightOfLayer[3] - Settings.HeightOfLayer[0]) / 2;
+		Camera.main.backgroundColor = Settings.Camera.BackgroundColor;
 
 		var cameraRequirements = Camera.main.GetComponentInParent<Moba_Camera>().requirements;
 		cameraRequirements.camera = Camera.main;

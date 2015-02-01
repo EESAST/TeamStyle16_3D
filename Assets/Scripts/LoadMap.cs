@@ -22,7 +22,7 @@ public class LoadMap : MonoBehaviour
 		var terrainData = new TerrainData
 		{
 			heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1,
-			size = new Vector3(worldSize.y, Settings.HeightOfLayer[2], worldSize.x),
+			size = new Vector3(worldSize.y, Settings.HeightOfLevel[2], worldSize.x),
 			alphamapResolution = resolution,
 			baseMapResolution = resolution
 		};
@@ -80,12 +80,6 @@ public class LoadMap : MonoBehaviour
 				var height = heights[Mathf.RoundToInt((float)i / (alphamapResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (alphamapResolution - 1) * (terrainData.heightmapWidth - 1))];
 				alphamaps[i, j, 0] = height;
 				alphamaps[i, j, 1] = 1 - height;
-				/*if (height > Settings.HeightOfLayer[0] / Settings.HeightOfLayer[1] + 0.1f)
-					alphamaps[i, j, 0] = 1;
-				else if (height > Settings.HeightOfLayer[0] / Settings.HeightOfLayer[1])
-					alphamaps[i, j, 1] = 1;
-				else
-					alphamaps[i, j, 2] = 1;*/
 			}
 		terrainData.SetAlphamaps(0, 0, alphamaps);
 
@@ -112,7 +106,7 @@ public class LoadMap : MonoBehaviour
 			Vector3 treePosition;
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
-			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.HeightOfLayer[1] / Settings.HeightOfLayer[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
+			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.HeightOfLevel[1] / Settings.HeightOfLevel[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
 			var treeInstance = new TreeInstance
 			{
 				prototypeIndex = Random.Range(0, treePrototypes.Length),
@@ -154,7 +148,7 @@ public class LoadMap : MonoBehaviour
 			{
 				var layer = Random.Range(0, detailPrototypes.Length);
 				var height = heights[Mathf.RoundToInt((float)i / (terrainData.detailResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (terrainData.detailResolution - 1) * (terrainData.heightmapWidth - 1))];
-				if (height > Mathf.Lerp(Settings.HeightOfLayer[1] / Settings.HeightOfLayer[2], 1, 0.4f))
+				if (height > Mathf.Lerp(Settings.HeightOfLevel[1] / Settings.HeightOfLevel[2], 1, 0.4f))
 					detailLayers[layer][i, j] = 1;
 			}
 		for (var i = 0; i < detailPrototypes.Length; i++)
@@ -175,14 +169,14 @@ public class LoadMap : MonoBehaviour
 		#endregion
 	}
 
-	private void CreateSea()
+	private void CreateOcean()
 	{
-		var sea = Instantiate(Resources.Load("Sea")) as GameObject;
-		sea.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z), 1);
-		sea.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
-		var seaMaterial = sea.GetComponent<WaterBase>().sharedMaterial;
-		seaMaterial.SetColor("_BaseColor", Settings.Sea.RefractionColor);
-		seaMaterial.SetColor("_ReflectionColor", Settings.Sea.ReflectionColor);
+		var ocean = Instantiate(Resources.Load("Ocean")) as GameObject;
+		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z), 1);
+		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
+		var oceanMaterial = ocean.GetComponent<WaterBase>().sharedMaterial;
+		oceanMaterial.SetColor("_BaseColor", Settings.Ocean.RefractionColor);
+		oceanMaterial.SetColor("_ReflectionColor", Settings.Ocean.ReflectionColor);
 	}
 
 	private void LoadEntities()
@@ -232,6 +226,6 @@ public class LoadMap : MonoBehaviour
 		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.x + Settings.MapSizeOffset.y, Settings.MapSizeOffset.z + Settings.MapSizeOffset.w) - Vector2.one;
 		LoadEntities();
 		CreateLand();
-		CreateSea();
+		CreateOcean();
 	}
 }

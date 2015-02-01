@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 224: {fileID: 22469904}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: HBRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24,9 +24,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 22487306}
   - 223: {fileID: 22345128}
-  - 114: {fileID: 11445126}
-  - 114: {fileID: 11445128}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +41,7 @@ GameObject:
   - 224: {fileID: 22487308}
   - 222: {fileID: 22287306}
   - 114: {fileID: 11487306}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: HBText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,50 +58,13 @@ GameObject:
   - 224: {fileID: 22487310}
   - 222: {fileID: 22287308}
   - 114: {fileID: 11487308}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: HBImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &11445126
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
-  m_PhysicalUnit: 3
-  m_FallbackScreenDPI: 96
-  m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
---- !u!114 &11445128
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 187306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ignoreReversedGraphics: 1
-  blockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &11487306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -125,7 +86,7 @@ MonoBehaviour:
     m_MinSize: 0
     m_MaxSize: 300
     m_Alignment: 4
-    m_RichText: 1
+    m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1

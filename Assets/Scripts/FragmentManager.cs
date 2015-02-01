@@ -15,12 +15,12 @@ public class FragmentManager : MonoBehaviour
 	private IEnumerator Extinguish()
 	{
 		rigidbody.isKinematic = false;
-		yield return new WaitForSeconds(0.1f);
-		while (!rigidbody.IsSleeping() && transform.position.y > Settings.HeightOfLayer[1] && Time.time < spawnTime + maxLifeSpan)
-			yield return new WaitForSeconds(0.1f);
-		var attenuation = transform.position.y < Settings.HeightOfLayer[1] ? Settings.Fragment.AttenuationFast : Settings.Fragment.AttenuationSlow;
-		while ((smokeTrail.maxEmission = smokeTrail.minEmission *= attenuation) > 10)
-			yield return new WaitForSeconds(0.1f);
+		yield return new WaitForSeconds(0.04f);
+		while (!rigidbody.IsSleeping() && transform.position.y > Settings.HeightOfLevel[1] && Time.time < spawnTime + maxLifeSpan)
+			yield return new WaitForSeconds(0.04f);
+		var attenuation = transform.position.y < Settings.HeightOfLevel[1] ? Settings.Fragment.FastAttenuation : Settings.Fragment.SlowAttenuation;
+		while ((smokeTrail.maxEmission = smokeTrail.minEmission *= attenuation) > 3)
+			yield return new WaitForSeconds(0.04f);
 		GetComponent<MeshCollider>().enabled = false;
 		Destroy(transform.parent.childCount == 1 ? transform.parent.gameObject : gameObject, 3);
 	}

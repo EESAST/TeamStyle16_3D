@@ -2,6 +2,7 @@
 
 using System.IO;
 using GameStatics;
+using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -75,7 +76,7 @@ public class InterfaceManager : MonoBehaviour
 				}
 			}
 		}
-		//if (Event.currentHeight.type != EventType.Layout)
+		//if (Event.current.type != EventType.Layout)
 		ProcessInput();
 	}
 
@@ -98,7 +99,11 @@ public class InterfaceManager : MonoBehaviour
 					if (showFileBrowser)
 						showFileBrowser = false;
 					else
+#if UNITY_EDITOR
+						EditorApplication.isPlaying = false;
+#else
 						Application.Quit();
+#endif
 					break;
 			}
 	}

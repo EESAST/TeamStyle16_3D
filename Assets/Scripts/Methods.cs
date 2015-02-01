@@ -67,13 +67,6 @@ namespace GameStatics
 			mesh.tangents = tangents;
 		}
 
-		public static void ChangeLayer(this GameObject entity, int layer)
-		{
-			entity.layer = layer;
-			foreach (Transform child in entity.transform)
-				child.gameObject.ChangeLayer(layer);
-		}
-
 		public static void Line(this Texture2D texture, Vector2 lhs, Vector2 rhs, Color lineColor, float lineThickness)
 		{
 			var tmpPixels = texture.GetPixels32();
@@ -130,6 +123,8 @@ namespace GameStatics
 			center /= results.Length;
 			return results;
 		}
+
+		public static Vector3 WorldCenter(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Entity>().Center()); }
 
 		public static class Array
 		{
@@ -195,7 +190,7 @@ namespace GameStatics
 
 		public static class Coordinates
 		{
-			public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.MapSizeOffset.w - externalY) * Settings.ScaleFactor, Settings.HeightOfLayer[Mathf.RoundToInt(externalZ)], ((externalX + Settings.MapSizeOffset.x) * Settings.ScaleFactor)); }
+			public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.MapSizeOffset.w - externalY) * Settings.ScaleFactor, Settings.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.MapSizeOffset.x) * Settings.ScaleFactor)); }
 
 			public static Vector3 ExternalToInternal(Vector3 externalCoordinates) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalCoordinates.z); }
 
@@ -213,7 +208,7 @@ namespace GameStatics
 
 			public static Vector3 IntersectToGround(Vector3 lhs, Vector3 rhs)
 			{
-				var t = (Settings.HeightOfLayer[2] - lhs.y) / (rhs.y - lhs.y);
+				var t = (Settings.HeightOfLevel[2] - lhs.y) / (rhs.y - lhs.y);
 				return (1 - t) * lhs + t * rhs;
 			}
 
@@ -221,7 +216,7 @@ namespace GameStatics
 			{
 				var flags = new bool[2];
 				for (var i = 0; i < 2; i++)
-					flags[i] = (origin.y - Settings.HeightOfLayer[2]) * (farCorners[i].y - Settings.HeightOfLayer[2]) < 0;
+					flags[i] = (origin.y - Settings.HeightOfLevel[2]) * (farCorners[i].y - Settings.HeightOfLevel[2]) < 0;
 				if (!flags[0] && !flags[1])
 					return null;
 				return new[] { IntersectToGround(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToGround(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToGround(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToGround(flags[0] ? origin : farCorners[2], farCorners[3]) };

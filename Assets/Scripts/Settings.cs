@@ -8,24 +8,25 @@ namespace GameStatics
 {
 	public static class Settings
 	{
-		private static readonly float[] _heightOfLayer = { 1, 1.8f, 2, 5 }; //stands for undersea, sea surface, ground and air in sequence
+		private static readonly float[] _heightOfLevel = { 1, 1.8f, 2, 5 }; //stands for underwater, water surface, ground and air in sequence
 		private static readonly float _shadowDistance = 50;
 		public static int CloudNumber = 50;
 		public static Vector4 MapSizeOffset = new Vector4(30, 10, 45, 45); //-x x -y y, in external space
 		public static float ScaleFactor = 5;
 		public static int TextGranularity = 3;
-		public static float[] HeightOfLayer { get { return Methods.Array.Multiply(_heightOfLayer, ScaleFactor); } }
+		public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }
 		public static float ShadowDistance { get { return _shadowDistance * ScaleFactor; } }
 
 		public static class Camera
 		{
 			private static readonly float _farClipPlane = 100;
+			public static Color BackgroundColor = new Color(0, 0.4f, 0.7f, 1);
 			public static float FarClipPlane { get { return _farClipPlane * ScaleFactor; } }
 
 			public static class Movement
 			{
 				private static readonly float _rate = 10;
-				public static float DefaultHeight = (HeightOfLayer[0] + HeightOfLayer[3]) / 2;
+				public static float DefaultHeight = (HeightOfLevel[0] + HeightOfLevel[3]) / 2;
 				public static float Rate { get { return _rate * ScaleFactor; } }
 			}
 
@@ -50,10 +51,10 @@ namespace GameStatics
 
 		public static class Fragment
 		{
-			public static float AttenuationFast = 0.6f;
-			public static float AttenuationSlow = 0.9f;
+			public static float FastAttenuation = 0.8f;
 			public static float MaxLifeSpan = 16;
 			public static float MinLifeSpan = 8;
+			public static float SlowAttenuation = 0.95f;
 			public static float ThicknessPerUnitSize = 0.03f;
 		}
 
@@ -69,7 +70,7 @@ namespace GameStatics
 			public static float BorderOffset = 10;
 			public static int Granularity = 2; //±ØÐëÎªÅ¼Êý
 			public static Color LandColor = new Color(0, 0.8f, 0, 0.6f);
-			public static Color SeaColor = new Color(0, 0, 0.6f, 0.4f);
+			public static Color OceanColor = new Color(0, 0, 0.6f, 0.4f);
 
 			public static class ViewLine
 			{
@@ -80,16 +81,19 @@ namespace GameStatics
 			}
 		}
 
-		public static class Sea
+		public static class Ocean
 		{
+			public static Color FogColor = new Color(0, 0.4f, 0.7f, 0.6f);
+			public static float FogDensity = 0.04f;
 			public static Color ReflectionColor = new Color(0.5f, 0.5f, 1, 0.5f);
 			public static Color RefractionColor = new Color(0, 0, 0.4f, 0.6f);
+			public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Entity", "Fragment");
 		}
 
 		public static class TeamColor
 		{
 			public static float Tolerance = 0.01f;
-			public static float TransitionRate = 0.1f;
+			public static float TransitionRate = 3;
 		}
 
 		public static class Terrain

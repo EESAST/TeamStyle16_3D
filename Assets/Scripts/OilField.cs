@@ -8,7 +8,7 @@ public class OilField : Resource
 {
 	private static readonly Material[] materials = new Material[4];
 
-	protected override Vector3 Center() { return new Vector3(0.00f, 0.04f, 0.02f); }
+	public override Vector3 Center() { return new Vector3(0.00f, 0.04f, 0.02f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.41f, 2.71f); }
 

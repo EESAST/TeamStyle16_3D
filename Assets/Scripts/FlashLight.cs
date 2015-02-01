@@ -6,12 +6,15 @@ using UnityEngine;
 
 #endregion
 
-public class FlashLight : MonoBehaviour, IEntityFX
+public class Flashlight : MonoBehaviour, IEntityFX
 {
-	public float amplitude = 1;
-	public float offset = 0;
-	public float omega = Mathf.PI;
-	public Vector3 translationOffsetToLocal;
+	public float amplitude;
+	private LensFlare flare;
+	public float maxOmega;
+	public float minOmega;
+	public float offset;
+	private float omega;
+	public Vector3 translationOffsetInParentSpace;
 
 	public void Disable()
 	{
@@ -22,19 +25,21 @@ public class FlashLight : MonoBehaviour, IEntityFX
 	private void Awake()
 	{
 		Delegates.TeamColorChanged += SetLightColor;
-		transform.localPosition = translationOffsetToLocal;
+		transform.localPosition = translationOffsetInParentSpace;
+		omega = Random.Range(minOmega, maxOmega);
 		light.range = Settings.ScaleFactor;
+		flare = GetComponent<LensFlare>();
 	}
 
 	private IEnumerator FadeOut()
 	{
-		while ((light.intensity *= 0.8f) > Mathf.Epsilon)
-			yield return new WaitForSeconds(0.1f);
+		while ((light.intensity *= 0.8f) + (flare.brightness *= 0.8f) > Mathf.Epsilon)
+			yield return new WaitForSeconds(0.04f);
 	}
 
 	private void OnDestroy() { Delegates.TeamColorChanged -= SetLightColor; }
 
-	private void SetLightColor() { light.color = Data.TeamColor.Current[GetComponentInParent<Base>().team]; }
+	private void SetLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Base>().team]; }
 
-	private void Update() { light.intensity = amplitude * Mathf.Sin(omega * Time.time) + offset; }
+	private void Update() { flare.brightness = light.intensity = amplitude * Mathf.Sin(omega * Time.time) + offset; }
 }

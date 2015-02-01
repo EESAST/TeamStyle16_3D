@@ -8,7 +8,7 @@ public class Mine : Resource
 {
 	private static readonly Material[] materials = new Material[2];
 
-	protected override Vector3 Center() { return new Vector3(-0.15f, -0.21f, -0.22f); }
+	public override Vector3 Center() { return new Vector3(-0.15f, -0.21f, -0.22f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(3.98f, 3.11f, 2.71f); }
 

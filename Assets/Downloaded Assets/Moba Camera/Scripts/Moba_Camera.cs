@@ -1,6 +1,7 @@
 #region
 
 using System;
+using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -82,16 +83,17 @@ public class Moba_Camera : MonoBehaviour
 		if (isForcedMoving)
 		{
 			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.timeScale);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.deltaTime);
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
-			var target = settings.lockTargetTransform.position;
+			//var target = settings.lockTargetTransform.position;
+			var target = settings.lockTargetTransform.WorldCenter();
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.timeScale);
-			_forceDestination = Vector3.zero;
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.deltaTime);
+			_forceDestination = Vector3.zero; //should be center
 		}
 		else
 		{
@@ -110,7 +112,7 @@ public class Moba_Camera : MonoBehaviour
 				_forceDestination = Vector3.zero;
 			}
 			else if (_forceDestination != Vector3.zero && (ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.timeScale);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.deltaTime);
 		}
 	}
 
@@ -152,7 +154,7 @@ public class Moba_Camera : MonoBehaviour
 		{
 			Screen.lockCursor = false;
 			if (settings.rotation.cameraRotationAutoRevert && (settings.rotation.defaultRotation - _currentCameraRotation).magnitude > settings.tolerance)
-				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.timeScale);
+				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.deltaTime);
 		}
 	}
 
@@ -233,10 +235,10 @@ public class Moba_Camera : MonoBehaviour
 		if (shallRevertZoom)
 		{
 			if (Math.Abs(settings.zoom.defaultZoom - _currentZoomAmount) > settings.tolerance)
-				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.timeScale);
+				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.deltaTime);
 		}
 		else if (Mathf.Abs(targetZoomAmount - _currentZoomAmount) > settings.tolerance)
-			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.timeScale);
+			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.deltaTime);
 	}
 
 	// Called from Update or FixedUpdate Depending on value of useFixedUpdate
