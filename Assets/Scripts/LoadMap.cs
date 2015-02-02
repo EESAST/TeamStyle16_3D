@@ -19,13 +19,7 @@ public class LoadMap : MonoBehaviour
 		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
 		var worldSize = realMapSize * Settings.ScaleFactor;
 		var resolution = Mathf.RoundToInt(Mathf.Sqrt(realMapSize.x * realMapSize.y) * Settings.Terrain.Smoothness);
-		var terrainData = new TerrainData
-		{
-			heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1,
-			size = new Vector3(worldSize.y, Settings.HeightOfLevel[2], worldSize.x),
-			alphamapResolution = resolution,
-			baseMapResolution = resolution
-		};
+		var terrainData = new TerrainData { heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1, size = new Vector3(worldSize.y, Settings.HeightOfLevel[2], worldSize.x), alphamapResolution = resolution, baseMapResolution = resolution };
 
 		#endregion
 
@@ -64,11 +58,7 @@ public class LoadMap : MonoBehaviour
 		var splatPrototypes = new SplatPrototype[splatTextures.Length];
 		for (var i = 0; i < splatPrototypes.Length; i++)
 		{
-			var splatPrototype = new SplatPrototype
-			{
-				texture = splatTextures[i],
-				tileSize = Vector2.one * Settings.ScaleFactor * 4
-			};
+			var splatPrototype = new SplatPrototype { texture = splatTextures[i], tileSize = Vector2.one * Settings.ScaleFactor * 4 };
 			splatPrototypes[i] = splatPrototype;
 		}
 		terrainData.splatPrototypes = splatPrototypes;
@@ -90,11 +80,7 @@ public class LoadMap : MonoBehaviour
 		var treePrototypes = new TreePrototype[treePrefabs.Length];
 		for (var i = 0; i < treePrototypes.Length; i++)
 		{
-			var treePrototype = new TreePrototype
-			{
-				prefab = treePrefabs[i],
-				bendFactor = 1
-			};
+			var treePrototype = new TreePrototype { prefab = treePrefabs[i], bendFactor = 1 };
 			treePrototypes[i] = treePrototype;
 		}
 		terrainData.treePrototypes = treePrototypes;
@@ -107,15 +93,7 @@ public class LoadMap : MonoBehaviour
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
 			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.HeightOfLevel[1] / Settings.HeightOfLevel[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
-			var treeInstance = new TreeInstance
-			{
-				prototypeIndex = Random.Range(0, treePrototypes.Length),
-				position = treePosition + Vector3.up * Settings.Terrain.Tree.VerticalPositionOffset * treeScale,
-				color = new Color(0, 0.8f, 0, 1),
-				lightmapColor = new Color(1, 1, 1, 1),
-				heightScale = treeScale,
-				widthScale = treeScale
-			};
+			var treeInstance = new TreeInstance { prototypeIndex = Random.Range(0, treePrototypes.Length), position = treePosition + Vector3.up * Settings.Terrain.Tree.VerticalPositionOffset * treeScale, color = new Color(0, 0.8f, 0, 1), lightmapColor = new Color(1, 1, 1, 1), heightScale = treeScale, widthScale = treeScale };
 			treeInstances[i] = treeInstance;
 		}
 		terrainData.treeInstances = treeInstances;
@@ -127,15 +105,7 @@ public class LoadMap : MonoBehaviour
 		var detailPrototypes = new DetailPrototype[detailTextures.Length];
 		for (var i = 0; i < detailPrototypes.Length; i++)
 		{
-			var detailPrototype = new DetailPrototype
-			{
-				prototypeTexture = detailTextures[i],
-				minWidth = Settings.Terrain.Detail.MinDimension,
-				minHeight = Settings.Terrain.Detail.MinDimension,
-				maxWidth = Settings.Terrain.Detail.MaxDimension,
-				maxHeight = Settings.Terrain.Detail.MaxDimension,
-				renderMode = DetailRenderMode.GrassBillboard
-			};
+			var detailPrototype = new DetailPrototype { prototypeTexture = detailTextures[i], minWidth = Settings.Terrain.Detail.MinDimension, minHeight = Settings.Terrain.Detail.MinDimension, maxWidth = Settings.Terrain.Detail.MaxDimension, maxHeight = Settings.Terrain.Detail.MaxDimension, renderMode = DetailRenderMode.GrassBillboard };
 			detailPrototypes[i] = detailPrototype;
 		}
 		terrainData.detailPrototypes = detailPrototypes;

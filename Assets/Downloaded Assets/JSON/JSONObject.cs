@@ -110,11 +110,7 @@ public class JSONObject
 		foreach (var kvp in dic)
 		{
 			keys.Add(kvp.Key);
-			list.Add(new JSONObject
-			{
-				type = Type.STRING,
-				str = kvp.Value
-			});
+			list.Add(new JSONObject { type = Type.STRING, str = kvp.Value });
 		}
 	}
 
@@ -139,14 +135,7 @@ public class JSONObject
 	}
 
 	//Convenience function for creating hbPos JSONObject containing hbPos string.  This is not part of the constructor so that malformed JSON data doesn't just turn into hbPos string object
-	public static JSONObject StringObject(string val)
-	{
-		return new JSONObject
-		{
-			type = Type.STRING,
-			str = val
-		};
-	}
+	public static JSONObject StringObject(string val) { return new JSONObject { type = Type.STRING, str = val }; }
 
 	public void Absorb(JSONObject obj)
 	{

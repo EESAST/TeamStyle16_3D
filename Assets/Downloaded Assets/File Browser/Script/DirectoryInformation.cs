@@ -7,32 +7,14 @@ using UnityEngine;
 
 public class DirectoryInformation
 {
-	public DirectoryInfo di;
-	public GUIContent gc;
+	private readonly GUIContent guiContent;
+	public DirectoryInfo directoryInfo;
 
-	public DirectoryInformation(DirectoryInfo d)
+	public DirectoryInformation(DirectoryInfo directoryInfo, Texture directoryTexture)
 	{
-		di = d;
-		gc = new GUIContent(d.Name);
+		this.directoryInfo = directoryInfo;
+		guiContent = new GUIContent(directoryInfo.Name, directoryTexture);
 	}
 
-	public DirectoryInformation(DirectoryInfo d, Texture2D img)
-	{
-		di = d;
-		gc = new GUIContent(d.Name, img);
-	}
-
-	public bool button()
-	{
-		return GUILayout.Button(gc, new GUIStyle("button")
-		{
-			alignment = TextAnchor.MiddleLeft
-		});
-	}
-
-	public bool button(GUIStyle gs) { return GUILayout.Button(gc, gs); }
-
-	public void label() { GUILayout.Label(gc); }
-
-	public void label(GUIStyle gs) { GUILayout.Label(gc, gs); }
+	public bool Button(GUIStyle guiStyle = null) { return GUILayout.Button(guiContent, guiStyle ?? new GUIStyle("button") { alignment = TextAnchor.MiddleLeft }); }
 }

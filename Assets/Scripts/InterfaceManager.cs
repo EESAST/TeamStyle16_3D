@@ -2,7 +2,6 @@
 
 using System.IO;
 using GameStatics;
-using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -17,24 +16,13 @@ public class InterfaceManager : MonoBehaviour
 	public Texture2D file;
 	private FileBrowser fileBrowser;
 	public Texture2D folder;
-	public GUISkin[] guiSkins;
 	public Texture2D shipImage;
 	private bool showFileBrowser;
 
 	private void Awake()
 	{
 		Methods.Game.Resume();
-		fileBrowser = new FileBrowser
-		{
-			backTexture = back,
-			directoryTexture = folder,
-			driveTexture = drive,
-			fileTexture = file,
-			guiSkin = guiSkins[0],
-			extension = ".battle",
-			searchRecursively = true,
-			showSearch = true
-		};
+		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = folder, driveTexture = drive, fileTexture = file }).Refresh();
 		for (var i = 0; i < clouds.Length; i++)
 		{
 			clouds[i].cloudTexture = cloudTextures[Random.Range(0, cloudTextures.Length)];
@@ -62,14 +50,14 @@ public class InterfaceManager : MonoBehaviour
 		if (GUI.Button(new Rect(x, y, width, height), "回放"))
 			showFileBrowser = true;
 		if (GUI.Button(new Rect(x, y + height + 20, width, height), "退出"))
-			Application.Quit();
+			Methods.Game.Quit();
 		if (showFileBrowser)
 		{
-			fileBrowser.backStyle = new GUIStyle("button");
-			if (fileBrowser.draw())
+			fileBrowser.backStyle = new GUIStyle("button") { alignment = TextAnchor.MiddleCenter };
+			if (fileBrowser.Draw())
 			{
 				showFileBrowser = false;
-				if (fileBrowser.outputFile != null)
+				if (fileBrowser.outputFile != null && fileBrowser.outputFile.Extension == ".battle")
 				{
 					Data.BattleData = new JSONObject(File.ReadAllText(fileBrowser.outputFile.FullName).Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 					Application.LoadLevel("BattleField");
@@ -85,9 +73,17 @@ public class InterfaceManager : MonoBehaviour
 		if (Event.current.type == EventType.KeyUp)
 			switch (Event.current.keyCode)
 			{
+				case KeyCode.UpArrow:
+					if (showFileBrowser)
+						fileBrowser.SelectLast();
+					break;
+				case KeyCode.DownArrow:
+					if (showFileBrowser)
+						fileBrowser.SelectNext();
+					break;
 				case KeyCode.Return:
 					if (showFileBrowser)
-						if (GUI.GetNameOfFocusedControl() == "searchBar")
+						if (GUI.GetNameOfFocusedControl() == "SearchBar")
 							fileBrowser.forceSearch = true;
 						else
 							fileBrowser.forceOutput = true;
@@ -99,11 +95,7 @@ public class InterfaceManager : MonoBehaviour
 					if (showFileBrowser)
 						showFileBrowser = false;
 					else
-#if UNITY_EDITOR
-						EditorApplication.isPlaying = false;
-#else
-						Application.Quit();
-#endif
+						Methods.Game.Quit();
 					break;
 			}
 	}

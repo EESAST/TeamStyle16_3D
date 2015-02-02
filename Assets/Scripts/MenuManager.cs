@@ -70,7 +70,7 @@ public class MenuManager : MonoBehaviour
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
-					Application.Quit();
+					Methods.Game.Quit();
 				break;
 		}
 	}

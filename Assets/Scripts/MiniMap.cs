@@ -32,10 +32,7 @@ public class MiniMap : MonoBehaviour
 		var rows = Mathf.RoundToInt(Data.MapSize.x);
 		var width = cols * Settings.MiniMap.Granularity;
 		var height = rows * Settings.MiniMap.Granularity;
-		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(width, height)
-		{
-			wrapMode = TextureWrapMode.Clamp
-		};
+		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(width, height) { wrapMode = TextureWrapMode.Clamp };
 		var tmpPixels = miniMapTexture.GetPixels32();
 		for (var i = 0; i < width; i++)
 			for (var j = 0; j < height; j++)

@@ -112,8 +112,8 @@ public abstract class Entity : MonoBehaviour
 
 	private void RefreshMarkRect()
 	{
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * 0.9f * Data.MiniMap.ScaleFactor);
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * 0.9f * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.ScaleFactor);
 	}
 
 	public virtual void Select()
@@ -137,10 +137,7 @@ public abstract class Entity : MonoBehaviour
 		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.TextGranularity * hbHorizontalPixelNumber);
 		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.TextGranularity * 10);
 		hbTextRect.localScale = Vector2.one / Settings.TextGranularity;
-		hbImage.texture = hbTexture = new Texture2D(hbHorizontalPixelNumber, 4)
-		{
-			wrapMode = TextureWrapMode.Clamp
-		};
+		hbImage.texture = hbTexture = new Texture2D(hbHorizontalPixelNumber, 4) { wrapMode = TextureWrapMode.Clamp };
 		hbPixels = hbTexture.GetPixels32();
 		for (var i = 0; i < hbHorizontalPixelNumber; i++)
 			for (var j = 0; j < 4; j++)

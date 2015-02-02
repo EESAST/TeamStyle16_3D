@@ -227,11 +227,7 @@ public static class JSONTemplates
 						val = (JSONObject)info.Invoke(null, parms);
 					}
 					else if (fi.FieldType.Equals(typeof(string)))
-						val = new JSONObject
-						{
-							type = JSONObject.Type.STRING,
-							str = fi.GetValue(obj).ToString()
-						};
+						val = new JSONObject { type = JSONObject.Type.STRING, str = fi.GetValue(obj).ToString() };
 					else
 						val = new JSONObject(fi.GetValue(obj).ToString());
 				}
@@ -257,11 +253,7 @@ public static class JSONTemplates
 						val = (JSONObject)info.Invoke(null, parms);
 					}
 					else if (pi.PropertyType.Equals(typeof(string)))
-						val = new JSONObject
-						{
-							type = JSONObject.Type.STRING,
-							str = pi.GetValue(obj, null).ToString()
-						};
+						val = new JSONObject { type = JSONObject.Type.STRING, str = pi.GetValue(obj, null).ToString() };
 					else
 						val = new JSONObject(pi.GetValue(obj, null).ToString());
 				}

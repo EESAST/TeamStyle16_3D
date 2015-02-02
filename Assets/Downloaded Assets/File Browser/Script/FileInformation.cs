@@ -7,32 +7,14 @@ using UnityEngine;
 
 public class FileInformation
 {
-	public FileInfo fi;
-	public GUIContent gc;
+	private readonly GUIContent guiContent;
+	public FileInfo fileInfo;
 
-	public FileInformation(FileInfo f)
+	public FileInformation(FileInfo fileInfo, Texture fileTexture)
 	{
-		fi = f;
-		gc = new GUIContent(fi.Name);
+		this.fileInfo = fileInfo;
+		guiContent = new GUIContent(this.fileInfo.Name, fileTexture);
 	}
 
-	public FileInformation(FileInfo f, Texture2D img)
-	{
-		fi = f;
-		gc = new GUIContent(fi.Name, img);
-	}
-
-	public bool button()
-	{
-		return GUILayout.Button(gc, new GUIStyle("button")
-		{
-			alignment = TextAnchor.MiddleLeft
-		});
-	}
-
-	public bool button(GUIStyle gs) { return GUILayout.Button(gc, gs); }
-
-	public void label() { GUILayout.Label(gc); }
-
-	public void label(GUIStyle gs) { GUILayout.Label(gc, gs); }
+	public bool Button() { return GUILayout.Button(guiContent, new GUIStyle("button") { alignment = TextAnchor.MiddleLeft }); }
 }

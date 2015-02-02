@@ -1,5 +1,6 @@
 #region
 
+using UnityEditor;
 using UnityEngine;
 
 #endregion
@@ -235,6 +236,15 @@ namespace GameStatics
 			{
 				Data.GamePaused = true;
 				Time.timeScale = 0;
+			}
+
+			public static void Quit()
+			{
+#if UNITY_EDITOR
+				EditorApplication.isPlaying = false;
+#else
+				Application.Quit();
+#endif
 			}
 
 			public static void Resume()
