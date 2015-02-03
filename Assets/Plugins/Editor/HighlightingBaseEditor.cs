@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using HighlightingSystem;
 using UnityEditor;

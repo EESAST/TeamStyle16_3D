@@ -1,4 +1,4 @@
-#define PRETTY //Comment out when you no longer need to read JSON to disable pretty print system-wide
+﻿#define PRETTY //Comment out when you no longer need to read JSON to disable pretty print system-wide
 #define USEFLOAT
 
 #region

@@ -1,4 +1,4 @@
-#region
+ï»¿#region
 
 using UnityEngine;
 
@@ -68,7 +68,7 @@ namespace GameStatics
 		public static class MiniMap
 		{
 			public static float BorderOffset = 10;
-			public static int Granularity = 2; //±ØÐëÎªÅ¼Êý
+			public static int Granularity = 2; //ï¿½ï¿½ï¿½ï¿½ÎªÅ¼ï¿½ï¿½
 			public static Color LandColor = new Color(0, 0.8f, 0, 0.6f);
 			public static Color OceanColor = new Color(0, 0, 0.6f, 0.4f);
 
@@ -76,7 +76,7 @@ namespace GameStatics
 			{
 				private static readonly float _thickness = 1;
 				public static Color Color = new Color(1, 0.92f, 0.016f, 0.8f);
-				public static int Granularity = 2; //±ØÐëÎªÅ¼Êý
+				public static int Granularity = 2; //ï¿½ï¿½ï¿½ï¿½ÎªÅ¼ï¿½ï¿½
 				public static float Thickness { get { return _thickness * Granularity; } }
 			}
 		}

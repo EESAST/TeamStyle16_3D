@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using System;
 using GameStatics;
@@ -50,9 +50,9 @@ public class Moba_Camera : MonoBehaviour
 
 	public Vector3 ForceDestination
 	{
-		get
+		private get
 		{
-			var tmp = _forceDestination;
+			var tmp = _forceDestination == Vector3.zero ? requirements.pivot.position : _forceDestination;
 			tmp.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			return tmp;
 		}
@@ -109,7 +109,7 @@ public class Moba_Camera : MonoBehaviour
 				requirements.pivot.position += movementVector.normalized * settings.movement.cameraMovementRate * Time.deltaTime;
 				_forceDestination = Vector3.zero;
 			}
-			else if (_forceDestination != Vector3.zero && (ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
+			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
 				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.deltaTime);
 		}
 	}

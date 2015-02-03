@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using UnityEditor;
 using UnityEngine;

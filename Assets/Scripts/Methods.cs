@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using UnityEditor;
 using UnityEngine;
@@ -251,6 +251,49 @@ namespace GameStatics
 			{
 				Data.GamePaused = false;
 				Time.timeScale = 1;
+			}
+		}
+
+		public static class GUI
+		{
+			private static bool Initialized;
+
+			private static void InitializeStyles()
+			{
+				for (var i = 0; i < 3; i++)
+				{
+					Data.GUI.TeamColoredTextures[i] = new Texture2D(1, 1);
+					Data.GUI.TeamColoredBoxes[i] = new GUIStyle("box") { normal = { background = Data.GUI.TeamColoredTextures[i] } };
+					Data.GUI.Label.TeamColor[i] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
+				}
+				Data.GUI.Button.Large = new GUIStyle("button");
+				Data.GUI.Button.Medium = new GUIStyle("button");
+				Data.GUI.Button.Small = new GUIStyle("button");
+				Data.GUI.Label.Large = new GUIStyle("label");
+				Data.GUI.Label.LargeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
+				Data.GUI.Label.Small = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
+				Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
+				Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
+				Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
+			}
+
+			public static void ResizeStyles()
+			{
+				if (!Initialized)
+				{
+					InitializeStyles();
+					Initialized = true;
+				}
+				var physicalHeight = Screen.height / Screen.dpi;
+				for (var i = 0; i < 3; i++)
+					Data.GUI.Label.TeamColor[i].fontSize = Mathf.RoundToInt(physicalHeight * 4);
+				Data.GUI.Button.Large.fontSize = Mathf.RoundToInt(physicalHeight * 5);
+				Data.GUI.Button.Medium.fontSize = Mathf.RoundToInt(physicalHeight * 4);
+				Data.GUI.Button.Small.fontSize = Mathf.RoundToInt(physicalHeight * 3);
+				Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.Large.fontSize = Mathf.RoundToInt(physicalHeight * 5);
+				Data.GUI.Label.Small.fontSize = Mathf.RoundToInt(physicalHeight * 4);
+				for (var i = 0; i < 3; i++)
+					Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalHeight * 3);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-namespace GameStatics
+﻿namespace GameStatics
 {
 	public static class Delegates
 	{

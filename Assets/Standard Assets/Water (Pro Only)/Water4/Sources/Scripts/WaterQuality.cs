@@ -1,4 +1,4 @@
-public enum WaterQuality
+﻿public enum WaterQuality
 {
 	High = 2,
 	Medium = 1,

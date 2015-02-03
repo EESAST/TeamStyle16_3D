@@ -1,66 +1,49 @@
 ﻿#region
 
-using System;
 using System.IO;
 using GameStatics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 #endregion
 
 public class InterfaceManager : MonoBehaviour
 {
 	private readonly Cloud[] clouds = new Cloud[Settings.CloudNumber];
-	private readonly Color[] lastTeamColors = new Color[4];
-	private readonly string[] setterTexts = { "队伍颜色", "敬请期待……" };
-	private readonly GUIStyle[] teamColorBoxes = new GUIStyle[3];
-	private readonly GUIStyle[] teamColorLabels = new GUIStyle[3];
-	private readonly Texture2D[] teamColorTextures = new Texture2D[3];
-	private readonly string[] teamDescriptions = { "队伍1", "队伍2", "中立" };
 	private Rect aboutRect;
 	private Vector2 aboutScroll = Vector2.zero;
 	public Texture back;
 	public Texture background;
-	private GUIStyle blueLabel;
 	public Texture[] cloudTextures;
-	public Texture dice;
 	public Texture directory;
 	public Texture drive;
 	public Texture file;
 	private FileBrowser fileBrowser;
-	private GUIStyle greenLabel;
 	private bool guiInitialized;
-	private GUIStyle largeButton;
-	private GUIStyle largeLabel;
-	private GUIStyle largeLabel_MiddleAligned;
-	private float lastScreenHeight;
-	private GUIStyle mediumButton;
-	private GUIStyle redLabel;
-	private Vector2 setterScroll = Vector2.zero;
-	private int setterSelected;
+	private Vector2 lastPhysicalScreenSize;
+	private Vector2 lastScreenSize;
+	private Vector2 optionScroll = Vector2.zero;
+	private int optionSelected;
 	public Texture ship;
-	private GUIStyle smallButton;
-	private GUIStyle smallLabel;
 	private InterfaceState stagedState;
-	private Color[] stagedTeamColors = new Color[4];
 	private InterfaceState state;
 
 	private void AboutWindow(int windowID)
 	{
-		GUILayout.Label("关于", largeLabel_MiddleAligned);
+		GUILayout.Label("关于", Data.GUI.Label.LargeMiddle);
 		GUILayout.BeginVertical("box");
 		aboutScroll = GUILayout.BeginScrollView(aboutScroll);
-		GUILayout.Label("第十六届电子系队式程序设计大赛专用3D回放引擎", smallLabel);
-		GUILayout.Label("电子系科协软件部队式3D组出品", smallLabel);
+		GUILayout.Label("第十六届电子系队式程序设计大赛专用3D回放引擎", Data.GUI.Label.Small);
+		GUILayout.Label("电子系科协软件部队式3D组出品", Data.GUI.Label.Small);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label("开发者：", largeLabel);
-		GUILayout.Label("林圣杰", smallLabel);
-		GUILayout.Label("钟元熠", smallLabel);
-		GUILayout.Label("鸣谢：", largeLabel);
-		GUILayout.Label("翁喆", smallLabel);
+		GUILayout.Label("开发者：", Data.GUI.Label.Large);
+		GUILayout.Label("林圣杰", Data.GUI.Label.Small);
+		GUILayout.Label("钟元熠", Data.GUI.Label.Small);
+		GUILayout.Label("鸣谢：", Data.GUI.Label.Large);
+		GUILayout.Label("翁喆", Data.GUI.Label.Small);
 		GUILayout.EndScrollView();
 		GUILayout.EndVertical();
-		if (GUILayout.Button("确定", mediumButton) || Event.current.type == EventType.KeyUp && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.Escape))
+		GUILayout.FlexibleSpace();
+		if (GUILayout.Button("确定", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.Escape))
 			stagedState = InterfaceState.Default;
 		GUI.DragWindow();
 	}
@@ -68,9 +51,12 @@ public class InterfaceManager : MonoBehaviour
 	private void Awake()
 	{
 		Methods.Game.Resume();
-		Data.TeamColor.Desired = new[] { Color.magenta, Color.cyan, Color.gray, Color.white };
-		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file }).Refresh();
-		RandomizeClouds();
+		for (var i = 0; i < clouds.Length; i++)
+		{
+			clouds[i].cloudTexture = cloudTextures[Random.Range(0, cloudTextures.Length)];
+			clouds[i].Reset();
+			clouds[i].rect.x = Random.Range(-clouds[i].rect.width, Screen.width);
+		}
 	}
 
 	private bool Confirm(string message)
@@ -78,14 +64,15 @@ public class InterfaceManager : MonoBehaviour
 		var value = false;
 		GUILayout.BeginArea(new Rect(Screen.width * 0.4f, Screen.height * 0.4f, Screen.width * 0.2f, Screen.height * 0.2f));
 		GUILayout.BeginVertical("box");
-		GUILayout.Label("确认退出？", largeLabel_MiddleAligned);
+		GUILayout.FlexibleSpace();
+		GUILayout.Label("确认" + message + "?", Data.GUI.Label.LargeMiddle);
 		GUILayout.FlexibleSpace();
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("确定", mediumButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		if (GUILayout.Button("是", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 			value = true;
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("取消", mediumButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
+		if (GUILayout.Button("否", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
 			stagedState = InterfaceState.Default;
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
@@ -113,24 +100,25 @@ public class InterfaceManager : MonoBehaviour
 
 	private void DrawDefaultInterface()
 	{
-		GUILayout.BeginArea(new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.08f, Screen.height * 0.3f));
+		GUILayout.BeginArea(new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f));
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("回 放", mediumButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		if (GUILayout.Button("回  放", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 			stagedState = InterfaceState.BrowsingFile;
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("设 置", mediumButton))
+		if (GUILayout.Button("选  项", Data.GUI.Button.Medium))
 		{
-			stagedState = InterfaceState.Setting;
-			stagedTeamColors = Data.TeamColor.Desired.Clone() as Color[];
+			stagedState = InterfaceState.Options;
+			for (var i = 0; i < 4; i++)
+				Data.GUI.StagedTeamColors[i] = Data.TeamColor.Desired[i];
 		}
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("关 于", mediumButton))
+		if (GUILayout.Button("关  于", Data.GUI.Button.Medium))
 		{
 			stagedState = InterfaceState.About;
 			GUI.FocusWindow(0);
 		}
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("退 出", mediumButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
+		if (GUILayout.Button("退  出", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
 			stagedState = InterfaceState.Quiting;
 		GUILayout.FlexibleSpace();
 		GUILayout.EndArea();
@@ -147,38 +135,38 @@ public class InterfaceManager : MonoBehaviour
 		Application.LoadLevel("BattleField");
 	}
 
-	private void DrawSetter()
+	private void DrawOptions()
 	{
 		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f));
 		GUILayout.BeginVertical("box");
-		setterSelected = GUILayout.Toolbar(setterSelected, setterTexts, largeButton);
+		optionSelected = GUILayout.Toolbar(optionSelected, Data.GUI.OptionTexts, Data.GUI.Button.Large);
 		GUILayout.FlexibleSpace();
-		if (setterSelected == 0)
+		if (optionSelected == 0)
 		{
 			GUILayout.BeginVertical("box");
-			setterScroll = GUILayout.BeginScrollView(setterScroll);
+			optionScroll = GUILayout.BeginScrollView(optionScroll);
 			GUILayout.BeginVertical();
 			for (var i = 0; i < 3; i++)
 			{
 				GUILayout.BeginHorizontal("box");
-				if (GUILayout.Button(new GUIContent("随机", dice), largeButton, GUILayout.ExpandHeight(true)))
-					stagedTeamColors[i] = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
+				if (GUILayout.Button(Data.GUI.Random, Data.GUI.Button.Large, GUILayout.ExpandHeight(true)))
+					Data.GUI.StagedTeamColors[i] = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
 				GUILayout.BeginVertical();
 				GUILayout.BeginHorizontal();
-				GUILayout.Label(teamDescriptions[i], teamColorLabels[i]);
-				GUILayout.Box("", teamColorBoxes[i]);
+				GUILayout.Label(Data.GUI.TeamDescriptions[i], Data.GUI.Label.TeamColor[i]);
+				GUILayout.Box("", Data.GUI.TeamColoredBoxes[i]);
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
-				GUILayout.Label("红", redLabel);
-				stagedTeamColors[i].r = GUILayout.HorizontalSlider(stagedTeamColors[i].r, 0, 1);
+				GUILayout.Label("红", Data.GUI.Label.RGB[0]);
+				Data.GUI.StagedTeamColors[i].r = GUILayout.HorizontalSlider(Data.GUI.StagedTeamColors[i].r, 0, 1);
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
-				GUILayout.Label("绿", greenLabel);
-				stagedTeamColors[i].g = GUILayout.HorizontalSlider(stagedTeamColors[i].g, 0, 1);
+				GUILayout.Label("绿", Data.GUI.Label.RGB[1]);
+				Data.GUI.StagedTeamColors[i].g = GUILayout.HorizontalSlider(Data.GUI.StagedTeamColors[i].g, 0, 1);
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
-				GUILayout.Label("蓝", blueLabel);
-				stagedTeamColors[i].b = GUILayout.HorizontalSlider(stagedTeamColors[i].b, 0, 1);
+				GUILayout.Label("蓝", Data.GUI.Label.RGB[2]);
+				Data.GUI.StagedTeamColors[i].b = GUILayout.HorizontalSlider(Data.GUI.StagedTeamColors[i].b, 0, 1);
 				GUILayout.EndHorizontal();
 				GUILayout.EndVertical();
 				GUILayout.EndHorizontal();
@@ -191,13 +179,13 @@ public class InterfaceManager : MonoBehaviour
 		}
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("确定", smallButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		if (GUILayout.Button("确定", Data.GUI.Button.Small) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 		{
-			Data.TeamColor.Desired = stagedTeamColors;
+			Data.TeamColor.Desired = Data.GUI.StagedTeamColors;
 			stagedState = InterfaceState.Default;
 		}
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("取消", smallButton) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
+		if (GUILayout.Button("取消", Data.GUI.Button.Small) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
 			stagedState = InterfaceState.Default;
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
@@ -207,21 +195,7 @@ public class InterfaceManager : MonoBehaviour
 
 	private void InitializeGUI()
 	{
-		for (var i = 0; i < 3; i++)
-		{
-			teamColorTextures[i] = new Texture2D(1, 1);
-			teamColorBoxes[i] = new GUIStyle("box") { normal = { background = teamColorTextures[i] } };
-			teamColorLabels[i] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
-		}
-		largeButton = new GUIStyle("button");
-		mediumButton = new GUIStyle("button");
-		fileBrowser.cancelStyle = fileBrowser.confirmStyle = smallButton = new GUIStyle("button");
-		largeLabel = new GUIStyle("label");
-		largeLabel_MiddleAligned = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
-		smallLabel = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
-		redLabel = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
-		greenLabel = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
-		blueLabel = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
+		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file, confirmStyle = Data.GUI.Button.Small, cancelStyle = Data.GUI.Button.Small }).Refresh();
 		guiInitialized = true;
 	}
 
@@ -241,8 +215,8 @@ public class InterfaceManager : MonoBehaviour
 			case InterfaceState.BrowsingFile:
 				DrawFileBrowser();
 				break;
-			case InterfaceState.Setting:
-				DrawSetter();
+			case InterfaceState.Options:
+				DrawOptions();
 				break;
 			case InterfaceState.About:
 				aboutRect = GUILayout.Window(0, aboutRect, AboutWindow, "");
@@ -254,37 +228,27 @@ public class InterfaceManager : MonoBehaviour
 		}
 	}
 
-	private void RandomizeClouds()
-	{
-		for (var i = 0; i < clouds.Length; i++)
-		{
-			clouds[i].cloudTexture = cloudTextures[Random.Range(0, cloudTextures.Length)];
-			clouds[i].Reset();
-			clouds[i].rect.x = Random.Range(-clouds[i].rect.width, Screen.width);
-		}
-	}
-
 	private void RefreshStyles()
 	{
-		if (!Methods.Array.Equals(lastTeamColors, stagedTeamColors))
+		if (!Methods.Array.Equals(Data.GUI.LastTeamColors, Data.GUI.StagedTeamColors))
 			for (var i = 0; i < 3; i++)
 			{
-				teamColorTextures[i].SetPixel(0, 0, lastTeamColors[i] = teamColorLabels[i].normal.textColor = stagedTeamColors[i]);
-				teamColorTextures[i].Apply();
+				Data.GUI.TeamColoredTextures[i].SetPixel(0, 0, Data.GUI.LastTeamColors[i] = Data.GUI.Label.TeamColor[i].normal.textColor = Data.GUI.StagedTeamColors[i]);
+				Data.GUI.TeamColoredTextures[i].Apply();
 			}
-		if (Math.Abs(lastScreenHeight - Screen.height) > Mathf.Epsilon)
+		var physicalScreenSize = new Vector2(Screen.width, Screen.height) / Screen.dpi;
+		if (lastPhysicalScreenSize != physicalScreenSize)
 		{
-			RandomizeClouds();
-			for (var i = 0; i < 3; i++)
-				teamColorLabels[i].fontSize = Screen.height / 25;
-			largeButton.fontSize = Screen.height / 20;
-			mediumButton.fontSize = Screen.height / 25;
-			smallButton.fontSize = Screen.height / 30;
-			largeLabel_MiddleAligned.fontSize = largeLabel.fontSize = Screen.height / 20;
-			smallLabel.fontSize = Screen.height / 25;
-			blueLabel.fontSize = greenLabel.fontSize = redLabel.fontSize = Screen.height / 30;
+			Methods.GUI.ResizeStyles();
+			lastPhysicalScreenSize = physicalScreenSize;
+		}
+		var screenSize = new Vector2(Screen.width, Screen.height);
+		if (lastScreenSize != screenSize)
+		{
+			for (var i = 0; i < clouds.Length; i++)
+				clouds[i].Refresh(lastScreenSize);
 			aboutRect = new Rect(Screen.width * 0.4f, Screen.height * 0.2f, Screen.width * 0.2f, Screen.height * 0.6f);
-			lastScreenHeight = Screen.height;
+			lastScreenSize = screenSize;
 		}
 	}
 
@@ -301,6 +265,16 @@ public class InterfaceManager : MonoBehaviour
 		public Rect rect;
 		public float speed;
 
+		public void Refresh(Vector2 lastScreenSize)
+		{
+			var ratio = lastScreenSize == Vector2.zero ? Vector2.one : new Vector2(Screen.width / lastScreenSize.x, Screen.height / lastScreenSize.y);
+			speed *= ratio.x;
+			rect.x *= ratio.x;
+			rect.y *= ratio.y;
+			rect.width *= ratio.x;
+			rect.height *= ratio.y;
+		}
+
 		public void Reset()
 		{
 			speed = Random.Range(Screen.width * 0.08f, Screen.width * 0.2f) * (Random.Range(0, 2) - 0.5f);
@@ -315,7 +289,7 @@ public class InterfaceManager : MonoBehaviour
 	{
 		Default,
 		BrowsingFile,
-		Setting,
+		Options,
 		About,
 		Quiting
 	}

@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using UnityEngine;
 #if UNITY_EDITOR
