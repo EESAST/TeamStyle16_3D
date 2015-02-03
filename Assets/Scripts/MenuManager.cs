@@ -8,7 +8,7 @@ using UnityEngine;
 public class MenuManager : MonoBehaviour
 {
 	public Texture2D mainMenuBackground;
-	private MenuState menuState;
+	private MenuState state;
 	public Texture2D subMenuBackground;
 
 	private bool Confirm(string message)
@@ -19,7 +19,7 @@ public class MenuManager : MonoBehaviour
 		if (GUI.Button(new Rect(330, y += 30, 100, 30), "是"))
 			return true;
 		if (GUI.Button(new Rect(330, y + 40, 100, 30), "否"))
-			menuState = MenuState.MainMenu;
+			state = MenuState.MainMenu;
 		return false;
 	}
 
@@ -37,7 +37,7 @@ public class MenuManager : MonoBehaviour
 
 	private void OnGUI()
 	{
-		if (menuState == MenuState.None)
+		if (state == MenuState.None)
 			return;
 		int width = 300, height = Mathf.Max(Mathf.Min(Screen.height / 2, 300), 200);
 		GUI.BeginGroup(new Rect(0, (Screen.height - height) / 3f, width, height));
@@ -47,16 +47,16 @@ public class MenuManager : MonoBehaviour
 		if (GUILayout.Button("RESUME", GUILayout.Height(height)))
 			SwitchGameState();
 		if (GUILayout.Button("OPTIONS", GUILayout.Height(height)))
-			menuState = MenuState.Options;
+			state = MenuState.Options;
 		if (GUILayout.Button("ABOUT", GUILayout.Height(height)))
-			menuState = MenuState.About;
+			state = MenuState.About;
 		if (GUILayout.Button("BACK TO MAIN INTERFACE", GUILayout.Height(height)))
-			menuState = MenuState.Back;
+			state = MenuState.Back;
 		if (GUILayout.Button("QUIT", GUILayout.Height(height)))
-			menuState = MenuState.Quit;
+			state = MenuState.Quit;
 		GUILayout.EndArea();
 		GUI.EndGroup();
-		switch (menuState)
+		switch (state)
 		{
 			case MenuState.Options:
 				DrawOptions();
@@ -77,8 +77,8 @@ public class MenuManager : MonoBehaviour
 
 	private void SwitchGameState()
 	{
-		menuState = menuState == MenuState.None ? MenuState.MainMenu : MenuState.None;
-		if (menuState == MenuState.None)
+		state = state == MenuState.None ? MenuState.MainMenu : MenuState.None;
+		if (state == MenuState.None)
 			Methods.Game.Resume();
 		else
 			Methods.Game.Pause();
@@ -89,8 +89,8 @@ public class MenuManager : MonoBehaviour
 	{
 		if (!Input.GetKeyDown(KeyCode.Escape) && !Input.GetKeyDown(KeyCode.Home))
 			return;
-		if (menuState > MenuState.MainMenu)
-			menuState = MenuState.MainMenu;
+		if (state > MenuState.MainMenu)
+			state = MenuState.MainMenu;
 		else
 			SwitchGameState();
 	}

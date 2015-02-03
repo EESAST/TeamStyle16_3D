@@ -1,4 +1,4 @@
-#region
+ï»¿#region
 
 using System.IO;
 using System.Linq;
@@ -9,9 +9,9 @@ using UnityEngine;
 
 public class FileBrowser
 {
-	private bool autoGUIRect;
 	public GUIStyle backStyle;
 	public GUIStyle cancelStyle;
+	public GUIStyle confirmStyle;
 	private DirectoryInfo currentDirectory;
 	private Color defaultColor;
 	private GUISkin defaultSkin;
@@ -20,10 +20,7 @@ public class FileBrowser
 	private Vector2 driveScroll = Vector2.zero;
 	private FileInformation[] files;
 	private Vector2 fileScroll = Vector2.zero;
-	public Texture2D fileTexture, directoryTexture, backTexture, driveTexture;
-	public bool forceOutput;
-	public bool forceSearch;
-	private Rect guiRect;
+	public Texture fileTexture, directoryTexture, backTexture, driveTexture;
 	public GUISkin guiSkin;
 	private bool isSearching;
 	private bool justFinishedSearching;
@@ -33,57 +30,30 @@ public class FileBrowser
 	private float searchStartTime;
 	private string searchString = "";
 	public Color selectedColor = new Color(0.5f, 0.5f, 0.9f);
-	private int selectedFileIndex = -1;
-	public GUIStyle selectStyle;
+	private int selectedIndex = -1;
 	private bool showDrives;
 	public bool showSearchBar = true;
 
-	public FileBrowser(string directory, Rect guiRect)
-	{
-		GetFileList(currentDirectory = new DirectoryInfo(directory));
-		this.guiRect = guiRect;
-	}
-
-	public FileBrowser(string directory)
-	{
-		GetFileList(currentDirectory = new DirectoryInfo(directory));
-		autoGUIRect = true;
-	}
+	public FileBrowser(string directory) { GetFileList(currentDirectory = new DirectoryInfo(directory)); }
 
 	public FileBrowser() : this(Directory.GetCurrentDirectory()) { }
 
-	public Rect GUIRect
-	{
-		get { return guiRect; }
-		set
-		{
-			guiRect = value;
-			autoGUIRect = false;
-		}
-	}
-
 	public bool Draw()
 	{
-		if (forceOutput)
-		{
-			forceOutput = false;
-			return true;
-		}
+		var value = false;
 		if (justFinishedSearching && Event.current.type == EventType.Layout)
 		{
 			justFinishedSearching = isSearching = false;
-			SelectFile(selectedFileIndex);
+			SelectFile(selectedIndex);
 		}
 		if (GUI.GetNameOfFocusedControl() == "")
 			GUI.FocusControl("SearchBar");
-		if (autoGUIRect)
-			guiRect = new Rect(Screen.width * 0.1f, Screen.height * 0.1f, Screen.width * 0.8f, Screen.height * 0.8f);
 		if (guiSkin)
 		{
 			defaultSkin = GUI.skin;
 			GUI.skin = guiSkin;
 		}
-		GUILayout.BeginArea(guiRect);
+		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f));
 		GUILayout.BeginVertical("box");
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
@@ -93,7 +63,7 @@ public class FileBrowser
 			DrawSearchBar();
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal("box");
-		GUILayout.BeginVertical(GUILayout.Width(guiRect.width / 3));
+		GUILayout.BeginVertical(GUILayout.Width(Screen.width * 0.25f));
 		if (showDrives)
 		{
 			GUILayout.BeginVertical("box");
@@ -103,7 +73,7 @@ public class FileBrowser
 			GUILayout.EndScrollView();
 			GUILayout.EndVertical();
 		}
-		else if (parentDirectory.Button(backStyle))
+		else if (parentDirectory.Button(backStyle ?? new GUIStyle("button") { alignment = TextAnchor.MiddleCenter }))
 			GetFileList(parentDirectory.directoryInfo);
 		GUILayout.BeginVertical("box");
 		directoryScroll = GUILayout.BeginScrollView(directoryScroll);
@@ -121,7 +91,7 @@ public class FileBrowser
 			fileScroll = GUILayout.BeginScrollView(fileScroll);
 			for (var i = 0; i < files.Length; i++)
 			{
-				if (i == selectedFileIndex)
+				if (i == selectedIndex)
 				{
 					defaultColor = GUI.color;
 					GUI.color = selectedColor;
@@ -129,7 +99,7 @@ public class FileBrowser
 				GUI.SetNextControlName(i.ToString());
 				if (files[i].Button())
 					SelectFile(i);
-				if (i == selectedFileIndex)
+				if (i == selectedIndex)
 					GUI.color = defaultColor;
 			}
 			GUILayout.EndScrollView();
@@ -137,13 +107,13 @@ public class FileBrowser
 		GUILayout.EndVertical();
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("È·¶¨", selectStyle ?? "button"))
-			return true;
+		if (GUILayout.Button("ç¡®å®š", confirmStyle ?? "button") || GUI.GetNameOfFocusedControl() != "SearchBar" && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+			value = true;
 		GUILayout.FlexibleSpace();
-		if (GUILayout.Button("È¡Ïû", cancelStyle ?? "button"))
+		if (GUILayout.Button("å–æ¶ˆ", cancelStyle ?? "button") || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
 		{
 			SelectFile(-1);
-			return true;
+			value = true;
 		}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
@@ -153,49 +123,54 @@ public class FileBrowser
 		GUILayout.EndArea();
 		if (guiSkin)
 			GUI.skin = defaultSkin;
-		return false;
+		if (Event.current.type != EventType.KeyDown)
+			return value;
+		if (Event.current.keyCode == KeyCode.UpArrow)
+			SelectLast();
+		if (Event.current.keyCode == KeyCode.DownArrow)
+			SelectNext();
+		return value;
 	}
 
 	private void DrawSearchBar()
 	{
 		if (isSearching)
-			GUILayout.Label("ÕýÔÚËÑË÷£º\"" + searchString + "\"");
+			GUILayout.Label("æ­£åœ¨æœç´¢ï¼š\"" + searchString + "\"");
 		else
 		{
 			GUI.SetNextControlName("SearchBar");
-			searchString = GUILayout.TextField(searchString, GUILayout.MinWidth(guiRect.width / 5));
-			if (GUILayout.Button("ËÑË÷") || forceSearch)
+			searchString = GUILayout.TextField(searchString, GUILayout.MinWidth(Screen.width * 0.2f));
+			if (GUILayout.Button("æœç´¢") || GUI.GetNameOfFocusedControl() == "SearchBar" && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 			{
-				forceSearch = false;
 				isSearching = true;
 				searchStartTime = Time.time;
 				new Thread(SearchFile).Start();
 			}
 		}
-		GUILayout.Space(guiRect.width / 100);
+		GUILayout.Space(Screen.width * 0.01f);
 	}
 
 	private void DrawSearchMessage()
 	{
 		var elapsedTime = Time.time - searchStartTime;
 		if (elapsedTime > 1)
-			GUILayout.Button("ÕýÔÚ");
+			GUILayout.Button("æ­£åœ¨");
 		if (elapsedTime > 2)
-			GUILayout.Button("ËÑË÷");
+			GUILayout.Button("æœç´¢");
 		if (elapsedTime > 3)
 			GUILayout.Button("\"" + searchString + "\"");
 		if (elapsedTime > 4)
-			GUILayout.Button("¡­¡­");
+			GUILayout.Button("â€¦â€¦");
 		if (elapsedTime > 5)
-			GUILayout.Button("Õâ½«");
+			GUILayout.Button("è¿™å°†");
 		if (elapsedTime > 6)
-			GUILayout.Button("»¨·Ñ");
+			GUILayout.Button("èŠ±è´¹");
 		if (elapsedTime > 7)
-			GUILayout.Button("Ò»µã");
+			GUILayout.Button("ä¸€ç‚¹");
 		if (elapsedTime > 8)
-			GUILayout.Button("Ê±¼ä");
+			GUILayout.Button("æ—¶é—´");
 		if (elapsedTime > 9)
-			GUILayout.Button("¡­¡­");
+			GUILayout.Button("â€¦â€¦");
 	}
 
 	private void GetFileList(DirectoryInfo directory)
@@ -218,10 +193,6 @@ public class FileBrowser
 			files[i] = new FileInformation(fileInfos[i], fileTexture);
 	}
 
-	public void SelectNext() { SelectFile(selectedFileIndex = (selectedFileIndex + 1) % files.Length); }
-
-	public void SelectLast() { SelectFile(selectedFileIndex = (selectedFileIndex + files.Length - 1) % files.Length); }
-
 	public void Refresh() { GetFileList(currentDirectory); }
 
 	private void SearchFile()
@@ -229,27 +200,23 @@ public class FileBrowser
 		var fileInfos = searchString == "" ? currentDirectory.GetFiles() : currentDirectory.GetFiles(searchString, recursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 		files = new FileInformation[fileInfos.Length];
 		if (fileInfos.Length == 0)
-			selectedFileIndex = -1;
+			selectedIndex = -1;
 		else
 		{
 			for (var i = 0; i < files.Length; i++)
 				files[i] = new FileInformation(fileInfos[i], fileTexture);
-			selectedFileIndex = 0;
+			selectedIndex = 0;
 		}
 		justFinishedSearching = true;
 	}
 
 	private void SelectFile(int index)
 	{
-		if ((selectedFileIndex = index) < 0)
-		{
-			outputFile = null;
-			GUI.FocusControl("");
-		}
-		else
-		{
-			outputFile = files[index].fileInfo;
-			GUI.FocusControl(index.ToString());
-		}
+		outputFile = (selectedIndex = index) < 0 ? null : files[index].fileInfo;
+		GUI.FocusControl(index.ToString());
 	}
+
+	public void SelectLast() { SelectFile(selectedIndex = (selectedIndex + files.Length - 1) % files.Length); }
+
+	public void SelectNext() { SelectFile(selectedIndex = (selectedIndex + 1) % files.Length); }
 }

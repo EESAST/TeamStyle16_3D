@@ -22,12 +22,11 @@ public class Moba_Camera : MonoBehaviour
 	public Moba_Camera_Inputs inputs = new Moba_Camera_Inputs();
 	public bool isForcedMoving;
 	private float mouseWheelDownTime;
-	private MovementMode movementMode;
 	public Moba_Camera_Requirements requirements = new Moba_Camera_Requirements();
 	public Moba_Camera_Settings settings = new Moba_Camera_Settings();
 	private bool shallRevertZoom;
 	private float targetZoomAmount;
-	// the currentHeight Camera Rotation
+	// the current Camera Rotation
 
 	public Vector2 currentCameraRotation
 	{
@@ -87,13 +86,12 @@ public class Moba_Camera : MonoBehaviour
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
-			//var target = settings.lockTargetTransform.position;
 			var target = settings.lockTargetTransform.WorldCenter();
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)
 				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.deltaTime);
-			_forceDestination = Vector3.zero; //should be center
+			_forceDestination = Vector3.zero;
 		}
 		else
 		{
@@ -334,11 +332,4 @@ public class Moba_Camera : MonoBehaviour
 		if (!settings.useFixedUpdate)
 			CameraUpdate();
 	}
-
-	private enum MovementMode
-	{
-		Edge,
-		Force,
-		Target
-	};
 }

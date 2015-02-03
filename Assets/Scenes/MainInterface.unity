@@ -102,14 +102,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   back: {fileID: 2800000, guid: 69b8acf17a8bad542b36431b4fce6a3e, type: 3}
-  backgroundImage: {fileID: 2800000, guid: 3867e3a92eac8f245af1ad22d43eaac1, type: 3}
+  background: {fileID: 2800000, guid: 3867e3a92eac8f245af1ad22d43eaac1, type: 3}
   cloudTextures:
   - {fileID: 2800000, guid: 884b3e5fe50a65043acc277ff0d0d681, type: 3}
   - {fileID: 2800000, guid: 272c007b4a6f5d141803040b5e6a21da, type: 3}
+  dice: {fileID: 2800000, guid: 9199f951608f42d4a8db3c19512d7887, type: 3}
+  directory: {fileID: 2800000, guid: 1406bb3241f49524ab32e39637a85257, type: 3}
   drive: {fileID: 2800000, guid: 8184e77bea8cba04a8ab1685be171b58, type: 3}
   file: {fileID: 2800000, guid: 2b2223e008029e9428c28e26d2768a00, type: 3}
-  folder: {fileID: 2800000, guid: 1406bb3241f49524ab32e39637a85257, type: 3}
-  shipImage: {fileID: 2800000, guid: 5317bb09904280e4196cc87887b43ebc, type: 3}
+  ship: {fileID: 2800000, guid: 5317bb09904280e4196cc87887b43ebc, type: 3}
 --- !u!4 &299704550
 Transform:
   m_ObjectHideFlags: 0
