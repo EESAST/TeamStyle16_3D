@@ -12,6 +12,8 @@ public class OilField : Resource
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.41f, 2.71f); }
 
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("OilFieldMark")) as GameObject).GetComponent<RectTransform>(); }
+
 	public static void LoadMaterial()
 	{
 		string[] name = { "M", "P_0", "P_1", "P_2" };

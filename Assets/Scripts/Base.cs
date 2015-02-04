@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -17,6 +16,8 @@ public class Base : Unit
 
 	protected override int Level() { return 2; }
 
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("BaseMark")) as GameObject).GetComponent<RectTransform>(); }
+
 	public static void LoadMaterial()
 	{
 		string[] name = { "CC", "PF" };
@@ -29,6 +30,12 @@ public class Base : Unit
 	}
 
 	protected override int MaxHP() { return 2000; }
+
+	protected override void RefreshColor()
+	{
+		base.RefreshColor();
+		GetComponentInChildren<Flashlight>().RefreshLightColor();
+	}
 
 	public static void RefreshMaterialColor()
 	{

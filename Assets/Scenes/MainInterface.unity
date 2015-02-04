@@ -83,6 +83,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 299704550}
   - 114: {fileID: 299704549}
+  - 114: {fileID: 299704551}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -106,7 +107,6 @@ MonoBehaviour:
   cloudTextures:
   - {fileID: 2800000, guid: 884b3e5fe50a65043acc277ff0d0d681, type: 3}
   - {fileID: 2800000, guid: 272c007b4a6f5d141803040b5e6a21da, type: 3}
-  dice: {fileID: 2800000, guid: 9199f951608f42d4a8db3c19512d7887, type: 3}
   directory: {fileID: 2800000, guid: 1406bb3241f49524ab32e39637a85257, type: 3}
   drive: {fileID: 2800000, guid: 8184e77bea8cba04a8ab1685be171b58, type: 3}
   file: {fileID: 2800000, guid: 2b2223e008029e9428c28e26d2768a00, type: 3}
@@ -123,3 +123,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &299704551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 299704548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f931fde0f21244eac5e6d64a1ba3b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

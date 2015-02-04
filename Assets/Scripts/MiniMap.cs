@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,5 +38,6 @@ public class MiniMap : MonoBehaviour
 				tmpPixels[i + width * j] = mapData[rows - j / Settings.MiniMap.Granularity - 1][i / Settings.MiniMap.Granularity].n < Mathf.Epsilon ? Settings.MiniMap.OceanColor : Settings.MiniMap.LandColor;
 		miniMapTexture.SetPixels32(tmpPixels);
 		miniMapTexture.Apply();
+		RefreshMapRect();
 	}
 }

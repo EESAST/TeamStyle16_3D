@@ -1,15 +1,23 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
 
 public class MaterialManager : MonoBehaviour
 {
+	private static bool materialLoaded;
+
 	private void Awake()
 	{
-		Delegates.TeamColorChanged += RefreshMaterialColor;
+		Delegates.CurrentTeamColorChanged += RefreshMaterialColor;
+		if (!materialLoaded)
+			LoadMaterial();
+		RefreshMaterialColor();
+	}
+
+	private static void LoadMaterial()
+	{
 		Base.LoadMaterial();
 		CargoShip.LoadMaterial();
 		Carrier.LoadMaterial();
@@ -20,9 +28,10 @@ public class MaterialManager : MonoBehaviour
 		OilField.LoadMaterial();
 		Scout.LoadMaterial();
 		Submarine.LoadMaterial();
+		materialLoaded = true;
 	}
 
-	private void OnDestroy() { Delegates.TeamColorChanged -= RefreshMaterialColor; }
+	private void OnDestroy() { Delegates.CurrentTeamColorChanged -= RefreshMaterialColor; }
 
 	private void RefreshMaterialColor()
 	{

@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections;
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -24,7 +23,6 @@ public class Flashlight : MonoBehaviour, IEntityFX
 
 	private void Awake()
 	{
-		Delegates.TeamColorChanged += SetLightColor;
 		transform.localPosition = translationOffsetInParentSpace;
 		omega = Random.Range(minOmega, maxOmega);
 		light.range = Settings.ScaleFactor;
@@ -37,9 +35,7 @@ public class Flashlight : MonoBehaviour, IEntityFX
 			yield return new WaitForSeconds(0.04f);
 	}
 
-	private void OnDestroy() { Delegates.TeamColorChanged -= SetLightColor; }
-
-	private void SetLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Base>().team]; }
+	public void RefreshLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Entity>().team]; }
 
 	private void Update() { flare.brightness = light.intensity = amplitude * Mathf.Sin(omega * Time.time) + offset; }
 }

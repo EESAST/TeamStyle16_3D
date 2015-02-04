@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections;
-using GameStatics;
 using HighlightingSystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,7 +21,8 @@ public abstract class Entity : MonoBehaviour
 	protected int HP;
 	private bool isDead;
 	private int lastHPIndex;
-	private RectTransform markRect;
+	protected RectTransform markRect;
+	protected Texture markTexture;
 
 	[HideInInspector]
 	public int team;
@@ -42,15 +42,26 @@ public abstract class Entity : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		Delegates.ScreenSizeChanged += RefreshMarkRect;
-		Delegates.TeamColorChanged += RefreshColor;
+		Delegates.MarkPatternChanged += RefreshMarkPattern;
+		Delegates.MarkSizeChanged += RefreshMarkSize;
+		Delegates.ScreenSizeChanged += RefreshMarkSize;
+		Delegates.CurrentTeamColorChanged += RefreshColor;
 		(hbCanvas = (Instantiate(Resources.Load("HealthBar")) as GameObject).GetComponent<Canvas>()).worldCamera = Camera.main;
 		hbRect = hbCanvas.transform.FindChild("HBRect").GetComponent<RectTransform>();
 		hbImage = hbRect.FindChild("HBImage").GetComponent<RawImage>();
 		hbText = hbRect.FindChild("HBText").GetComponent<Text>();
-		markRect = (Instantiate(Resources.Load("Mark")) as GameObject).GetComponent<RectTransform>();
+		LoadMark();
+		markRect.name = Level().ToString();
+		markTexture = markRect.GetComponent<RawImage>().texture;
 		markRect.SetParent(GameObject.Find("MiniMap").transform);
-		markRect.SetSiblingIndex(markRect.GetSiblingIndex() - 1);
+		for (var i = markRect.GetSiblingIndex() - 1; i > 0; i--)
+		{
+			int level;
+			if (int.TryParse(markRect.parent.GetChild(i - 1).name, out level) && level > Level())
+				continue;
+			markRect.SetSiblingIndex(i);
+			break;
+		}
 		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 25);
 		highlighter = gameObject.AddComponent<Highlighter>();
 		gameObject.AddComponent<Rigidbody>().isKinematic = true;
@@ -94,14 +105,18 @@ public abstract class Entity : MonoBehaviour
 
 	protected abstract int Level();
 
+	protected abstract void LoadMark();
+
 	protected abstract int MaxHP();
 
 	public void MouseOver() { highlighter.On(Data.TeamColor.Current[team]); }
 
-	protected virtual void OnDestroy()
+	protected void OnDestroy()
 	{
-		Delegates.ScreenSizeChanged -= RefreshMarkRect;
-		Delegates.TeamColorChanged -= RefreshColor;
+		Delegates.MarkPatternChanged -= RefreshMarkPattern;
+		Delegates.MarkSizeChanged -= RefreshMarkSize;
+		Delegates.ScreenSizeChanged -= RefreshMarkSize;
+		Delegates.CurrentTeamColorChanged -= RefreshColor;
 		if (hbRect)
 			Destroy(hbRect.gameObject);
 		if (markRect)
@@ -110,10 +125,12 @@ public abstract class Entity : MonoBehaviour
 
 	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
 
-	private void RefreshMarkRect()
+	private void RefreshMarkPattern() { markRect.GetComponent<RawImage>().texture = Data.MarkPatternIndex == 0 ? markTexture : null; }
+
+	private void RefreshMarkSize()
 	{
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MiniMap.ScaleFactor);
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MarkScaleFactor * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MarkScaleFactor * Data.MiniMap.ScaleFactor);
 	}
 
 	public virtual void Select()
@@ -145,6 +162,9 @@ public abstract class Entity : MonoBehaviour
 					hbPixels[i + hbHorizontalPixelNumber * j] = Settings.HealthBar.EmptyColor;
 		hbTexture.SetPixels32(hbPixels);
 		hbTexture.Apply();
+		RefreshColor();
+		RefreshMarkPattern();
+		RefreshMarkSize();
 	}
 
 	protected virtual void Update()
@@ -169,7 +189,7 @@ public abstract class Entity : MonoBehaviour
 		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
-		hbRect.localScale = Vector2.one * 10 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
+		hbRect.localScale = Vector2.one * Monitor.LastScreenSize.x / 100 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
 		if (!isDead)
 			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.ScaleFactor / 2));
 		hbText.text = HP + "/" + MaxHP();
@@ -193,8 +213,8 @@ public abstract class Entity : MonoBehaviour
 		}
 		SetPosition(posX, posY);
 		var delta = Mathf.CeilToInt((RelativeSize - 1) / 2f);
-		for (var x = Mathf.RoundToInt(posX - delta); x <= Mathf.RoundToInt(posX + delta); x++)
-			for (var y = Mathf.RoundToInt(posY - delta); y <= Mathf.RoundToInt(posY + delta); y++)
+		for (var x = Mathf.FloorToInt(posX - delta); x <= Mathf.CeilToInt(posX + delta); x++)
+			for (var y = Mathf.FloorToInt(posY - delta); y <= Mathf.CeilToInt(posY + delta); y++)
 				Data.IsOccupied[x, y] = true;
 	}
 }

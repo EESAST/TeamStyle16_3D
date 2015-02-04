@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -14,6 +13,8 @@ public class Fighter : Unit
 	protected override Vector3 Dimensions() { return new Vector3(4.78f, 1.93f, 5.82f); }
 
 	protected override int Level() { return 3; }
+
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("AircraftMark")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

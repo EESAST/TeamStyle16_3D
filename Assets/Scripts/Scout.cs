@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -14,6 +13,8 @@ public class Scout : Unit
 	protected override Vector3 Dimensions() { return new Vector3(1.59f, 0.82f, 2.51f); }
 
 	protected override int Level() { return 3; }
+
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("AircraftMark")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

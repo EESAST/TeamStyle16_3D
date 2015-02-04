@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -86,7 +85,7 @@ public class Moba_Camera : MonoBehaviour
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
-			var target = settings.lockTargetTransform.WorldCenter();
+			var target = settings.lockTargetTransform.WorldCenterOfEntity();
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)

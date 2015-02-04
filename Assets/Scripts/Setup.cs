@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -19,9 +18,7 @@ public class Setup : MonoBehaviour
 		var yMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["y_max"].n);
 		Data.MapSize = new Vector2(xMax, yMax);
 		Data.IsOccupied = new bool[xMax, yMax];
-		Data.TeamColor.Current = new Color[4];
-		if (Data.TeamColor.Desired == null)
-			Data.TeamColor.Desired = new[] { Color.magenta, Color.cyan, Color.gray, Color.white };
+		Methods.RefreshMiniMap();
 		var cameraBoundary = GameObject.Find("CameraBoundary").GetComponent<BoxCollider>();
 		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.ScaleFactor + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]);
 		Camera.main.transform.root.position = cameraBoundary.transform.position = Methods.Coordinates.ExternalToInternal((Data.MapSize - Vector2.one) / 2) + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]) / 2;

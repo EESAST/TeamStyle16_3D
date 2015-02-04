@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 
 #endregion
@@ -14,6 +13,8 @@ public class Fort : Unit
 	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
 
 	protected override int Level() { return 2; }
+
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("FortMark")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

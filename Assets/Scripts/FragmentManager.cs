@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections;
-using GameStatics;
 using UnityEngine;
 
 #endregion

@@ -1,10 +1,9 @@
-﻿namespace GameStatics
+﻿public static class Delegates
 {
-	public static class Delegates
-	{
-		public delegate void EventHandler();
+	public delegate void EventHandler();
 
-		public static EventHandler ScreenSizeChanged;
-		public static EventHandler TeamColorChanged;
-	}
+	public static EventHandler CurrentTeamColorChanged;
+	public static EventHandler MarkPatternChanged;
+	public static EventHandler MarkSizeChanged;
+	public static EventHandler ScreenSizeChanged;
 }

@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameStatics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,9 +27,9 @@ public class MiniView : MonoBehaviour
 
 	private void Start()
 	{
-		var granularity = Settings.MiniMap.ViewLine.Granularity;
-		GetComponent<RawImage>().texture = miniViewTexture = new Texture2D(Mathf.RoundToInt(Data.MapSize.y) * granularity, Mathf.RoundToInt(Data.MapSize.x) * granularity) { wrapMode = TextureWrapMode.Clamp };
+		GetComponent<RawImage>().texture = miniViewTexture = new Texture2D(Mathf.RoundToInt(Data.MapSize.y * Data.MiniMap.ScaleFactor) / 2 * 2, Mathf.RoundToInt(Data.MapSize.x * Data.MiniMap.ScaleFactor) / 2 * 2) { wrapMode = TextureWrapMode.Clamp };
 		clearPixels = new Color32[miniViewTexture.width * miniViewTexture.height];
+		RefreshViewRect();
 	}
 
 	private void Update()
