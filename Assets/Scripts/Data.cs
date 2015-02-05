@@ -18,7 +18,7 @@ public static class Data
 	{
 		public static Vector2 AboutScroll = Vector2.zero;
 		public static bool Initialized;
-		public static Vector2 OptionScroll = Vector2.zero;
+		public static Vector2 LegendScroll = Vector2.zero;
 		public static int OptionSelected;
 		public static GUIContent Random = new GUIContent("随机", Resources.Load<Texture>("Dice"));
 		public static int StagedMarkPatternIndex;
@@ -26,6 +26,7 @@ public static class Data
 		public static Color[] StagedTeamColor = new Color[4];
 		public static GUIStyle[] TeamColoredBoxes = new GUIStyle[3];
 		public static Texture2D[] TeamColoredTextures = new Texture2D[3];
+		public static Vector2 TeamColorScroll = Vector2.zero;
 		public static string[] TeamDescriptions = { "队伍1", "队伍2", "中立" };
 
 		public static class Button

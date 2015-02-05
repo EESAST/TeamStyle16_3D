@@ -43,10 +43,8 @@ public class InterfaceManager : MonoBehaviour
 	private bool Confirm(string message)
 	{
 		var value = false;
-		GUILayout.BeginArea(new Rect(Screen.width * 0.4f, Screen.height * 0.4f, Screen.width * 0.2f, Screen.height * 0.2f));
-		GUILayout.BeginVertical("box");
+		GUILayout.BeginArea(new Rect(Screen.width * 0.4f, Screen.height * 0.4f, Screen.width * 0.2f, Screen.height * 0.2f), GUI.skin.box);
 		Methods.GUI.Confirm(message, ref value, ref stagedState);
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		return value;
 	}
@@ -105,10 +103,8 @@ public class InterfaceManager : MonoBehaviour
 
 	private void DrawOptions()
 	{
-		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f));
-		GUILayout.BeginVertical("box");
+		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f), GUI.skin.box);
 		Methods.GUI.DrawOptions(ref stagedState);
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 	}
 

@@ -203,35 +203,33 @@ public static class Methods
 
 		public static Vector3 ExternalToInternal(Vector2 externalCoordinates, float externalZ) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalZ); }
 
-		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates) { return new Vector2(Screen.width - Settings.MiniMap.BorderOffset - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.BorderOffset - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor); }
+		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates) { return new Vector2(Screen.width - Settings.MiniMap.Border.right - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.Border.top - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor); }
 
-		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2(externalCoordinates.y / (Data.MapSize.y - 1), 1 - externalCoordinates.x / (Data.MapSize.x - 1)); }
+		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
 
 		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.x, Data.MapSize.y - 1 + Settings.MapSizeOffset.w - internalCoordinates.x / Settings.ScaleFactor); }
 
-		public static Vector2 InternalToMiniMapBasedScreen(Vector3 internalCoordinates) { return ExternalToMiniMapBasedScreen(InternalToExternal(internalCoordinates)); }
-
 		public static Vector2 InternalToMiniMapRatios(Vector3 internalCoordinates) { return ExternalToMiniMapRatios(InternalToExternal(internalCoordinates)); }
 
-		public static Vector3 IntersectToGround(Vector3 lhs, Vector3 rhs)
+		private static Vector3 IntersectToDefaultHeight(Vector3 lhs, Vector3 rhs)
 		{
 			var t = (Settings.HeightOfLevel[2] - lhs.y) / (rhs.y - lhs.y);
 			return (1 - t) * lhs + t * rhs;
 		}
 
-		public static Vector3[] IntersectToGround(Vector3 origin, Vector3[] farCorners)
+		public static Vector3[] IntersectToDefaultHeight(Vector3 origin, Vector3[] farCorners)
 		{
 			var flags = new bool[2];
 			for (var i = 0; i < 2; i++)
-				flags[i] = (origin.y - Settings.HeightOfLevel[2]) * (farCorners[i].y - Settings.HeightOfLevel[2]) < 0;
+				flags[i] = (origin.y - Settings.Camera.Movement.DefaultHeight) * (farCorners[i].y - Settings.Camera.Movement.DefaultHeight) < 0;
 			if (!flags[0] && !flags[1])
 				return null;
-			return new[] { IntersectToGround(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToGround(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToGround(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToGround(flags[0] ? origin : farCorners[2], farCorners[3]) };
+			return new[] { IntersectToDefaultHeight(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToDefaultHeight(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToDefaultHeight(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToDefaultHeight(flags[0] ? origin : farCorners[2], farCorners[3]) };
 		}
 
 		public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
 
-		public static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.BorderOffset - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.BorderOffset - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
+		public static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.Border.top - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.Border.right - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
 
 		public static Vector3 MiniMapBasedScreenToInternal(Vector2 screenPosition) { return ExternalToInternal(MiniMapBasedScreenToExternal(screenPosition)); }
 	}
@@ -306,8 +304,7 @@ public static class Methods
 			switch (Data.GUI.OptionSelected)
 			{
 				case 0:
-					Data.GUI.OptionScroll = GUILayout.BeginScrollView(Data.GUI.OptionScroll);
-					GUILayout.BeginVertical();
+					Data.GUI.TeamColorScroll = GUILayout.BeginScrollView(Data.GUI.TeamColorScroll);
 					for (var i = 0; i < 3; i++)
 					{
 						GUILayout.BeginHorizontal("box");
@@ -335,10 +332,10 @@ public static class Methods
 						if (i < 2)
 							GUILayout.FlexibleSpace();
 					}
-					GUILayout.EndVertical();
 					GUILayout.EndScrollView();
 					break;
 				case 1:
+					Data.GUI.TeamColorScroll = GUILayout.BeginScrollView(Data.GUI.TeamColorScroll);
 					GUILayout.BeginVertical("box");
 					GUILayout.Label("尺寸", Data.GUI.Label.Large);
 					GUILayout.FlexibleSpace();
@@ -353,6 +350,7 @@ public static class Methods
 					GUILayout.FlexibleSpace();
 					Data.MarkPatternIndex = GUILayout.Toolbar(Data.MarkPatternIndex, new[] { "默认", "方块" }, Data.GUI.Button.Medium);
 					GUILayout.EndVertical();
+					GUILayout.EndScrollView();
 					break;
 			}
 			GUILayout.FlexibleSpace();

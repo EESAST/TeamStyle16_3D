@@ -65,7 +65,7 @@ public static class Settings
 
 	public static class MiniMap
 	{
-		public static float BorderOffset = 10;
+		public static RectOffset Border = new RectOffset(18, 39, 31, 30); //Correspond to the rect offset of the mini frame sprite
 		public static int Granularity = 2; //Must be even to ensure proper display of the texture
 		public static Color LandColor = new Color(0, 0.8f, 0, 0.6f);
 		public static Color OceanColor = new Color(0, 0, 0.6f, 0.4f);

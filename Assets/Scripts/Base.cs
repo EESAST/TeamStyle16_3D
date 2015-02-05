@@ -16,7 +16,7 @@ public class Base : Unit
 
 	protected override int Level() { return 2; }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("BaseMark")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Base")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

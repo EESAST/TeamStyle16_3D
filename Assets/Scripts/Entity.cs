@@ -53,11 +53,11 @@ public abstract class Entity : MonoBehaviour
 		LoadMark();
 		markRect.name = Level().ToString();
 		markTexture = markRect.GetComponent<RawImage>().texture;
-		markRect.SetParent(GameObject.Find("MiniMap").transform);
-		for (var i = markRect.GetSiblingIndex() - 1; i > 0; i--)
+		markRect.SetParent(GameObject.Find("Map").transform);
+		for (var i = markRect.GetSiblingIndex() - 1; i >= 0; i--)
 		{
 			int level;
-			if (int.TryParse(markRect.parent.GetChild(i - 1).name, out level) && level > Level())
+			if (i > 0 && int.TryParse(markRect.parent.GetChild(i - 1).name, out level) && level > Level())
 				continue;
 			markRect.SetSiblingIndex(i);
 			break;
@@ -171,7 +171,7 @@ public abstract class Entity : MonoBehaviour
 	{
 		HP = (HP + 1) % (MaxHP() + 1);
 
-		markRect.anchoredPosition = Methods.Coordinates.InternalToMiniMapBasedScreen(transform.position);
+		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
 
 		#region Update Health Bar
 

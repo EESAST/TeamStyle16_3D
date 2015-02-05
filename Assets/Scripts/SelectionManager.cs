@@ -1,6 +1,7 @@
 ﻿#region
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 #endregion
 
@@ -11,16 +12,18 @@ public class SelectionManager : MonoBehaviour
 
 	private void Update()
 	{
+		if (EventSystem.current.IsPointerOverGameObject())
+			return;
 		if (!Screen.lockCursor)
 		{
 			Entity target = null;
 			RaycastHit hitInfo;
 			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, LayerMask.GetMask("Entity")))
 				target = hitInfo.transform.GetComponentInParent<Entity>();
+			if (Input.GetMouseButtonDown(0))
+				lastDownEntity = target;
 			if (target != null)
 			{
-				if (Input.GetMouseButtonDown(0))
-					lastDownEntity = target;
 				if (Input.GetMouseButtonUp(0) && target == lastDownEntity)
 				{
 					if (lastSelectedEntity)

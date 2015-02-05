@@ -27,8 +27,10 @@ public class FileBrowser
 	public FileInfo outputFile;
 	private DirectoryInformation parentDirectory;
 	public bool recursiveSearch = true;
+	private Vector2 searchScroll = Vector2.zero;
 	private float searchStartTime;
 	private string searchString = "";
+	private Thread searchThread;
 	public Color selectedColor = new Color(0.5f, 0.5f, 0.9f);
 	private int selectedIndex = -1;
 	private bool showDrives;
@@ -53,8 +55,7 @@ public class FileBrowser
 			defaultSkin = GUI.skin;
 			GUI.skin = guiSkin;
 		}
-		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f));
-		GUILayout.BeginVertical("box");
+		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f), GUI.skin.box);
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
 		GUILayout.Label(currentDirectory.FullName);
@@ -111,15 +112,20 @@ public class FileBrowser
 			value = true;
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("取消", cancelStyle ?? "button") || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
-		{
-			SelectFile(-1);
-			value = true;
-		}
+			if (isSearching)
+			{
+				searchThread.Abort();
+				isSearching = false;
+			}
+			else
+			{
+				SelectFile(-1);
+				value = true;
+			}
 		GUILayout.FlexibleSpace();
 		GUILayout.EndHorizontal();
 		GUILayout.EndVertical();
 		GUILayout.EndHorizontal();
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		if (guiSkin)
 			GUI.skin = defaultSkin;
@@ -144,7 +150,7 @@ public class FileBrowser
 			{
 				isSearching = true;
 				searchStartTime = Time.time;
-				new Thread(SearchFile).Start();
+				(searchThread = new Thread(SearchFile)).Start();
 			}
 		}
 		GUILayout.Space(Screen.width * 0.01f);
@@ -153,6 +159,7 @@ public class FileBrowser
 	private void DrawSearchMessage()
 	{
 		var elapsedTime = Time.time - searchStartTime;
+		searchScroll = GUILayout.BeginScrollView(searchScroll);
 		if (elapsedTime > 1)
 			GUILayout.Button("正在");
 		if (elapsedTime > 2)
@@ -171,6 +178,7 @@ public class FileBrowser
 			GUILayout.Button("时间");
 		if (elapsedTime > 9)
 			GUILayout.Button("……");
+		GUILayout.EndScrollView();
 	}
 
 	private void GetFileList(DirectoryInfo directory)

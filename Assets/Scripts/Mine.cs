@@ -12,7 +12,7 @@ public class Mine : Resource
 
 	protected override Vector3 Dimensions() { return new Vector3(3.98f, 3.11f, 2.71f); }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("MineMark")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Mine")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

@@ -29,9 +29,7 @@ public class MenuManager : MonoBehaviour
 		var value = false;
 		GUILayout.BeginArea(confirmAreaRect, subMenuStyle);
 		GUILayout.BeginArea(confirmContentRect);
-		GUILayout.BeginVertical();
 		Methods.GUI.Confirm(message, ref value, ref stagedState);
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 		return value;
@@ -41,9 +39,7 @@ public class MenuManager : MonoBehaviour
 	{
 		GUILayout.BeginArea(aboutAreaRect, subMenuStyle);
 		GUILayout.BeginArea(aboutContentRect);
-		GUILayout.BeginVertical();
 		Methods.GUI.DrawAbout(ref stagedState);
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 	}
@@ -52,7 +48,6 @@ public class MenuManager : MonoBehaviour
 	{
 		GUILayout.BeginArea(defaultAreaRect, mainMenuStyle);
 		GUILayout.BeginArea(defaultContentRect);
-		GUILayout.BeginVertical();
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("继  续", Data.GUI.Button.Medium))
 			SwitchGameState();
@@ -72,7 +67,6 @@ public class MenuManager : MonoBehaviour
 		if (GUILayout.Button("退  出", Data.GUI.Button.Medium))
 			stagedState = MenuState.Quit;
 		GUILayout.FlexibleSpace();
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 	}
@@ -81,9 +75,7 @@ public class MenuManager : MonoBehaviour
 	{
 		GUILayout.BeginArea(optionAreaRect, subMenuStyle);
 		GUILayout.BeginArea(optionContentRect);
-		GUILayout.BeginVertical();
 		Methods.GUI.DrawOptions(ref stagedState);
-		GUILayout.EndVertical();
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 	}

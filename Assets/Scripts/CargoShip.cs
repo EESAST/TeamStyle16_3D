@@ -8,9 +8,9 @@ public class CargoShip : Vessel
 {
 	private static readonly Material[][] materials = new Material[1][];
 
-	public override Vector3 Center() { return new Vector3(-0.75f, -0.00f, 0.30f); }
+	public override Vector3 Center() { return new Vector3(-0.75f, 0.01f, 0.30f); }
 
-	protected override Vector3 Dimensions() { return new Vector3(28.46f, 15.22f, 46.185f); }
+	protected override Vector3 Dimensions() { return new Vector3(28.48f, 15.18f, 46.16f); }
 
 	public static void LoadMaterial()
 	{

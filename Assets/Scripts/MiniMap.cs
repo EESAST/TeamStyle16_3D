@@ -7,36 +7,33 @@ using UnityEngine.UI;
 
 public class MiniMap : MonoBehaviour
 {
-	private RectTransform mapRect;
 	private Texture2D miniMapTexture;
 
 	private void Awake()
 	{
 		Delegates.ScreenSizeChanged += RefreshMapRect;
-		(mapRect = GetComponent<RectTransform>()).anchoredPosition = -Vector2.one * Settings.MiniMap.BorderOffset;
+		GetComponent<RectTransform>().anchoredPosition = -new Vector2(Settings.MiniMap.Border.right, Settings.MiniMap.Border.top);
 	}
 
 	private void OnDestroy() { Delegates.ScreenSizeChanged -= RefreshMapRect; }
 
 	private void RefreshMapRect()
 	{
-		mapRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.MapSize.y * Data.MiniMap.ScaleFactor);
-		mapRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.MapSize.x * Data.MiniMap.ScaleFactor);
+		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.MapSize.y * Data.MiniMap.ScaleFactor);
+		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.MapSize.x * Data.MiniMap.ScaleFactor);
 	}
 
 	private void Start()
 	{
 		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
-		var cols = Mathf.RoundToInt(Data.MapSize.y);
-		var rows = Mathf.RoundToInt(Data.MapSize.x);
-		var width = cols * Settings.MiniMap.Granularity;
-		var height = rows * Settings.MiniMap.Granularity;
+		var width = Mathf.RoundToInt(Data.MapSize.y) * Settings.MiniMap.Granularity;
+		var height = Mathf.RoundToInt(Data.MapSize.x) * Settings.MiniMap.Granularity;
 		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(width, height) { wrapMode = TextureWrapMode.Clamp };
-		var tmpPixels = miniMapTexture.GetPixels32();
+		var pixels = miniMapTexture.GetPixels32();
 		for (var i = 0; i < width; i++)
 			for (var j = 0; j < height; j++)
-				tmpPixels[i + width * j] = mapData[rows - j / Settings.MiniMap.Granularity - 1][i / Settings.MiniMap.Granularity].n < Mathf.Epsilon ? Settings.MiniMap.OceanColor : Settings.MiniMap.LandColor;
-		miniMapTexture.SetPixels32(tmpPixels);
+				pixels[i + width * j] = mapData[(height - 1 - j) / Settings.MiniMap.Granularity][i / Settings.MiniMap.Granularity].n < Mathf.Epsilon ? Settings.MiniMap.OceanColor : Settings.MiniMap.LandColor;
+		miniMapTexture.SetPixels32(pixels);
 		miniMapTexture.Apply();
 		RefreshMapRect();
 	}
