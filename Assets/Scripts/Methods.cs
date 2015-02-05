@@ -197,7 +197,7 @@ public static class Methods
 
 	public static class Coordinates
 	{
-		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.MapSizeOffset.w - externalY) * Settings.ScaleFactor, Settings.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.MapSizeOffset.x) * Settings.ScaleFactor)); }
+		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.MapSizeOffset.right - externalY) * Settings.ScaleFactor, Settings.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.MapSizeOffset.top) * Settings.ScaleFactor)); }
 
 		public static Vector3 ExternalToInternal(Vector3 externalCoordinates) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalCoordinates.z); }
 
@@ -207,7 +207,7 @@ public static class Methods
 
 		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
 
-		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.x, Data.MapSize.y - 1 + Settings.MapSizeOffset.w - internalCoordinates.x / Settings.ScaleFactor); }
+		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.MapSizeOffset.right - internalCoordinates.x / Settings.ScaleFactor); }
 
 		public static Vector2 InternalToMiniMapRatios(Vector3 internalCoordinates) { return ExternalToMiniMapRatios(InternalToExternal(internalCoordinates)); }
 

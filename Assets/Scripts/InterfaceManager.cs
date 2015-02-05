@@ -119,10 +119,10 @@ public class InterfaceManager : MonoBehaviour
 
 	private void OnGUI()
 	{
-		if (Event.current.type == EventType.Layout)
-			state = stagedState;
 		if (!guiInitialized)
 			InitializeGUI();
+		if (Event.current.type == EventType.Layout)
+			state = stagedState;
 		DrawBackground();
 		switch (state)
 		{

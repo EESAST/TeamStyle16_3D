@@ -31,7 +31,7 @@ public class LoadMap : MonoBehaviour
 		for (var x = 0; x < terrainData.heightmapHeight; x++)
 			for (var y = 0; y < terrainData.heightmapWidth; y++)
 			{
-				float i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.x, j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.z;
+				float i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top, j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
 				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
 				float ul = 0, ur = 0, br = 0, bl = 0, di = i - i0, dj = j - j0;
 				if (mapRect.Contains(new Vector2(i0, j0)))
@@ -84,7 +84,7 @@ public class LoadMap : MonoBehaviour
 		}
 		terrainData.treePrototypes = treePrototypes;
 		var treeInstances = new TreeInstance[Mathf.RoundToInt(landArea * Settings.Terrain.Tree.Density)];
-		var range = new Vector4(Settings.MapSizeOffset.w / realMapSize.y, 1 - Settings.MapSizeOffset.z / realMapSize.y, Settings.MapSizeOffset.x / realMapSize.x, 1 - Settings.MapSizeOffset.y / realMapSize.x);
+		var range = new Vector4(Settings.MapSizeOffset.right / realMapSize.y, 1 - Settings.MapSizeOffset.left / realMapSize.y, Settings.MapSizeOffset.top / realMapSize.x, 1 - Settings.MapSizeOffset.bottom / realMapSize.x);
 		for (var i = 0; i < treeInstances.Length; i++)
 		{
 			var treeScale = Random.Range(0.08f, 0.16f) * Settings.ScaleFactor;
@@ -141,7 +141,7 @@ public class LoadMap : MonoBehaviour
 	private void CreateOcean()
 	{
 		var ocean = Instantiate(Resources.Load("Ocean")) as GameObject;
-		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.x, Settings.MapSizeOffset.z), 1);
+		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.top, Settings.MapSizeOffset.left), 1);
 		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
 		var oceanMaterial = ocean.GetComponent<WaterBase>().sharedMaterial;
 		oceanMaterial.SetColor("_BaseColor", Settings.Ocean.RefractionColor);
@@ -154,45 +154,14 @@ public class LoadMap : MonoBehaviour
 		for (var i = 0; i < mapElements.Count; i++)
 		{
 			var info = mapElements[i];
-			switch (info["__class__"].str)
-			{
-				case "Base":
-					(Instantiate(Resources.Load("Base/Base")) as GameObject).GetComponent<Base>().Info = info;
-					break;
-				case "Cargo":
-					(Instantiate(Resources.Load("CargoShip/CargoShip")) as GameObject).GetComponent<CargoShip>().Info = info;
-					break;
-				case "Carrier":
-					(Instantiate(Resources.Load("Carrier/Carrier")) as GameObject).GetComponent<Carrier>().Info = info;
-					break;
-				case "Destroyer":
-					(Instantiate(Resources.Load("Destroyer/Destroyer")) as GameObject).GetComponent<Destroyer>().Info = info;
-					break;
-				case "Fighter":
-					(Instantiate(Resources.Load("Fighter/Fighter")) as GameObject).GetComponent<Fighter>().Info = info;
-					break;
-				case "Fort":
-					(Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>().Info = info;
-					break;
-				case "Mine":
-					(Instantiate(Resources.Load("Mine/Mine")) as GameObject).GetComponent<Mine>().Info = info;
-					break;
-				case "Oilfield":
-					(Instantiate(Resources.Load("OilField/OilField")) as GameObject).GetComponent<OilField>().Info = info;
-					break;
-				case "Scout":
-					(Instantiate(Resources.Load("Scout/Scout")) as GameObject).GetComponent<Scout>().Info = info;
-					break;
-				case "Submarine":
-					(Instantiate(Resources.Load("Submarine/Submarine")) as GameObject).GetComponent<Submarine>().Info = info;
-					break;
-			}
+			var entityType = info["__class__"].str;
+			((Instantiate(Resources.Load(entityType + '/' + entityType)) as GameObject).GetComponent(entityType) as Entity).Info = info;
 		}
 	}
 
 	private void Start()
 	{
-		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.x + Settings.MapSizeOffset.y, Settings.MapSizeOffset.z + Settings.MapSizeOffset.w) - Vector2.one;
+		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.vertical, Settings.MapSizeOffset.horizontal) - Vector2.one;
 		LoadEntities();
 		CreateLand();
 		CreateOcean();

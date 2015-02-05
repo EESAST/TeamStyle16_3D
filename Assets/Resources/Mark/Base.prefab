@@ -11,7 +11,7 @@ GameObject:
   - 222: {fileID: 22268718}
   - 114: {fileID: 11468718}
   m_Layer: 5
-  m_Name: BaseMark
+  m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

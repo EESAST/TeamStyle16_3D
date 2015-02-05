@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class CargoShip : Vessel
+public class Cargo : Vessel
 {
 	private static readonly Material[][] materials = new Material[1][];
 
@@ -19,7 +19,7 @@ public class CargoShip : Vessel
 		{
 			materials[id] = new Material[3];
 			for (var team = 0; team < 3; team++)
-				materials[id][team] = Resources.Load<Material>("CargoShip/Materials/" + name[id] + "_" + team);
+				materials[id][team] = Resources.Load<Material>("Cargo/Materials/" + name[id] + "_" + team);
 		}
 	}
 

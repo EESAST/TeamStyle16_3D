@@ -15,7 +15,7 @@ public class Underwater : MonoBehaviour
 
 	private void Start()
 	{
-		defaultCullingMask = Camera.main.cullingMask;
+		defaultCullingMask = camera.cullingMask;
 		defaultFog = RenderSettings.fog;
 		defaultFogColor = RenderSettings.fogColor;
 		defaultFogDensity = RenderSettings.fogDensity;
@@ -24,26 +24,25 @@ public class Underwater : MonoBehaviour
 
 	private void Update()
 	{
-		var newIsUnderwater = Camera.main.transform.position.y < Settings.HeightOfLevel[1];
-		if (isUnderwater != newIsUnderwater)
+		var newIsUnderwater = camera.transform.position.y < Settings.HeightOfLevel[1];
+		if (isUnderwater == newIsUnderwater)
+			return;
+		isUnderwater = newIsUnderwater;
+		if (isUnderwater)
 		{
-			isUnderwater = newIsUnderwater;
-			if (isUnderwater)
-			{
-				Camera.main.cullingMask = Settings.Ocean.UnderwaterCullingMask + 1;
-				RenderSettings.fog = true;
-				RenderSettings.fogColor = Settings.Ocean.FogColor;
-				RenderSettings.fogDensity = Settings.Ocean.FogDensity;
-				RenderSettings.skybox = null;
-			}
-			else
-			{
-				Camera.main.cullingMask = defaultCullingMask;
-				RenderSettings.fog = defaultFog;
-				RenderSettings.fogColor = defaultFogColor;
-				RenderSettings.fogDensity = defaultFogDensity;
-				RenderSettings.skybox = defaultSkybox;
-			}
+			camera.cullingMask = Settings.Ocean.UnderwaterCullingMask + 1;
+			RenderSettings.fog = true;
+			RenderSettings.fogColor = Settings.Ocean.FogColor;
+			RenderSettings.fogDensity = Settings.Ocean.FogDensity;
+			RenderSettings.skybox = null;
+		}
+		else
+		{
+			camera.cullingMask = defaultCullingMask;
+			RenderSettings.fog = defaultFog;
+			RenderSettings.fogColor = defaultFogColor;
+			RenderSettings.fogDensity = defaultFogDensity;
+			RenderSettings.skybox = defaultSkybox;
 		}
 	}
 }

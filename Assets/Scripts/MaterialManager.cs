@@ -19,13 +19,13 @@ public class MaterialManager : MonoBehaviour
 	private static void LoadMaterial()
 	{
 		Base.LoadMaterial();
-		CargoShip.LoadMaterial();
+		Cargo.LoadMaterial();
 		Carrier.LoadMaterial();
 		Destroyer.LoadMaterial();
 		Fighter.LoadMaterial();
 		Fort.LoadMaterial();
 		Mine.LoadMaterial();
-		OilField.LoadMaterial();
+		Oilfield.LoadMaterial();
 		Scout.LoadMaterial();
 		Submarine.LoadMaterial();
 		materialLoaded = true;
@@ -36,7 +36,7 @@ public class MaterialManager : MonoBehaviour
 	private void RefreshMaterialColor()
 	{
 		Base.RefreshMaterialColor();
-		CargoShip.RefreshMaterialColor();
+		Cargo.RefreshMaterialColor();
 		Carrier.RefreshMaterialColor();
 		Destroyer.RefreshMaterialColor();
 		Fighter.RefreshMaterialColor();
@@ -48,7 +48,7 @@ public class MaterialManager : MonoBehaviour
 	private void Update()
 	{
 		Fort.RefreshTextureOffset();
-		OilField.RefreshTextureOffset();
+		Oilfield.RefreshTextureOffset();
 		Scout.RefreshTextureOffset();
 	}
 }

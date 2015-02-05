@@ -93,14 +93,14 @@ public class MenuManager : MonoBehaviour
 
 	private void OnGUI()
 	{
+		if (!guiInitialized)
+			InitializeGUI();
 		if (Event.current.type == EventType.Layout)
 			state = stagedState;
 		if (Event.current.type == EventType.KeyUp && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.Escape) && state <= MenuState.Default)
 			SwitchGameState();
 		if (state == MenuState.None)
 			return;
-		if (!guiInitialized)
-			InitializeGUI();
 		DrawDefaultMenu();
 		switch (state)
 		{

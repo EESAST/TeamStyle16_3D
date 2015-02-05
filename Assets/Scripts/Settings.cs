@@ -9,7 +9,8 @@ public static class Settings
 	private static readonly float[] _heightOfLevel = { 1, 1.8f, 2, 5 }; //stands for underwater, water surface, ground and air in sequence
 	private static readonly float _shadowDistance = 50;
 	public static int CloudNumber = 50;
-	public static Vector4 MapSizeOffset = new Vector4(30, 10, 45, 45); //-x x -y y, in external space
+	//public static RectOffset MapSizeOffset = new RectOffset(45, 45, 30, 10);
+	public static RectOffset MapSizeOffset = new RectOffset(80, 80, 80, 80);
 	public static float ScaleFactor = 5;
 	public static int TextGranularity = 3;
 	public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }
@@ -67,8 +68,8 @@ public static class Settings
 	{
 		public static RectOffset Border = new RectOffset(18, 39, 31, 30); //Correspond to the rect offset of the mini frame sprite
 		public static int Granularity = 2; //Must be even to ensure proper display of the texture
-		public static Color LandColor = new Color(0, 0.8f, 0, 0.6f);
-		public static Color OceanColor = new Color(0, 0, 0.6f, 0.4f);
+		public static Color LandColor = new Color(0, 0.8f, 0, 0.8f);
+		public static Color OceanColor = new Color(0, 0, 0.6f, 0.6f);
 
 		public static class ViewLine
 		{

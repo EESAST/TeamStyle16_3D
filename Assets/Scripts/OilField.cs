@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class OilField : Resource
+public class Oilfield : Resource
 {
 	private static readonly Material[] materials = new Material[4];
 
@@ -12,13 +12,13 @@ public class OilField : Resource
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.41f, 2.71f); }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/OilField")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Oilfield")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{
 		string[] name = { "M", "P_0", "P_1", "P_2" };
 		for (var id = 0; id < 4; id++)
-			materials[id] = Resources.Load<Material>("OilField/Materials/" + name[id]);
+			materials[id] = Resources.Load<Material>("Oilfield/Materials/" + name[id]);
 	}
 
 	protected override int MaxHP() { return 1000; }
