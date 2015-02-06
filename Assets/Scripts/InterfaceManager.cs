@@ -148,7 +148,7 @@ public class InterfaceManager : MonoBehaviour
 	private void OnScreenSizeChanged()
 	{
 		for (var i = 0; i < clouds.Length; i++)
-			clouds[i].Refresh(Monitor.LastScreenSize);
+			clouds[i].Refresh(Monitor.ScreenSize);
 		aboutRect = new Rect(Screen.width * 0.4f, Screen.height * 0.2f, Screen.width * 0.2f, Screen.height * 0.6f);
 	}
 

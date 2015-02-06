@@ -10,22 +10,19 @@ public class MiniView : MonoBehaviour
 	private Color32[] clearPixels;
 	private Texture2D miniViewTexture;
 
-	private void Awake() { Delegates.ScreenSizeChanged += RefreshViewRect; }
+	private void Awake() { Delegates.ScreenSizeChanged += RefreshView; }
 
-	private void OnDestroy() { Delegates.ScreenSizeChanged -= RefreshViewRect; }
+	private void OnDestroy() { Delegates.ScreenSizeChanged -= RefreshView; }
 
-	private void RefreshViewRect()
+	private void RefreshView()
 	{
+		GetComponent<RawImage>().texture = miniViewTexture = new Texture2D(Mathf.RoundToInt(Data.MapSize.y * Data.MiniMap.ScaleFactor / 2) * 2, Mathf.RoundToInt(Data.MapSize.x * Data.MiniMap.ScaleFactor / 2) * 2) { wrapMode = TextureWrapMode.Clamp };
+		clearPixels = new Color32[miniViewTexture.width * miniViewTexture.height];
 		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.MapSize.y * Data.MiniMap.ScaleFactor);
 		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.MapSize.x * Data.MiniMap.ScaleFactor);
 	}
 
-	private void Start()
-	{
-		GetComponent<RawImage>().texture = miniViewTexture = new Texture2D(Mathf.RoundToInt(Data.MapSize.y * Data.MiniMap.ScaleFactor) / 2 * 2, Mathf.RoundToInt(Data.MapSize.x * Data.MiniMap.ScaleFactor) / 2 * 2) { wrapMode = TextureWrapMode.Clamp };
-		clearPixels = new Color32[miniViewTexture.width * miniViewTexture.height];
-		RefreshViewRect();
-	}
+	private void Start() { RefreshView(); }
 
 	private void Update()
 	{
@@ -39,7 +36,7 @@ public class MiniView : MonoBehaviour
 			var scaleFactor = new Vector2(miniViewTexture.width, miniViewTexture.height);
 			for (var i = 0; i < 4; i++)
 				miniMapBasedPoints[i] = Vector2.Scale(Methods.Coordinates.InternalToMiniMapRatios(worldPoints[i]), scaleFactor);
-			miniViewTexture.Polygon(miniMapBasedPoints, Settings.MiniMap.ViewLine.Color, Settings.MiniMap.ViewLine.Thickness);
+			miniViewTexture.Polygon(miniMapBasedPoints, Settings.MiniMap.ViewLine.Color, Settings.MiniMap.ViewLine.Thickness * Vector2.Dot(Monitor.ScreenSize, Vector2.one) / 1000);
 		}
 		miniViewTexture.Apply();
 	}

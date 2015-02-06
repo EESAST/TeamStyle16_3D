@@ -74,14 +74,14 @@ public static class Settings
 		public static class ViewLine
 		{
 			public static Color Color = new Color(1, 0.92f, 0.016f, 0.8f);
-			public static float Thickness = 3;
+			public static float Thickness = 2;
 		}
 	}
 
 	public static class Ocean
 	{
-		public static Color FogColor = new Color(0, 0.4f, 0.7f, 0.6f);
-		public static float FogDensity = 0.04f;
+		public static Color FogColor = new Color(0, 0.2f, 0.6f, 1);
+		public static float FogDensity = 0.02f;
 		public static Color ReflectionColor = new Color(0.5f, 0.5f, 1, 0.5f);
 		public static Color RefractionColor = new Color(0, 0, 0.4f, 0.6f);
 		public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Entity", "Fragment");

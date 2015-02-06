@@ -27,11 +27,23 @@ public class LoadMap : MonoBehaviour
 		float landArea = 0;
 		var heights = new float[terrainData.heightmapHeight, terrainData.heightmapWidth];
 		var mapRect = new Rect(0, 0, Data.MapSize.x, Data.MapSize.y);
-		var omega = new Vector2(realMapSize.x / terrainData.heightmapHeight, realMapSize.y / terrainData.heightmapWidth);
+		// Random bumps with Gaussian Distribution
+		for (int bumpNum = Mathf.RoundToInt(realMapSize.x * realMapSize.y / 40), i = 0; i < bumpNum; ++i)
+		{
+			var sigma = new Vector2(Random.Range(10.0f, 20.0f), Random.Range(10.0f, 20.0f));
+			var mu = new Vector2(Random.Range(0, terrainData.heightmapHeight), Random.Range(0, terrainData.heightmapWidth));
+			float sx = 1.0f / (sigma.x * sigma.x), sy = 1.0f / (sigma.y * sigma.y);
+			int mu_x = (int)mu.x, mu_y = (int)mu.y;
+			var h = Random.Range(0.1f, 0.35f);
+			for (int x = Mathf.Max(-mu_x, (int)-sigma.x * 3), xe = Mathf.Min(terrainData.heightmapHeight - mu_x, (int)(sigma.x * 3)); x < xe; ++x)
+				for (int y = Mathf.Max(-mu_y, (int)-sigma.y * 3), ye = Mathf.Min(terrainData.heightmapWidth - mu_y, (int)(sigma.y * 3)); y < ye; ++y)
+					heights[mu_x + x, mu_y + y] += h * Mathf.Exp(- /*(float)*/(x * x * sx + y * y * sy));
+		}
 		for (var x = 0; x < terrainData.heightmapHeight; x++)
 			for (var y = 0; y < terrainData.heightmapWidth; y++)
 			{
-				float i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top, j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
+				var i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top;
+				var j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
 				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
 				float ul = 0, ur = 0, br = 0, bl = 0, di = i - i0, dj = j - j0;
 				if (mapRect.Contains(new Vector2(i0, j0)))
@@ -42,10 +54,10 @@ public class LoadMap : MonoBehaviour
 					br = mapData[i0 + 1][j0 + 1].n;
 				if (mapRect.Contains(new Vector2(i0 + 1, j0)))
 					bl = mapData[i0 + 1][j0].n;
-				heights[x, y] = (1 - di) * (1 - dj) * ul + (1 - di) * dj * ur + di * (1 - dj) * bl + di * dj * br;
-				float[] heightCandidates = { Mathf.Sign(heights[x, y] - 0.5f) * Mathf.Pow(Mathf.Abs(heights[x, y] * 2 - 1), 0.25f) / 2 + 0.5f, Mathf.Sin(omega.x * x) * Mathf.Cos(omega.y * y) * 0.16f };
-				landArea += heightCandidates[0];
-				heights[x, y] = Mathf.Max(heightCandidates[0], heightCandidates[1]);
+				var height = (1 - di) * (1 - dj) * ul + (1 - di) * dj * ur + di * (1 - dj) * bl + di * dj * br;
+				height = Mathf.Sign(height - 0.5f) * Mathf.Pow(Mathf.Abs(height * 2 - 1), 0.25f) / 2 + 0.5f;
+				landArea += height;
+				heights[x, y] = Mathf.Max(height, heights[x, y]);
 			}
 		terrainData.SetHeights(0, 0, heights);
 		landArea *= realMapSize.x * realMapSize.y / (terrainData.heightmapHeight * terrainData.heightmapWidth);

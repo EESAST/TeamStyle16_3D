@@ -213,7 +213,7 @@ public static class Methods
 
 		private static Vector3 IntersectToDefaultHeight(Vector3 lhs, Vector3 rhs)
 		{
-			var t = (Settings.HeightOfLevel[2] - lhs.y) / (rhs.y - lhs.y);
+			var t = (Settings.Camera.Movement.DefaultHeight - lhs.y) / (rhs.y - lhs.y);
 			return (1 - t) * lhs + t * rhs;
 		}
 
@@ -335,7 +335,7 @@ public static class Methods
 					GUILayout.EndScrollView();
 					break;
 				case 1:
-					Data.GUI.TeamColorScroll = GUILayout.BeginScrollView(Data.GUI.TeamColorScroll);
+					Data.GUI.LegendScroll = GUILayout.BeginScrollView(Data.GUI.LegendScroll);
 					GUILayout.BeginVertical("box");
 					GUILayout.Label("尺寸", Data.GUI.Label.Large);
 					GUILayout.FlexibleSpace();

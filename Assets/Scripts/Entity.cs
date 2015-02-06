@@ -189,7 +189,7 @@ public abstract class Entity : MonoBehaviour
 		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
-		hbRect.localScale = Vector2.one * Monitor.LastScreenSize.x / 100 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
+		hbRect.localScale = Vector2.one * Monitor.ScreenSize.x / 100 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
 		if (!isDead)
 			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.ScaleFactor / 2));
 		hbText.text = HP + "/" + MaxHP();

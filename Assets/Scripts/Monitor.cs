@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class Monitor : MonoBehaviour
 {
-	public static int LastMarkPatternIndex;
-	public static float LastMarkScaleFactor;
-	public static Vector2 LastPhysicalScreenSize;
-	public static Vector2 LastScreenSize;
-	public static Color[] LastTeamColor = new Color[4];
+	private static int markPatternIndex;
+	private static float markScaleFactor;
+	private static Vector2 physicalScreenSize;
+	public static Vector2 ScreenSize;
+	private static readonly Color[] teamColor = new Color[4];
 
 	private void Update()
 	{
@@ -29,22 +29,22 @@ public class Monitor : MonoBehaviour
 
 		#region Mark Pattern Index
 
-		if (LastMarkPatternIndex != Data.MarkPatternIndex)
+		if (markPatternIndex != Data.MarkPatternIndex)
 		{
 			if (Delegates.MarkPatternChanged != null)
 				Delegates.MarkPatternChanged();
-			LastMarkPatternIndex = Data.MarkPatternIndex;
+			markPatternIndex = Data.MarkPatternIndex;
 		}
 
 		#endregion
 
 		#region Mark Scale Factor
 
-		if (Math.Abs(LastMarkScaleFactor - Data.MarkScaleFactor) > Mathf.Epsilon)
+		if (Math.Abs(markScaleFactor - Data.MarkScaleFactor) > Mathf.Epsilon)
 		{
 			if (Delegates.MarkSizeChanged != null)
 				Delegates.MarkSizeChanged();
-			LastMarkScaleFactor = Data.MarkScaleFactor;
+			markScaleFactor = Data.MarkScaleFactor;
 		}
 
 		#endregion
@@ -52,12 +52,12 @@ public class Monitor : MonoBehaviour
 		#region Screen Size
 
 		var screenSize = new Vector2(Screen.width, Screen.height);
-		if (LastScreenSize != screenSize)
+		if (ScreenSize != screenSize)
 		{
 			Methods.RefreshMiniMap();
 			if (Delegates.ScreenSizeChanged != null)
 				Delegates.ScreenSizeChanged();
-			LastScreenSize = screenSize;
+			ScreenSize = screenSize;
 		}
 
 		#endregion
@@ -69,11 +69,11 @@ public class Monitor : MonoBehaviour
 
 		#region Desired Team Color
 
-		if (!Methods.Array.Equals(LastTeamColor, Data.TeamColor.Desired))
+		if (!Methods.Array.Equals(teamColor, Data.TeamColor.Desired))
 		{
 			Methods.GUI.RefreshTeamColoredStyles();
 			for (var i = 0; i < 4; i++)
-				LastTeamColor[i] = Data.TeamColor.Desired[i];
+				teamColor[i] = Data.TeamColor.Desired[i];
 		}
 
 		#endregion
@@ -81,10 +81,10 @@ public class Monitor : MonoBehaviour
 		#region Physical Screen Size
 
 		var physicalScreenSize = new Vector2(Screen.width, Screen.height) / Screen.dpi;
-		if (LastPhysicalScreenSize != physicalScreenSize)
+		if (Monitor.physicalScreenSize != physicalScreenSize)
 		{
 			Methods.GUI.ResizeFonts();
-			LastPhysicalScreenSize = physicalScreenSize;
+			Monitor.physicalScreenSize = physicalScreenSize;
 		}
 
 		#endregion
