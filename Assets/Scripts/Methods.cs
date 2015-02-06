@@ -116,8 +116,8 @@ public static class Methods
 	public static void RefreshMiniMap()
 	{
 		Data.MiniMap.ScaleFactor = (Screen.width + Screen.height) / (Vector2.Dot(Data.MapSize, Vector2.one * 4));
-		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x);
-		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y);
+		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
+		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
 		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
 	}
 

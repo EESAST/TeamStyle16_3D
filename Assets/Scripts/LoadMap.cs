@@ -1,6 +1,8 @@
 ﻿#region
 
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 #endregion
 
@@ -27,21 +29,23 @@ public class LoadMap : MonoBehaviour
 		float landArea = 0;
 		var heights = new float[terrainData.heightmapHeight, terrainData.heightmapWidth];
 		var mapRect = new Rect(0, 0, Data.MapSize.x, Data.MapSize.y);
-		// Random bumps with Gaussian Distribution
-		for (int bumpNum = Mathf.RoundToInt(realMapSize.x * realMapSize.y / 40), i = 0; i < bumpNum; ++i)
+		for (int bumpNum = Mathf.RoundToInt(realMapSize.x * realMapSize.y / 10), i = 0; i < bumpNum; ++i)
 		{
-			var sigma = new Vector2(Random.Range(10.0f, 20.0f), Random.Range(10.0f, 20.0f));
-			var mu = new Vector2(Random.Range(0, terrainData.heightmapHeight), Random.Range(0, terrainData.heightmapWidth));
-			float sx = 1.0f / (sigma.x * sigma.x), sy = 1.0f / (sigma.y * sigma.y);
-			int mu_x = (int)mu.x, mu_y = (int)mu.y;
-			var h = Random.Range(0.1f, 0.35f);
-			for (int x = Mathf.Max(-mu_x, (int)-sigma.x * 3), xe = Mathf.Min(terrainData.heightmapHeight - mu_x, (int)(sigma.x * 3)); x < xe; ++x)
-				for (int y = Mathf.Max(-mu_y, (int)-sigma.y * 3), ye = Mathf.Min(terrainData.heightmapWidth - mu_y, (int)(sigma.y * 3)); y < ye; ++y)
-					heights[mu_x + x, mu_y + y] += h * Mathf.Exp(- /*(float)*/(x * x * sx + y * y * sy));
+			var sigmaX = Random.Range(0.6f, 1.2f) * terrainData.heightmapHeight / realMapSize.x;
+			var sigmaY = Random.Range(0.6f, 1.2f) * terrainData.heightmapWidth / realMapSize.y;
+			var x0 = Random.Range(0, terrainData.heightmapHeight);
+			var y0 = Random.Range(0, terrainData.heightmapWidth);
+			var h = Random.Range(-0.4f, 0.4f);
+			for (var x = Mathf.Max(-x0, -Mathf.RoundToInt(sigmaX * 3)); x < Mathf.Min(terrainData.heightmapHeight - x0, Mathf.RoundToInt(sigmaX * 3)); ++x)
+				for (var y = Mathf.Max(-y0, -Mathf.RoundToInt(sigmaY * 3)); y < Mathf.Min(terrainData.heightmapWidth - y0, Mathf.RoundToInt(sigmaY * 3)); ++y)
+					heights[x0 + x, y0 + y] += h * Mathf.Exp(-(Mathf.Pow(x / sigmaX, 2) + Mathf.Pow(y / sigmaY, 2)) / 2);
 		}
+		var heightThreshold = Settings.HeightOfLevel[0] / Settings.HeightOfLevel[2];
 		for (var x = 0; x < terrainData.heightmapHeight; x++)
 			for (var y = 0; y < terrainData.heightmapWidth; y++)
 			{
+				if ((heights[x, y] += heightThreshold / 2) > heightThreshold)
+					heights[x, y] = heightThreshold;
 				var i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top;
 				var j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
 				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
@@ -55,9 +59,10 @@ public class LoadMap : MonoBehaviour
 				if (mapRect.Contains(new Vector2(i0 + 1, j0)))
 					bl = mapData[i0 + 1][j0].n;
 				var height = (1 - di) * (1 - dj) * ul + (1 - di) * dj * ur + di * (1 - dj) * bl + di * dj * br;
-				height = Mathf.Sign(height - 0.5f) * Mathf.Pow(Mathf.Abs(height * 2 - 1), 0.25f) / 2 + 0.5f;
+				if (Math.Abs(height) < Mathf.Epsilon)
+					continue;
+				heights[x, y] = Mathf.Max(heights[x, y], height = Mathf.Sign(height - 0.5f) * Mathf.Pow(Mathf.Abs(height * 2 - 1), 0.25f) / 2 + 0.5f);
 				landArea += height;
-				heights[x, y] = Mathf.Max(height, heights[x, y]);
 			}
 		terrainData.SetHeights(0, 0, heights);
 		landArea *= realMapSize.x * realMapSize.y / (terrainData.heightmapHeight * terrainData.heightmapWidth);

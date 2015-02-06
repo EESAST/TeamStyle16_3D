@@ -6,10 +6,9 @@ using UnityEngine;
 
 public static class Settings
 {
-	private static readonly float[] _heightOfLevel = { 1, 1.8f, 2, 5 }; //stands for underwater, water surface, ground and air in sequence
+	private static readonly float[] _heightOfLevel = { 2, 2.8f, 3, 6 }; //stands for underwater, water surface, ground and air in sequence
 	private static readonly float _shadowDistance = 50;
 	public static int CloudNumber = 50;
-	//public static RectOffset MapSizeOffset = new RectOffset(45, 45, 30, 10);
 	public static RectOffset MapSizeOffset = new RectOffset(80, 80, 80, 80);
 	public static float ScaleFactor = 5;
 	public static int TextGranularity = 3;
