@@ -36,6 +36,7 @@ public abstract class Entity : MonoBehaviour
 			_info = value;
 			UpdateInfo();
 		}
+		get { return _info; }
 	}
 
 	protected virtual int RelativeSize { get { return 1; } }
@@ -77,8 +78,9 @@ public abstract class Entity : MonoBehaviour
 		highlighter.ConstantOff();
 	}
 
-	protected virtual void Destruct()
+	public virtual void Destruct()
 	{
+		Data.Entities.Remove(Mathf.RoundToInt(Info["index"].n));
 		isDead = true;
 		foreach (IEntityFX entityFX in GetComponentsInChildren(typeof(IEntityFX)))
 			entityFX.Disable();
@@ -87,6 +89,30 @@ public abstract class Entity : MonoBehaviour
 	}
 
 	protected abstract Vector3 Dimensions();
+
+	public IEnumerator FaceTarget(Vector3 target)
+	{
+		var dir = Methods.Coordinates.ExternalToInternal(target) - transform.position;
+		dir.y = 0;
+		var p = transform.rotation;
+		var q = Quaternion.FromToRotation(Vector3.forward, //this.transform.TransformDirection (Vector3.forward),
+			dir);
+		for (float t = 0; t <= 1; t += 0.1f)
+		{
+			transform.rotation = Quaternion.Slerp(p, q, t);
+			yield return new WaitForSeconds(0.01f);
+		}
+		//this.transform.rotation = q;
+
+		//var angles0 = this.transform.rotation.eulerAngles;
+		//var angles1 = Quaternion.LookRotation();
+		//var angles = new Vector3(angles0);
+		//angles
+		//this.transform.eulerAngles
+
+		//this.rigidbody.
+		//this.rigidbody.velocity = new Vector3(posX - this.rigidbody.position
+	}
 
 	private IEnumerator FadeOut()
 	{
@@ -123,6 +149,33 @@ public abstract class Entity : MonoBehaviour
 			Destroy(markRect.gameObject);
 	}
 
+	protected void OnGUI()
+	{
+		/*#region Draw Info Panel
+
+		if (!mouseOver || Screen.lockCursor)
+			return;
+		var infoPanel = new Rect(Input.mousePosition.x - 110, Screen.height - Input.mousePosition.y - 110, 100, Info.Count * Settings.UI.FontSize);
+		if (infoPanel.x < 0)
+			infoPanel.x = 0;
+		if (infoPanel.y < 0)
+			infoPanel.y = 0;
+		//infoPanel.x = Mathf.Min(Screen.width - infoPanel.width, infoPanel.x);
+		infoPanel.y = Mathf.Min(Screen.height - infoPanel.height, infoPanel.y);
+		GUI.BeginGroup(infoPanel);
+		var r = new Rect(0, 0, infoPanel.width, infoPanel.height);
+		GUI.Box(r, "");
+		r.height = Settings.UI.FontSize;
+		for (var i = 0; i < Info.Count; ++i)
+		{
+			GUI.Label(r, Info[i].ToString());
+			r.y += Settings.UI.FontSize;
+		}
+		GUI.EndGroup();
+
+		#endregion*/
+	}
+
 	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
 
 	private void RefreshMarkPattern() { markRect.GetComponent<RawImage>().texture = Data.MarkPatternIndex == 0 ? markTexture : null; }
@@ -141,7 +194,7 @@ public abstract class Entity : MonoBehaviour
 		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
 	}
 
-	private void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, Level()); }
+	public void SetPosition(float externalX, float externalY) { transform.position = Methods.Coordinates.ExternalToInternal(externalX, externalY, Level()); }
 
 	protected virtual void Start()
 	{
@@ -169,7 +222,7 @@ public abstract class Entity : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		HP = (HP + 1) % (MaxHP() + 1);
+		//HP = (HP + 1) % (MaxHP() + 1);
 
 		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
 
@@ -199,22 +252,21 @@ public abstract class Entity : MonoBehaviour
 
 	protected virtual void UpdateInfo()
 	{
-		var pos = _info["pos"];
 		float posX, posY;
-		if (pos["__class__"].str == "Rectangle")
-		{
-			posX = (pos["upper_left"]["x"].n + pos["lower_right"]["x"].n) / 2;
-			posY = (pos["upper_left"]["y"].n + pos["lower_right"]["y"].n) / 2;
-		}
-		else
-		{
-			posX = pos["x"].n;
-			posY = pos["y"].n;
-		}
+		Methods.Coordinates.JSONToExternal(_info["pos"], out posX, out posY);
 		SetPosition(posX, posY);
 		var delta = Mathf.CeilToInt((RelativeSize - 1) / 2f);
 		for (var x = Mathf.FloorToInt(posX - delta); x <= Mathf.CeilToInt(posX + delta); x++)
 			for (var y = Mathf.FloorToInt(posY - delta); y <= Mathf.CeilToInt(posY + delta); y++)
 				Data.IsOccupied[x, y] = true;
+	}
+
+	public void UpdateInfo_(JSONObject info)
+	{
+		//_info = info;	//not really necessary
+		HP = Mathf.RoundToInt(info["health"].n);
+		float posX, posY;
+		Methods.Coordinates.JSONToExternal(info["pos"], out posX, out posY);
+		SetPosition(posX, posY);
 	}
 }

@@ -107,18 +107,21 @@ public static class Methods
 		texture.SetPixels32(tmpPixels);
 	}
 
+	public static void OnScreenSizeChanged()
+	{
+		var screenArea = Screen.width * Screen.height;
+		Data.MiniMap.ScaleFactor = Mathf.Sqrt(screenArea / Data.MapSize.x / Data.MapSize.y) / 4;
+		//Data.MiniMap.ScaleFactor = (Screen.width + Screen.height) / (Vector2.Dot(Data.MapSize, Vector2.one * 4));
+		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
+		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
+		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
+		Data.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
+	}
+
 	public static void Polygon(this Texture2D texture, Vector2[] points, Color lineColor, float lineThickness)
 	{
 		for (var i = 0; i < points.Length; i++)
 			texture.Line(points[i], points[(i + 1) % points.Length], lineColor, lineThickness);
-	}
-
-	public static void RefreshMiniMap()
-	{
-		Data.MiniMap.ScaleFactor = (Screen.width + Screen.height) / (Vector2.Dot(Data.MapSize, Vector2.one * 4));
-		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
-		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
-		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
 	}
 
 	public static Vector3[] TransformPoints(this Transform transform, Vector3[] points, out Vector3 center)
@@ -228,6 +231,29 @@ public static class Methods
 		}
 
 		public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
+
+		public static Vector2 JSONToExternal(JSONObject jsonPos)
+		{
+			float posX, posY;
+			JSONToExternal(jsonPos, out posX, out posY);
+			return new Vector2(posX, posY);
+		}
+
+		public static void JSONToExternal(JSONObject jsonPos, out float posX, out float posY)
+		{
+			if (jsonPos["__class__"].str == "Rectangle")
+			{
+				posX = (jsonPos["upper_left"]["x"].n + jsonPos["lower_right"]["x"].n) / 2;
+				posY = (jsonPos["upper_left"]["y"].n + jsonPos["lower_right"]["y"].n) / 2;
+			}
+			else
+			{
+				posX = jsonPos["x"].n;
+				posY = jsonPos["y"].n;
+			}
+		}
+
+		public static Vector3 JSONToInternal(JSONObject jsonPos) { return ExternalToInternal(JSONToExternal(jsonPos)); }
 
 		public static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.Border.top - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.Border.right - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
 

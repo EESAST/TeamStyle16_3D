@@ -54,7 +54,7 @@ public class Monitor : MonoBehaviour
 		var screenSize = new Vector2(Screen.width, Screen.height);
 		if (ScreenSize != screenSize)
 		{
-			Methods.RefreshMiniMap();
+			Methods.OnScreenSizeChanged();
 			if (Delegates.ScreenSizeChanged != null)
 				Delegates.ScreenSizeChanged();
 			ScreenSize = screenSize;

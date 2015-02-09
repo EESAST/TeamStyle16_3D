@@ -8,7 +8,7 @@ public abstract class Vessel : Unit
 {
 	protected override int Level() { return 1; }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Vessel")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Vessel")) as GameObject).GetComponent<RectTransform>(); }
 
 	protected override void Start()
 	{

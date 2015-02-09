@@ -9,6 +9,7 @@ public class MiniView : MonoBehaviour
 {
 	private Color32[] clearPixels;
 	private Texture2D miniViewTexture;
+	private float lineThickness;
 
 	private void Awake() { Delegates.ScreenSizeChanged += RefreshView; }
 
@@ -18,8 +19,7 @@ public class MiniView : MonoBehaviour
 	{
 		GetComponent<RawImage>().texture = miniViewTexture = new Texture2D(Mathf.RoundToInt(Data.MapSize.y * Data.MiniMap.ScaleFactor / 2) * 2, Mathf.RoundToInt(Data.MapSize.x * Data.MiniMap.ScaleFactor / 2) * 2) { wrapMode = TextureWrapMode.Clamp };
 		clearPixels = new Color32[miniViewTexture.width * miniViewTexture.height];
-		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.MapSize.y * Data.MiniMap.ScaleFactor);
-		GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.MapSize.x * Data.MiniMap.ScaleFactor);
+		lineThickness = Settings.MiniMap.ViewLine.Thickness * Mathf.Sqrt(Screen.width * Screen.height) / 1000;
 	}
 
 	private void Start() { RefreshView(); }
@@ -36,7 +36,7 @@ public class MiniView : MonoBehaviour
 			var scaleFactor = new Vector2(miniViewTexture.width, miniViewTexture.height);
 			for (var i = 0; i < 4; i++)
 				miniMapBasedPoints[i] = Vector2.Scale(Methods.Coordinates.InternalToMiniMapRatios(worldPoints[i]), scaleFactor);
-			miniViewTexture.Polygon(miniMapBasedPoints, Settings.MiniMap.ViewLine.Color, Settings.MiniMap.ViewLine.Thickness * Vector2.Dot(Monitor.ScreenSize, Vector2.one) / 1000);
+			miniViewTexture.Polygon(miniMapBasedPoints, Settings.MiniMap.ViewLine.Color, lineThickness);
 		}
 		miniViewTexture.Apply();
 	}

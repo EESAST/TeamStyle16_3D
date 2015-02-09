@@ -14,7 +14,7 @@ public class Scout : Unit
 
 	protected override int Level() { return 3; }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Aircraft")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Aircraft")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

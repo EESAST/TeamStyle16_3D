@@ -8,7 +8,7 @@ using UnityEngine;
 
 public abstract class Unit : Entity
 {
-	protected override void Destruct()
+	public override void Destruct()
 	{
 		base.Destruct();
 		StartCoroutine(Explode());
@@ -46,8 +46,8 @@ public abstract class Unit : Entity
 					fragment.transform.parent = dummy.transform;
 					var smokeTrail = fragment.GetComponentInChildren<ParticleEmitter>();
 					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
-					if (count++ % 5 == 0)
-						yield return null;
+					if (++count % 5 == 0)
+						yield break;
 				}
 			}
 		}

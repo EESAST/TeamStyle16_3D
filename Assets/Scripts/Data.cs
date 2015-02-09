@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -8,11 +9,21 @@ using UnityEngine;
 public static class Data
 {
 	public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static Dictionary<int, Entity> Entities;
 	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
 	public static int MarkPatternIndex;
 	public static float MarkScaleFactor = 1;
+	public static float ProductionEntrySize;
+	public static List<ProductionEntry>[] ProductionList;
+
+	public static class Game
+	{
+		public static JSONObject Populations;
+		public static bool Ready;
+		public static JSONObject Scores;
+	}
 
 	public static class GUI
 	{

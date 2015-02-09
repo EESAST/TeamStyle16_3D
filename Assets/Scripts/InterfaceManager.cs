@@ -12,11 +12,13 @@ public class InterfaceManager : MonoBehaviour
 	public Texture back;
 	public Texture background;
 	public Texture[] cloudTextures;
+	private Rect defaultRect = new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f);
 	public Texture directory;
 	public Texture drive;
 	public Texture file;
 	private FileBrowser fileBrowser;
 	private bool guiInitialized;
+	private Rect optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
 	public Texture ship;
 	private MenuState stagedState = MenuState.Default;
 	private MenuState state;
@@ -67,7 +69,7 @@ public class InterfaceManager : MonoBehaviour
 
 	private void DrawDefaultInterface()
 	{
-		GUILayout.BeginArea(new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f));
+		GUILayout.BeginArea(defaultRect);
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("回  放", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 			stagedState = MenuState.BrowsingFile;
@@ -103,15 +105,15 @@ public class InterfaceManager : MonoBehaviour
 
 	private void DrawOptions()
 	{
-		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f), GUI.skin.box);
+		GUILayout.BeginArea(optionsRect, GUI.skin.box);
 		Methods.GUI.DrawOptions(ref stagedState);
 		GUILayout.EndArea();
 	}
 
 	private void InitializeGUI()
 	{
-		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file, confirmStyle = Data.GUI.Button.Small, cancelStyle = Data.GUI.Button.Small }).Refresh();
 		Methods.GUI.InitializeStyles();
+		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file, confirmStyle = Data.GUI.Button.Small, cancelStyle = Data.GUI.Button.Small }).Refresh();
 		guiInitialized = true;
 	}
 
@@ -149,6 +151,8 @@ public class InterfaceManager : MonoBehaviour
 	{
 		for (var i = 0; i < clouds.Length; i++)
 			clouds[i].Refresh(Monitor.ScreenSize);
+		defaultRect = new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f);
+		optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
 		aboutRect = new Rect(Screen.width * 0.4f, Screen.height * 0.2f, Screen.width * 0.2f, Screen.height * 0.6f);
 	}
 

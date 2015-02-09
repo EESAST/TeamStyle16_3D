@@ -20,7 +20,7 @@ public class Submarine : Unit
 
 	protected override int Level() { return 0; }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Submarine")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Submarine")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

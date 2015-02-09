@@ -31,21 +31,21 @@ public class LoadMap : MonoBehaviour
 		var mapRect = new Rect(0, 0, Data.MapSize.x, Data.MapSize.y);
 		for (int bumpNum = Mathf.RoundToInt(realMapSize.x * realMapSize.y / 10), i = 0; i < bumpNum; ++i)
 		{
-			var sigmaX = Random.Range(0.6f, 1.2f) * terrainData.heightmapHeight / realMapSize.x;
-			var sigmaY = Random.Range(0.6f, 1.2f) * terrainData.heightmapWidth / realMapSize.y;
-			var x0 = Random.Range(0, terrainData.heightmapHeight);
-			var y0 = Random.Range(0, terrainData.heightmapWidth);
-			var h = Random.Range(-0.4f, 0.4f);
-			for (var x = Mathf.Max(-x0, -Mathf.RoundToInt(sigmaX * 3)); x < Mathf.Min(terrainData.heightmapHeight - x0, Mathf.RoundToInt(sigmaX * 3)); ++x)
-				for (var y = Mathf.Max(-y0, -Mathf.RoundToInt(sigmaY * 3)); y < Mathf.Min(terrainData.heightmapWidth - y0, Mathf.RoundToInt(sigmaY * 3)); ++y)
-					heights[x0 + x, y0 + y] += h * Mathf.Exp(-(Mathf.Pow(x / sigmaX, 2) + Mathf.Pow(y / sigmaY, 2)) / 2);
+			var sigmaX = Random.Range(0.8f, 2) * terrainData.heightmapHeight / realMapSize.x;
+			var sigmaY = Random.Range(0.8f, 2) * terrainData.heightmapWidth / realMapSize.y;
+			var muX = Random.Range(0, terrainData.heightmapHeight);
+			var muY = Random.Range(0, terrainData.heightmapWidth);
+			var h = Random.Range(-0.6f, 0.4f);
+			for (var x = Mathf.Max(-muX, -Mathf.RoundToInt(sigmaX * 3)); x < Mathf.Min(terrainData.heightmapHeight - muX, Mathf.RoundToInt(sigmaX * 3)); ++x)
+				for (var y = Mathf.Max(-muY, -Mathf.RoundToInt(sigmaY * 3)); y < Mathf.Min(terrainData.heightmapWidth - muY, Mathf.RoundToInt(sigmaY * 3)); ++y)
+					heights[muX + x, muY + y] += h * Mathf.Exp(-Mathf.Pow(x / sigmaX, 2) - Mathf.Pow(y / sigmaY, 2));
 		}
-		var heightThreshold = Settings.HeightOfLevel[0] / Settings.HeightOfLevel[2];
+		var threshold = Settings.HeightOfLevel[0] / Settings.HeightOfLevel[2];
 		for (var x = 0; x < terrainData.heightmapHeight; x++)
 			for (var y = 0; y < terrainData.heightmapWidth; y++)
 			{
-				if ((heights[x, y] += heightThreshold / 2) > heightThreshold)
-					heights[x, y] = heightThreshold;
+				if ((heights[x, y] += threshold / 2) > threshold)
+					heights[x, y] = threshold;
 				var i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top;
 				var j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
 				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
@@ -165,21 +165,21 @@ public class LoadMap : MonoBehaviour
 		oceanMaterial.SetColor("_ReflectionColor", Settings.Ocean.ReflectionColor);
 	}
 
-	private void LoadEntities()
+	private void LoadInitialState()
 	{
-		var mapElements = Data.BattleData["gamebody"]["map_info"]["elements"];
-		for (var i = 0; i < mapElements.Count; i++)
+		foreach (var entry in Data.BattleData["key_frames"][0][0].list)
 		{
-			var info = mapElements[i];
-			var entityType = info["__class__"].str;
-			((Instantiate(Resources.Load(entityType + '/' + entityType)) as GameObject).GetComponent(entityType) as Entity).Info = info;
+			var entityType = entry["__class__"].str;
+			var entity = (Instantiate(Resources.Load(entityType + '/' + entityType)) as GameObject).GetComponent(entityType) as Entity;
+			entity.Info = entry;
+			Data.Entities.Add(Mathf.RoundToInt(entry["index"].n), entity);
 		}
 	}
 
 	private void Start()
 	{
 		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.vertical, Settings.MapSizeOffset.horizontal) - Vector2.one;
-		LoadEntities();
+		LoadInitialState();
 		CreateLand();
 		CreateOcean();
 	}

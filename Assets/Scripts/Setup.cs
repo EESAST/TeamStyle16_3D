@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections.Generic;
 using UnityEngine;
 
 #endregion
@@ -10,6 +11,7 @@ public class Setup : MonoBehaviour
 
 	private void Awake()
 	{
+		ResetData();
 		QualitySettings.shadowDistance = Settings.ShadowDistance;
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
 		RenderSettings.fogEndDistance = Settings.Camera.FarClipPlane;
@@ -18,7 +20,7 @@ public class Setup : MonoBehaviour
 		var yMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["y_max"].n);
 		Data.MapSize = new Vector2(xMax, yMax);
 		Data.IsOccupied = new bool[xMax, yMax];
-		Methods.RefreshMiniMap();
+		Methods.OnScreenSizeChanged();
 		var cameraBoundary = GameObject.Find("CameraBoundary").GetComponent<BoxCollider>();
 		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.ScaleFactor + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]);
 		Camera.main.transform.root.position = cameraBoundary.transform.position = Methods.Coordinates.ExternalToInternal((Data.MapSize - Vector2.one) / 2) + Vector3.up * (Settings.HeightOfLevel[3] - Settings.HeightOfLevel[0]) / 2;
@@ -37,5 +39,11 @@ public class Setup : MonoBehaviour
 		cameraSettings.zoom.minZoom = Settings.Camera.Zoom.Min;
 		cameraSettings.zoom.defaultZoom = Settings.Camera.Zoom.Default;
 		cameraSettings.zoom.zoomRate = Settings.Camera.Zoom.Rate;
+	}
+
+	private void ResetData()
+	{
+		Data.Entities = new Dictionary<int, Entity>();
+		Data.ProductionList = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
 	}
 }

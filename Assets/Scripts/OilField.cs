@@ -12,7 +12,7 @@ public class Oilfield : Resource
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.41f, 2.71f); }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Oilfield")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Oilfield")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{

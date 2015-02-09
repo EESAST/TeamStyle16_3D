@@ -82,9 +82,9 @@ public class MenuManager : MonoBehaviour
 
 	private void InitializeGUI()
 	{
-		mainMenuStyle = new GUIStyle { normal = { background = mainMenuBackground }, border = new RectOffset(80, 20, 40, 40) };
-		subMenuStyle = new GUIStyle { normal = { background = subMenuBackground }, border = new RectOffset(30, 60, 60, 40) };
 		Methods.GUI.InitializeStyles();
+		mainMenuStyle = new GUIStyle { normal = { background = mainMenuBackground }, border = new RectOffset(80, 20, 40, 40) };
+		subMenuStyle = new GUIStyle { normal = { background = subMenuBackground }, border = new RectOffset(25, 50, 30, 35) };
 		guiInitialized = true;
 		ResizeGUIRects();
 	}
@@ -93,6 +93,7 @@ public class MenuManager : MonoBehaviour
 
 	private void OnGUI()
 	{
+		GUI.depth = -1;
 		if (!guiInitialized)
 			InitializeGUI();
 		if (Event.current.type == EventType.Layout)
@@ -125,14 +126,14 @@ public class MenuManager : MonoBehaviour
 	{
 		if (!guiInitialized)
 			return;
-		defaultAreaRect = new Rect(0, Screen.height * 0.2f, Screen.width * 0.25f, Screen.height * 0.6f);
-		defaultContentRect = new Rect(mainMenuStyle.border.left, mainMenuStyle.border.top, defaultAreaRect.width - mainMenuStyle.border.left - mainMenuStyle.border.right, defaultAreaRect.height - mainMenuStyle.border.top - mainMenuStyle.border.bottom);
-		optionAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.1f, (Screen.width - defaultAreaRect.width) * 0.8f, Screen.height * 0.8f);
-		optionContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, optionAreaRect.width - subMenuStyle.border.left - subMenuStyle.border.right, optionAreaRect.height - subMenuStyle.border.top - subMenuStyle.border.bottom);
-		aboutAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.2f, (Screen.width - defaultAreaRect.width) * 0.4f, Screen.height * 0.6f);
-		aboutContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, aboutAreaRect.width - subMenuStyle.border.left - subMenuStyle.border.right, aboutAreaRect.height - subMenuStyle.border.top - subMenuStyle.border.bottom);
-		confirmAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.25f, (Screen.width - defaultAreaRect.width) * 0.4f, Screen.height * 0.5f);
-		confirmContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, confirmAreaRect.width - subMenuStyle.border.left - subMenuStyle.border.right, confirmAreaRect.height - subMenuStyle.border.top - subMenuStyle.border.bottom);
+		defaultContentRect = new Rect(mainMenuStyle.border.left, mainMenuStyle.border.top, Screen.width * 0.15f, Screen.height * 0.4f);
+		defaultAreaRect = new Rect(0, Screen.height * 0.35f, defaultContentRect.width + mainMenuStyle.border.horizontal, defaultContentRect.height + mainMenuStyle.border.vertical);
+		optionContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.5f, Screen.height * 0.6f);
+		optionAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.2f, optionContentRect.width + subMenuStyle.border.horizontal, optionContentRect.height + subMenuStyle.border.vertical);
+		aboutContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.3f, Screen.height * 0.5f);
+		aboutAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.3f, aboutContentRect.width + subMenuStyle.border.horizontal, aboutContentRect.height + subMenuStyle.border.vertical);
+		confirmContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.2f, Screen.height * 0.3f);
+		confirmAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.4f, confirmContentRect.width + subMenuStyle.border.horizontal, confirmContentRect.height + subMenuStyle.border.vertical);
 	}
 
 	private void SwitchGameState()

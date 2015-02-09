@@ -14,7 +14,7 @@ public class Fort : Unit
 
 	protected override int Level() { return 2; }
 
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Mark/Fort")) as GameObject).GetComponent<RectTransform>(); }
+	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Fort")) as GameObject).GetComponent<RectTransform>(); }
 
 	public static void LoadMaterial()
 	{
