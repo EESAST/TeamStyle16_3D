@@ -9,24 +9,9 @@ using UnityEngine;
 public static class Data
 {
 	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
-
-	public static class Game
-	{
-		public static int AttacksLeft;
-		public static int CollectsLeft;
-		public static int FixesLeft;
-		public static bool IsAttacking;
-		public static bool IsCollecting;
-		public static bool IsFixing;
-		public static bool IsMoving;
-		public static bool IsSupplying;
-		public static int MovesLeft;
-		public static bool Paused;
-		public static bool Ready;
-		public static int SuppliesLeft;
-	}
 
 	public static class GUI
 	{
@@ -71,13 +56,22 @@ public static class Data
 
 	public static class Replay
 	{
+		public static int AttacksLeft;
 		public static Base[] Bases = new Base[2];
-		//public static JSONObject CurrentScores;
+		public static int CollectsLeft;
 		public static float[] CurrentScores;
 		public static Dictionary<int, Element> Elements;
+		public static int FixesLeft;
+		public static bool IsAttacking;
+		public static bool IsCollecting;
+		public static bool IsFixing;
+		public static bool IsMoving;
+		public static bool IsSupplying;
+		public static int MovesLeft;
 		public static JSONObject Populations;
 		public static float ProductionEntrySize;
 		public static List<ProductionEntry>[] ProductionList;
+		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static JSONObject UnitNums;
 	}

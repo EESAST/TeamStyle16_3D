@@ -279,7 +279,7 @@ public static class Methods
 	{
 		public static void Pause()
 		{
-			Data.Game.Paused = true;
+			Data.GamePaused = true;
 			Time.timeScale = 0;
 		}
 
@@ -294,7 +294,7 @@ public static class Methods
 
 		public static void Resume()
 		{
-			Data.Game.Paused = false;
+			Data.GamePaused = false;
 			Time.timeScale = 1;
 		}
 	}

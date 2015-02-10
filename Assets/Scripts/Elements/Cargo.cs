@@ -18,7 +18,8 @@ public class Cargo : Ship
 		targetMetal += metal;
 		target.targetFuel -= fuel;
 		target.targetMetal -= metal;
-		--Data.Game.CollectsLeft;
+		Data.Replay.TargetScores[team] += (fuel + metal);
+		--Data.Replay.CollectsLeft;
 	}
 
 	protected override Vector3 Dimensions() { return new Vector3(28.48f, 15.18f, 46.16f); }

@@ -20,7 +20,7 @@ public class Base : Building
 		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
 		targetMetal -= metal;
 		target.targetHP += healthIncrease;
-		--Data.Game.FixesLeft;
+		--Data.Replay.FixesLeft;
 	}
 
 	public override void Initialize(JSONObject info)

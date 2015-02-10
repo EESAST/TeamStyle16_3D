@@ -106,12 +106,13 @@ public abstract class UnitBase : Element
 	{
 		yield return FaceTarget(internalTargetPosition);
 		targetAmmo -= Constants.AmmoOnce[Kind()]; //TODO:run this when firing is actually animated; firing animation;
-		--Data.Game.AttacksLeft;
+		--Data.Replay.AttacksLeft;
 	}
 
 	public IEnumerator FireAtUnitBase(UnitBase targetElement, int damage)
 	{
 		yield return StartCoroutine(FireAtPosition(targetElement.transform.WorldCenterOfElement()));
+		Data.Replay.TargetScores[team] += damage;
 		targetElement.targetHP -= damage;
 	}
 
@@ -179,7 +180,7 @@ public abstract class UnitBase : Element
 		target.targetFuel += fuel;
 		target.targetAmmo += ammo;
 		target.targetMetal += metal;
-		--Data.Game.SuppliesLeft;
+		--Data.Replay.SuppliesLeft;
 	}
 
 	protected override void Update()

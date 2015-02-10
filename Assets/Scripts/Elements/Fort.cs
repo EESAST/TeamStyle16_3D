@@ -72,7 +72,7 @@ public class Fort : Building
 			transform.position = Vector3.Lerp(transform.position, internalTargetPosition, 0.1f);
 			yield return new WaitForSeconds(0.04f);
 		}
-		--Data.Game.AttacksLeft;
+		--Data.Replay.AttacksLeft;
 	}
 
 	protected override void Start()
