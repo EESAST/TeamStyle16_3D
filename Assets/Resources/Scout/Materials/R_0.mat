@@ -19,7 +19,7 @@ Material:
         second:
           m_Texture: {fileID: 2800000, guid: 5e26160124bba7d419e050eaa43a97bf, type: 3}
           m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: .399779081}
+          m_Offset: {x: 0, y: .254265577}
       data:
         first:
           name: _BumpMap
