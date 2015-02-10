@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections;
 using UnityEngine;
 
 #endregion
@@ -14,10 +15,18 @@ public class Base : Building
 
 	protected override Vector3 Dimensions() { return new Vector3(6.22f, 5.25f, 6.23f); }
 
+	public IEnumerator Fix(Unit target, int metal, int healthIncrease)
+	{
+		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
+		targetMetal -= metal;
+		target.targetHP += healthIncrease;
+		--Data.Game.FixesLeft;
+	}
+
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		Data.Bases[team] = this;
+		Data.Replay.Bases[team] = this;
 	}
 
 	protected override int Kind() { return 0; }

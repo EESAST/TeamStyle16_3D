@@ -25,7 +25,7 @@ public class MiniMap : MonoBehaviour
 
 	private void Start()
 	{
-		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
+		var mapData = Data.Battle["gamebody"]["map_info"]["types"];
 		var width = Mathf.RoundToInt(Data.MapSize.y) * Settings.MiniMap.Granularity;
 		var height = Mathf.RoundToInt(Data.MapSize.x) * Settings.MiniMap.Granularity;
 		GetComponent<RawImage>().texture = miniMapTexture = new Texture2D(width, height) { wrapMode = TextureWrapMode.Clamp };

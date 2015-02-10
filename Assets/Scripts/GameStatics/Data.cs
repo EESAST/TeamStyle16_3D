@@ -8,22 +8,24 @@ using UnityEngine;
 
 public static class Data
 {
-	public static Base[] Bases = new Base[2];
-	public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
-	public static Dictionary<int, Element> Elements;
-	public static bool GamePaused;
+	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
-	public static int MarkPatternIndex;
-	public static float MarkScaleFactor = 1;
-	public static float ProductionEntrySize;
-	public static List<ProductionEntry>[] ProductionList;
 
 	public static class Game
 	{
-		public static JSONObject Populations;
+		public static int AttacksLeft;
+		public static int CollectsLeft;
+		public static int FixesLeft;
+		public static bool IsAttacking;
+		public static bool IsCollecting;
+		public static bool IsFixing;
+		public static bool IsMoving;
+		public static bool IsSupplying;
+		public static int MovesLeft;
+		public static bool Paused;
 		public static bool Ready;
-		public static JSONObject Scores;
+		public static int SuppliesLeft;
 	}
 
 	public static class GUI
@@ -61,8 +63,23 @@ public static class Data
 
 	public static class MiniMap
 	{
+		public static int MarkPatternIndex;
+		public static float MarkScaleFactor = 1;
 		public static Rect Rect;
 		public static float ScaleFactor;
+	}
+
+	public static class Replay
+	{
+		public static Base[] Bases = new Base[2];
+		//public static JSONObject CurrentScores;
+		public static float[] CurrentScores;
+		public static Dictionary<int, Element> Elements;
+		public static JSONObject Populations;
+		public static float ProductionEntrySize;
+		public static List<ProductionEntry>[] ProductionList;
+		public static int[] TargetScores;
+		public static JSONObject UnitNums;
 	}
 
 	public static class TeamColor

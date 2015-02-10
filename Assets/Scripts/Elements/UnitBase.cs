@@ -102,13 +102,17 @@ public abstract class UnitBase : Element
 		}
 	}
 
-	public void FireAtElement(UnitBase targetElement, int damage)
+	public IEnumerator FireAtPosition(Vector3 internalTargetPosition)
 	{
-		FireAtPosition(targetElement.transform.WorldCenterOfEntity());
-		targetElement.targetHP -= damage;
+		yield return FaceTarget(internalTargetPosition);
+		targetAmmo -= Constants.AmmoOnce[Kind()]; //TODO:run this when firing is actually animated; firing animation;
+		--Data.Game.AttacksLeft;
 	}
 
-	public void FireAtPosition(Vector3 internalTargetPosition) { targetAmmo -= Constants.AmmoOnce[Kind()]; //TODO:run this when firing is actually animated; firing animation;
+	public IEnumerator FireAtUnitBase(UnitBase targetElement, int damage)
+	{
+		yield return StartCoroutine(FireAtPosition(targetElement.transform.WorldCenterOfElement()));
+		targetElement.targetHP -= damage;
 	}
 
 	public override void Initialize(JSONObject info)
@@ -164,6 +168,18 @@ public abstract class UnitBase : Element
 					hbPixels[i + hbHorizontalPixelNumber * j] = Settings.HealthBar.EmptyColor;
 		hbTexture.SetPixels32(hbPixels);
 		hbTexture.Apply();
+	}
+
+	public IEnumerator Supply(UnitBase target, int fuel, int ammo, int metal)
+	{
+		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
+		targetFuel -= fuel;
+		targetAmmo -= ammo;
+		targetMetal -= metal;
+		target.targetFuel += fuel;
+		target.targetAmmo += ammo;
+		target.targetMetal += metal;
+		--Data.Game.SuppliesLeft;
 	}
 
 	protected override void Update()

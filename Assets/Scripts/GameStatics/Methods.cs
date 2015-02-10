@@ -116,7 +116,7 @@ public static class Methods
 		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
 		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
 		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
-		Data.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
+		Data.Replay.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
 	}
 
 	public static void Polygon(this Texture2D texture, Vector2[] points, Color lineColor, float lineThickness)
@@ -135,7 +135,7 @@ public static class Methods
 		return results;
 	}
 
-	public static Vector3 WorldCenterOfEntity(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Element>().Center()); }
+	public static Vector3 WorldCenterOfElement(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Element>().Center()); }
 
 	public static class Array
 	{
@@ -264,7 +264,7 @@ public static class Methods
 			if (Math.Abs(posZ - 2) < Mathf.Epsilon)
 				posZ = 3;
 			else if (Math.Abs(posZ - 1) < Mathf.Epsilon)
-				posZ += Data.BattleData["gamebody"]["map_info"]["types"][Mathf.RoundToInt(posX)][Mathf.RoundToInt(posY)].n;
+				posZ += Data.Battle["gamebody"]["map_info"]["types"][Mathf.RoundToInt(posX)][Mathf.RoundToInt(posY)].n;
 			return new Vector3(posX, posY, posZ);
 		}
 
@@ -279,7 +279,7 @@ public static class Methods
 	{
 		public static void Pause()
 		{
-			Data.GamePaused = true;
+			Data.Game.Paused = true;
 			Time.timeScale = 0;
 		}
 
@@ -294,7 +294,7 @@ public static class Methods
 
 		public static void Resume()
 		{
-			Data.GamePaused = false;
+			Data.Game.Paused = false;
 			Time.timeScale = 1;
 		}
 	}
@@ -381,15 +381,15 @@ public static class Methods
 					GUILayout.Label("尺寸", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(Data.MarkScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
-					Data.MarkScaleFactor = GUILayout.HorizontalSlider(Data.MarkScaleFactor, 1, 10);
+					GUILayout.Label(Data.MiniMap.MarkScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
+					Data.MiniMap.MarkScaleFactor = GUILayout.HorizontalSlider(Data.MiniMap.MarkScaleFactor, 1, 10);
 					GUILayout.EndHorizontal();
 					GUILayout.EndVertical();
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginVertical("box");
 					GUILayout.Label("图案", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
-					Data.MarkPatternIndex = GUILayout.Toolbar(Data.MarkPatternIndex, new[] { "默认", "方块" }, Data.GUI.Button.Medium);
+					Data.MiniMap.MarkPatternIndex = GUILayout.Toolbar(Data.MiniMap.MarkPatternIndex, new[] { "默认", "方块" }, Data.GUI.Button.Medium);
 					GUILayout.EndVertical();
 					GUILayout.EndScrollView();
 					break;
@@ -407,8 +407,8 @@ public static class Methods
 				stagedState = MenuState.Default;
 				for (var i = 0; i < 4; i++)
 					Data.TeamColor.Target[i] = Data.GUI.StagedTeamColor[i];
-				Data.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
-				Data.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
+				Data.MiniMap.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
+				Data.MiniMap.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -464,8 +464,8 @@ public static class Methods
 		{
 			for (var i = 0; i < 4; i++)
 				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Target[i];
-			Data.GUI.StagedMarkScaleFactor = Data.MarkScaleFactor;
-			Data.GUI.StagedMarkPatternIndex = Data.MarkPatternIndex;
+			Data.GUI.StagedMarkScaleFactor = Data.MiniMap.MarkScaleFactor;
+			Data.GUI.StagedMarkPatternIndex = Data.MiniMap.MarkPatternIndex;
 		}
 	}
 }

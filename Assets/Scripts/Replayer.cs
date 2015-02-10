@@ -8,10 +8,10 @@ using UnityEngine;
 
 public class Replayer : MonoBehaviour
 {
-	private readonly float defaultDeltaTime = 1;
-	private readonly float timePerFrame = 2; // 2 second(s)
-	private JSONObject commands;
-	private float dt, elapsedTime;
+	//private readonly float defaultDeltaTime = 1;
+	//private readonly float timePerFrame = 2; // 2 second(s)
+	//private JSONObject commands;
+	//private float dt, elapsedTime;
 	private JSONObject elements;
 	private JSONObject events;
 	private bool guiInitialized;
@@ -19,8 +19,9 @@ public class Replayer : MonoBehaviour
 	private Rect infoContentRect;
 	public Texture2D panelBackground;
 	private GUIStyle panelStyle;
-	private JSONObject productionLists;
-	private int round, frameCount;
+	//private JSONObject productionLists;
+	private int round = -1;
+	private int roundCount;
 
 	private void AddProductionEntries()
 	{
@@ -28,39 +29,55 @@ public class Replayer : MonoBehaviour
 			(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Setup(Mathf.RoundToInt(productionEntryAddition["team"].n), Mathf.RoundToInt(productionEntryAddition["kind"].n));
 	}
 
-	private void Attacks()
+	private IEnumerator Attacks()
 	{
+		Data.Game.IsAttacking = true;
 		foreach (var attack in events.list)
 			switch (attack["__class__"].str)
 			{
 				case "AttackUnit":
-					(Data.Elements[Mathf.RoundToInt(attack["index"].n)] as UnitBase).FireAtElement(Data.Elements[Mathf.RoundToInt(attack["target"].n)] as UnitBase, Mathf.RoundToInt(attack["damage"].n));
+					{
+						++Data.Game.AttacksLeft;
+						var attacker = Data.Replay.Elements[Mathf.RoundToInt(attack["index"].n)] as UnitBase;
+						var target = Data.Replay.Elements[Mathf.RoundToInt(attack["target"].n)] as UnitBase;
+						attacker.StartCoroutine(attacker.FireAtUnitBase(target, Mathf.RoundToInt(attack["damage"].n)));
+					}
 					break;
 				case "AttackMiss":
-					(Data.Elements[Mathf.RoundToInt(attack["index"].n)] as UnitBase).FireAtPosition(Methods.Coordinates.JSONToInternal(attack["target_pos"]));
+					{
+						++Data.Game.AttacksLeft;
+						var attacker = Data.Replay.Elements[Mathf.RoundToInt(attack["index"].n)] as UnitBase;
+						attacker.StartCoroutine(attacker.FireAtPosition(Methods.Coordinates.JSONToInternal(attack["target_pos"])));
+					}
 					break;
 				case "Capture":
-					var fort = Data.Elements[Mathf.RoundToInt(attack["index"].n)] as Fort;
+					++Data.Game.AttacksLeft;
+					var fort = Data.Replay.Elements[Mathf.RoundToInt(attack["index"].n)] as Fort;
 					fort.targetTeam = Mathf.RoundToInt(attack["team"].n);
 					break;
 			}
+		while (Data.Game.AttacksLeft > 0) //TODO:use coroutine to process a single attack
+			yield return new WaitForSeconds(0.04f);
+		Data.Game.IsAttacking = false;
 	}
 
 	private void Awake() { Delegates.ScreenSizeChanged += ResizeGUIRects; }
 
-	private void Collects()
+	private IEnumerator Collects()
 	{
+		Data.Game.IsCollecting = true;
 		foreach (var collect in events.list.Where(collect => collect["__class__"].str == "Collect"))
 		{
-			var collector = Data.Elements[Mathf.RoundToInt(collect["index"].n)] as Cargo;
-			var target = Data.Elements[Mathf.RoundToInt(collect["target"].n)] as Resource;
+			++Data.Game.CollectsLeft;
+			var collector = Data.Replay.Elements[Mathf.RoundToInt(collect["index"].n)] as Cargo;
+			var target = Data.Replay.Elements[Mathf.RoundToInt(collect["target"].n)] as Resource;
 			var fuel = Mathf.RoundToInt(collect["fuel"].n);
 			var metal = Mathf.RoundToInt(collect["metal"].n);
-			collector.targetFuel += fuel;
-			collector.targetMetal += metal;
-			target.targetFuel -= fuel;
-			target.targetMetal -= metal;
+			collector.StartCoroutine(collector.Collect(target, fuel, metal));
 		}
+		while (Data.Game.CollectsLeft > 0)
+			yield return new WaitForSeconds(0.04f);
+		Data.Game.IsCollecting = false;
 	}
 
 	private void Creates()
@@ -70,18 +87,24 @@ public class Replayer : MonoBehaviour
 		foreach (var create in events.list.Where(create => create["__class__"].str == "Create"))
 		{
 			var typeName = Constants.TypeNames[Mathf.RoundToInt(create["kind"].n)];
-			var info = elements[Mathf.RoundToInt(create["index"].n).ToString()];
+			var info = (round == roundCount ? Data.Battle["gamebody"]["map_info"]["elements"] : elements)[Mathf.RoundToInt(create["index"].n).ToString()];
 			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(info);
 		}
 	}
 
-	private void Fixes()
+	private IEnumerator Fixes()
 	{
+		Data.Game.IsFixing = true;
 		foreach (var fix in events.list.Where(fix => fix["__class__"].str == "Fix"))
 		{
-			(Data.Elements[Mathf.RoundToInt(fix["index"].n)] as Base).targetMetal -= Mathf.RoundToInt(fix["metal"].n);
-			(Data.Elements[Mathf.RoundToInt(fix["target"].n)] as Unit).targetHP += Mathf.RoundToInt(fix["health_increase"].n);
+			++Data.Game.FixesLeft;
+			var fixer = Data.Replay.Elements[Mathf.RoundToInt(fix["index"].n)] as Base;
+			var target = Data.Replay.Elements[Mathf.RoundToInt(fix["target"].n)] as Unit;
+			fixer.StartCoroutine(fixer.Fix(target, Mathf.RoundToInt(fix["metal"].n), Mathf.RoundToInt(fix["health_increase"].n)));
 		}
+		while (Data.Game.FixesLeft > 0)
+			yield return new WaitForSeconds(0.04f);
+		Data.Game.IsFixing = false;
 	}
 
 	private void InitializeGUI()
@@ -95,39 +118,52 @@ public class Replayer : MonoBehaviour
 	private IEnumerator LoadFrame( /*int round, bool shallAnimate = true*/)
 	{
 		//Data.Game.Ready = false;
-		Data.Game.Scores = Data.BattleData["history"]["score"][round];
-		Data.Game.Populations = Data.BattleData["history"]["population"][round]; //TODO:these should be updated during the corresponding period, not in the beginning
-		var keyFrame = Data.BattleData["key_frames"]; //a key frame is the snapshop of the initial state of a round
+		//Data.Replay.CurrentScores = Data.Battle["history"]["score"][round];
+		//Data.Replay.Populations = Data.Battle["history"]["population"][round]; //TODO:these should be updated during the corresponding period, not in the beginning
+		var keyFrame = Data.Battle["key_frames"]; //a key frame is the snapshot of the initial state of a round, which means the last key frame can't reflect the final state of the game, requiring the additional Data.Battle["gamebody"]
 		elements = keyFrame[round][0]; //an object within which lies a list of key-vals, i.e elements[i] is the ith element (key-val pair)
-		productionLists = keyFrame[round][1]; //an array comprised of two sub-arrays, stands for two teams, e.g. productionLists[1][i] stands for the ith production of team 1, which is still a two-entry array itself, i.e. [kind, roundLeft]
+		//productionLists = keyFrame[round][1]; //an array comprised of two sub-arrays, stands for two teams, e.g. productionLists[1][i] stands for the ith production of team 1, which is still a two-entry array itself, i.e. [kind, roundLeft]
 
 		Creates();
 
-		commands = Data.BattleData["history"]["command"][round]; //e.g. commands[0][i] stands for the ith command (object) of team 0
-		events = Data.BattleData["history"]["event"][round]; //e.g. events[i] stands for the ith event (object)
+		//commands = Data.Battle["history"]["command"][round]; //e.g. commands[0][i] stands for the ith command (object) of team 0
+		events = Data.Battle["history"]["event"][round]; //e.g. events[i] stands for the ith event (object)
 
 		AddProductionEntries();
-		Attacks();
-		yield return new WaitForSeconds(2);
-		Supplies();
-		Fixes();
-		yield return new WaitForSeconds(1);
-		Moves();
-		Collects();
-
-		yield return null;
+		yield return StartCoroutine(Attacks());
+		StartCoroutine(Supplies());
+		StartCoroutine(Fixes());
+		while (Data.Game.IsSupplying || Data.Game.IsFixing)
+			yield return new WaitForSeconds(0.04f);
+		yield return StartCoroutine(Moves());
+		StartCoroutine(Collects());
 	}
 
 	private void LoadNextFrame()
 	{
-		StartCoroutine(LoadFrame());
 		++round;
+		if (round < roundCount)
+			StartCoroutine(LoadFrame());
+		else
+		{
+			Creates();
+			CancelInvoke("LoadNextFrame");
+		}
 	}
 
-	private void Moves()
+	private IEnumerator Moves()
 	{
+		Data.Game.IsMoving = true;
 		foreach (var move in events.list.Where(move => move["__class__"].str == "Move"))
-			Data.Elements[Mathf.RoundToInt(move["index"].n)].transform.position = Methods.Coordinates.JSONToInternal(move["nodes"].list[move["nodes"].Count - 1]); //TODO:animate movement according to nodes
+		{
+			++Data.Game.MovesLeft;
+			var mover = Data.Replay.Elements[Mathf.RoundToInt(move["index"].n)] as Unit;
+			var nodes = move["nodes"];
+			mover.StartCoroutine(mover.Move(nodes));
+		}
+		while (Data.Game.MovesLeft > 0)
+			yield return new WaitForSeconds(0.04f);
+		Data.Game.IsMoving = false;
 	}
 
 	private void OnDestroy()
@@ -142,23 +178,12 @@ public class Replayer : MonoBehaviour
 			InitializeGUI();
 		GUILayout.BeginArea(infoAreaRect, panelStyle);
 		GUILayout.BeginArea(infoContentRect);
-		GUILayout.Label("第 " + round + " 回合", Data.GUI.Label.LargeMiddle);
+		GUILayout.Label("第 " + (round + 1) + " 回合", Data.GUI.Label.LargeMiddle);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(Data.Game.Scores[0].n + " : " + Data.Game.Scores[1].n, Data.GUI.Label.SmallMiddle);
+		GUILayout.Label(Data.Replay.CurrentScores[0] + " : " + Data.Replay.CurrentScores[1], Data.GUI.Label.SmallMiddle); //TODO:probably needs ToString()
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 	}
-
-	/*private IEnumerator Replay()
-	{
-		Data.Game.Ready = true;
-		while (round < frameCount - 1)
-		{
-			yield return new WaitForSeconds(defaultDeltaTime); //check status every default delta time
-			if (Data.Game.Ready)
-				LoadFrame(++round);
-		}
-	}*/
 
 	private void ResizeGUIRects()
 	{
@@ -170,28 +195,25 @@ public class Replayer : MonoBehaviour
 
 	private void Start()
 	{
-		frameCount = Data.BattleData["key_frames"].Count;
-		Data.Game.Scores = Data.BattleData["history"]["score"][0];
-		Data.Game.Populations = Data.BattleData["history"]["population"][0];
-		//StartCoroutine(Replay());
-		InvokeRepeating("LoadNextFrame", Settings.TimePerFrame, Settings.TimePerFrame);
+		roundCount = Data.Battle["key_frames"].Count;
+		InvokeRepeating("LoadNextFrame", 0, Settings.TimePerFrame); //Settings.TimePerFrame must suffice to allow for all procedures
 	}
 
-	private void Supplies()
+	private IEnumerator Supplies()
 	{
+		Data.Game.IsSupplying = true;
 		foreach (var supply in events.list.Where(supply => supply["__class__"].str == "Supply"))
 		{
-			var supplier = Data.Elements[Mathf.RoundToInt(supply["index"].n)] as UnitBase;
-			var target = Data.Elements[Mathf.RoundToInt(supply["target"].n)] as UnitBase;
+			++Data.Game.SuppliesLeft;
+			var supplier = Data.Replay.Elements[Mathf.RoundToInt(supply["index"].n)] as UnitBase;
+			var target = Data.Replay.Elements[Mathf.RoundToInt(supply["target"].n)] as UnitBase;
 			var fuel = Mathf.RoundToInt(supply["fuel"].n);
 			var ammo = Mathf.RoundToInt(supply["ammo"].n);
 			var metal = Mathf.RoundToInt(supply["metal"].n);
-			supplier.targetFuel -= fuel;
-			supplier.targetAmmo -= ammo;
-			supplier.targetMetal -= metal;
-			target.targetFuel += fuel;
-			target.targetAmmo += ammo;
-			target.targetMetal += metal;
+			supplier.StartCoroutine(supplier.Supply(target, fuel, ammo, metal));
 		}
+		while (Data.Game.SuppliesLeft > 0)
+			yield return new WaitForSeconds(0.04f);
+		Data.Game.IsSupplying = false;
 	}
 }

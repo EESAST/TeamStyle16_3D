@@ -17,7 +17,7 @@ public class LoadMap : MonoBehaviour
 	{
 		#region Preparations
 
-		var mapData = Data.BattleData["gamebody"]["map_info"]["types"];
+		var mapData = Data.Battle["gamebody"]["map_info"]["types"];
 		var worldSize = realMapSize * Settings.ScaleFactor;
 		var resolution = Mathf.RoundToInt(Mathf.Sqrt(realMapSize.x * realMapSize.y) * Settings.Terrain.Smoothness);
 		var terrainData = new TerrainData { heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1, size = new Vector3(worldSize.y, Settings.HeightOfLevel[2], worldSize.x), alphamapResolution = resolution, baseMapResolution = resolution };
@@ -167,7 +167,7 @@ public class LoadMap : MonoBehaviour
 
 	private void LoadInitialState()
 	{
-		foreach (var entry in Data.BattleData["key_frames"][0][0].list)
+		foreach (var entry in Data.Battle["key_frames"][0][0].list)
 		{
 			var typeName = entry["__class__"].str;
 			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);

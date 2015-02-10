@@ -143,6 +143,6 @@ public class MenuManager : MonoBehaviour
 			Methods.Game.Resume();
 		else
 			Methods.Game.Pause();
-		Camera.main.GetComponent<Blur>().enabled = Data.GamePaused;
+		Camera.main.GetComponent<Blur>().enabled = Data.Game.Paused;
 	}
 }

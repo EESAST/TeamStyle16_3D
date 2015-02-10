@@ -16,8 +16,8 @@ public class Setup : MonoBehaviour
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
 		RenderSettings.fogEndDistance = Settings.Camera.FarClipPlane;
 		Physics.gravity = Vector3.down * Settings.ScaleFactor;
-		var xMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["x_max"].n);
-		var yMax = Mathf.RoundToInt(Data.BattleData["gamebody"]["map_info"]["y_max"].n);
+		var xMax = Mathf.RoundToInt(Data.Battle["gamebody"]["map_info"]["x_max"].n);
+		var yMax = Mathf.RoundToInt(Data.Battle["gamebody"]["map_info"]["y_max"].n);
 		Data.MapSize = new Vector2(xMax, yMax);
 		Data.IsOccupied = new bool[xMax, yMax];
 		Methods.OnScreenSizeChanged();
@@ -43,7 +43,9 @@ public class Setup : MonoBehaviour
 
 	private void ResetData()
 	{
-		Data.Elements = new Dictionary<int, Element>();
-		Data.ProductionList = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
+		Data.Replay.Elements = new Dictionary<int, Element>();
+		Data.Replay.ProductionList = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
+		Data.Replay.CurrentScores = new float[2];
+		Data.Replay.TargetScores = new int[2];
 	}
 }

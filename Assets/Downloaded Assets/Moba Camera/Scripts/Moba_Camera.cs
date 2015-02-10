@@ -85,7 +85,7 @@ public class Moba_Camera : MonoBehaviour
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
-			var target = settings.lockTargetTransform.WorldCenterOfEntity();
+			var target = settings.lockTargetTransform.WorldCenterOfElement();
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)

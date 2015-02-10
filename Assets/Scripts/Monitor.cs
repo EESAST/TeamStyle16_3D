@@ -15,6 +15,14 @@ public class Monitor : MonoBehaviour
 
 	private void Update()
 	{
+		#region Current Scores
+
+		if (!Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))
+			for (var i = 0; i < 2; i++)
+				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.deltaTime);
+
+		#endregion
+
 		#region Current Team Color
 
 		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
@@ -29,22 +37,22 @@ public class Monitor : MonoBehaviour
 
 		#region Mark Pattern Index
 
-		if (markPatternIndex != Data.MarkPatternIndex)
+		if (markPatternIndex != Data.MiniMap.MarkPatternIndex)
 		{
 			if (Delegates.MarkPatternChanged != null)
 				Delegates.MarkPatternChanged();
-			markPatternIndex = Data.MarkPatternIndex;
+			markPatternIndex = Data.MiniMap.MarkPatternIndex;
 		}
 
 		#endregion
 
 		#region Mark Scale Factor
 
-		if (Math.Abs(markScaleFactor - Data.MarkScaleFactor) > Mathf.Epsilon)
+		if (Math.Abs(markScaleFactor - Data.MiniMap.MarkScaleFactor) > Mathf.Epsilon)
 		{
 			if (Delegates.MarkSizeChanged != null)
 				Delegates.MarkSizeChanged();
-			markScaleFactor = Data.MarkScaleFactor;
+			markScaleFactor = Data.MiniMap.MarkScaleFactor;
 		}
 
 		#endregion

@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections;
 using UnityEngine;
 
 #endregion
@@ -9,6 +10,16 @@ public class Cargo : Ship
 	private static readonly Material[][] materials = new Material[1][];
 
 	public override Vector3 Center() { return new Vector3(-0.75f, 0.01f, 0.30f); }
+
+	public IEnumerator Collect(Resource target, int fuel, int metal)
+	{
+		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
+		targetFuel += fuel;
+		targetMetal += metal;
+		target.targetFuel -= fuel;
+		target.targetMetal -= metal;
+		--Data.Game.CollectsLeft;
+	}
 
 	protected override Vector3 Dimensions() { return new Vector3(28.48f, 15.18f, 46.16f); }
 

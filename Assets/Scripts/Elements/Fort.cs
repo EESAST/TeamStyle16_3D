@@ -10,6 +10,12 @@ public class Fort : Building
 	private static readonly Material[][] materials = new Material[3][];
 	public int targetTeam;
 
+	protected override void Awake()
+	{
+		base.Awake();
+		targetTeam = -1;
+	}
+
 	public override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
@@ -31,6 +37,16 @@ public class Fort : Building
 
 	protected override int MaxHP() { return 800; }
 
+	protected override void OnDestroy()
+	{
+		if (targetTeam == -1)
+			return;
+		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
+		fort.team = targetTeam;
+		fort.StartCoroutine(fort.Rise(transform.position));
+		Data.Replay.Elements.Add(index, fort);
+	}
+
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 3; id++)
@@ -48,14 +64,6 @@ public class Fort : Building
 		}
 	}
 
-	/*private void OnDestroy()
-	{
-		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();	//TODO:spawning new objects in OnDestroy() is dangerous
-		fort.team = targetTeam;
-		fort.StartCoroutine(fort.Rise(transform.position));
-		Data.Elements.Add(index, fort);
-	}*/
-
 	private IEnumerator Rise(Vector3 internalTargetPosition) //TODO:maybe using a sine lerp
 	{
 		transform.position = internalTargetPosition - Vector3.up * RelativeSize * Settings.ScaleFactor;
@@ -64,6 +72,7 @@ public class Fort : Building
 			transform.position = Vector3.Lerp(transform.position, internalTargetPosition, 0.1f);
 			yield return new WaitForSeconds(0.04f);
 		}
+		--Data.Game.AttacksLeft;
 	}
 
 	protected override void Start()

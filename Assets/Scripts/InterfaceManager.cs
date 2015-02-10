@@ -99,7 +99,7 @@ public class InterfaceManager : MonoBehaviour
 		stagedState = MenuState.Default;
 		if (fileBrowser.outputFile == null || fileBrowser.outputFile.Extension != ".battle")
 			return;
-		Data.BattleData = new JSONObject(File.ReadAllText(fileBrowser.outputFile.FullName).Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+		Data.Battle = new JSONObject(File.ReadAllText(fileBrowser.outputFile.FullName).Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 		Application.LoadLevel("BattleField");
 	}
 

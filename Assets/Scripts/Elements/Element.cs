@@ -59,7 +59,7 @@ public abstract class Element : MonoBehaviour
 	protected virtual void Destruct()
 	{
 		isDead = true;
-		Data.Elements.Remove(index);
+		Data.Replay.Elements.Remove(index);
 		foreach (IElementFX elementFX in GetComponentsInChildren(typeof(IElementFX)))
 			elementFX.Disable();
 		highlighter.Die();
@@ -68,9 +68,10 @@ public abstract class Element : MonoBehaviour
 
 	protected abstract Vector3 Dimensions();
 
-	public IEnumerator FaceTarget(Vector3 target)
+	protected IEnumerator FaceTarget(Vector3 internalTargetPosition)
 	{
-		var dir = Methods.Coordinates.ExternalToInternal(target) - transform.position;
+		yield break;
+		/*var dir = Methods.Coordinates.ExternalToInternal(internalTargetPosition) - transform.position;
 		dir.y = 0;
 		var p = transform.rotation;
 		var q = Quaternion.FromToRotation(Vector3.forward, //this.transform.TransformDirection (Vector3.forward),
@@ -79,7 +80,7 @@ public abstract class Element : MonoBehaviour
 		{
 			transform.rotation = Quaternion.Slerp(p, q, t);
 			yield return new WaitForSeconds(0.01f);
-		}
+		}*/
 		//this.transform.rotation = q;
 
 		//var angles0 = this.transform.rotation.eulerAngles;
@@ -131,12 +132,12 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
 
-	private void RefreshMarkPattern() { markRect.GetComponent<RawImage>().texture = Data.MarkPatternIndex == 0 ? markTexture : null; }
+	private void RefreshMarkPattern() { markRect.GetComponent<RawImage>().texture = Data.MiniMap.MarkPatternIndex == 0 ? markTexture : null; }
 
 	private void RefreshMarkSize()
 	{
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MarkScaleFactor * Data.MiniMap.ScaleFactor);
-		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MarkScaleFactor * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RelativeSize * Data.MiniMap.MarkScaleFactor * Data.MiniMap.ScaleFactor);
+		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.MarkScaleFactor * Data.MiniMap.ScaleFactor);
 	}
 
 	public virtual void Select()
@@ -149,7 +150,7 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		Data.Elements.Add(index, this);
+		Data.Replay.Elements.Add(index, this);
 		transform.rotation = DefaultRotation;
 		transform.localScale = Vector3.one * RelativeSize * Settings.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		RefreshColor();
