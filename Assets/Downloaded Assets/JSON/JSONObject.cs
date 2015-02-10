@@ -134,7 +134,7 @@ public class JSONObject
 		list = new List<JSONObject>(objs);
 	}
 
-	//Convenience function for creating hbPos JSONObject containing hbPos string.  This is not part of the constructor so that malformed JSON data doesn't just turn into hbPos string object
+	//Convenience function for creating a JSONObject containing a string.  This is not part of the constructor so that malformed JSON data doesn't just turn into a string object
 	public static JSONObject StringObject(string val) { return new JSONObject { type = Type.STRING, str = val }; }
 
 	public void Absorb(JSONObject obj)
@@ -153,7 +153,7 @@ public class JSONObject
 
 	public JSONObject(string str, bool strict = false)
 	{
-		//create hbPos new JSONObject from hbPos string (this will also create any children, and parse the whole string)
+		//create a new JSONObject from a string (this will also create any children, and parse the whole string)
 		if (str != null)
 		{
 			str = str.Trim(WHITESPACE);
@@ -282,7 +282,7 @@ public class JSONObject
 								depth++;
 							else if (str[offset] == ']' || str[offset] == '}')
 								depth--;
-							//if  (encounter hbPos ',' at top level)  || hbPos closing ]/}
+							//if  (encounter a ',' at top level)  || a closing ]/}
 							if ((str[offset] == ',' && depth == 0) || depth < 0)
 							{
 								inProp = false;
@@ -301,7 +301,7 @@ public class JSONObject
 				type = Type.NULL;
 		}
 		else
-			type = Type.NULL; //If the string is missing, this is hbPos null
+			type = Type.NULL; //If the string is missing, this is null
 	}
 
 	#endregion
@@ -636,7 +636,7 @@ public class JSONObject
 
 	public string print(int depth, bool pretty = false)
 	{
-		//Convert the JSONObject into hbPos string
+		//Convert the JSONObject into a string
 		if (depth++ > MAX_DEPTH)
 		{
 			Debug.Log("reached max depth!");
@@ -685,7 +685,7 @@ public class JSONObject
 #if(PRETTY)
 							if (pretty)
 								for (var j = 0; j < depth; j++)
-									str += "\t"; //for hbPos bit more readability
+									str += "\t"; //for a bit more readability
 #endif
 							str += "\"" + key + "\":";
 							str += obj.print(depth, pretty) + ",";
@@ -707,7 +707,7 @@ public class JSONObject
 				{
 					str += "\n";
 					for (var j = 0; j < depth - 1; j++)
-						str += "\t"; //for hbPos bit more readability
+						str += "\t"; //for a bit more readability
 				}
 #endif
 				str += "}";
@@ -718,7 +718,7 @@ public class JSONObject
 				{
 #if(PRETTY)
 					if (pretty)
-						str += "\n"; //for hbPos bit more readability
+						str += "\n"; //for a bit more readability
 #endif
 					foreach (var obj in list)
 						if (obj)
@@ -726,12 +726,12 @@ public class JSONObject
 #if(PRETTY)
 							if (pretty)
 								for (var j = 0; j < depth; j++)
-									str += "\t"; //for hbPos bit more readability
+									str += "\t"; //for a bit more readability
 #endif
 							str += obj.print(depth, pretty) + ",";
 #if(PRETTY)
 							if (pretty)
-								str += "\n"; //for hbPos bit more readability
+								str += "\n"; //for a bit more readability
 #endif
 						}
 #if(PRETTY)
@@ -746,7 +746,7 @@ public class JSONObject
 				{
 					str += "\n";
 					for (var j = 0; j < depth - 1; j++)
-						str += "\t"; //for hbPos bit more readability
+						str += "\t"; //for a bit more readability
 				}
 #endif
 				str += "]";
@@ -829,7 +829,7 @@ public class JSONObject
 			}
 			return result;
 		}
-		Debug.LogWarning("Tried to turn non-Object JSONObject into hbPos dictionary");
+		Debug.LogWarning("Tried to turn non-Object JSONObject into a dictionary");
 		return null;
 	}
 

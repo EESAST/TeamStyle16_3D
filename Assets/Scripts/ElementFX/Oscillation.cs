@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class Oscillation : MonoBehaviour, IEntityFX
+public class Oscillation : MonoBehaviour, IElementFX
 {
 	private float amplitude;
 	private float angularAmplitude;

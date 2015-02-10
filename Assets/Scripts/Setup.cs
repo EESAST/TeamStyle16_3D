@@ -43,7 +43,7 @@ public class Setup : MonoBehaviour
 
 	private void ResetData()
 	{
-		Data.Entities = new Dictionary<int, Entity>();
+		Data.Elements = new Dictionary<int, Element>();
 		Data.ProductionList = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
 	}
 }

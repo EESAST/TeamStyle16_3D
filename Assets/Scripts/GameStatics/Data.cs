@@ -8,8 +8,9 @@ using UnityEngine;
 
 public static class Data
 {
+	public static Base[] Bases = new Base[2];
 	public static JSONObject BattleData = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
-	public static Dictionary<int, Entity> Entities;
+	public static Dictionary<int, Element> Elements;
 	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
@@ -49,10 +50,11 @@ public static class Data
 
 		public static class Label
 		{
-			public static GUIStyle Large;
+			public static GUIStyle LargeLeft;
 			public static GUIStyle LargeMiddle;
 			public static GUIStyle[] RGB = new GUIStyle[3];
-			public static GUIStyle Small;
+			public static GUIStyle SmallLeft;
+			public static GUIStyle SmallMiddle;
 			public static GUIStyle[] TeamColored = new GUIStyle[3];
 		}
 	}
@@ -66,6 +68,6 @@ public static class Data
 	public static class TeamColor
 	{
 		public static Color[] Current = new Color[4];
-		public static Color[] Desired = { Color.magenta, Color.cyan, Color.gray, Color.white };
+		public static Color[] Target = { Color.magenta, Color.cyan, Color.gray, Color.white };
 	}
 }

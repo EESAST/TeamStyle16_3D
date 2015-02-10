@@ -10,12 +10,11 @@ public static class Settings
 	private static readonly float _shadowDistance = 50;
 	public static int CloudNumber = 50;
 	public static RectOffset MapSizeOffset = new RectOffset(80, 80, 80, 80);
+	public static int MaxEntryPerRow = 5;
 	public static float ScaleFactor = 5;
 	public static int TextGranularity = 3;
-	public static float TimePerFrame = 3;
+	public static float TimePerFrame = 5;
 	public static float Tolerance = 0.01f;
-	public static int MaxEntryNumPerRow = 5;
-
 	public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }
 	public static float ShadowDistance { get { return _shadowDistance * ScaleFactor; } }
 
@@ -87,7 +86,7 @@ public static class Settings
 		public static float FogDensity = 0.02f;
 		public static Color ReflectionColor = new Color(0.5f, 0.5f, 1, 0.5f);
 		public static Color RefractionColor = new Color(0, 0, 0.4f, 0.6f);
-		public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Entity", "Fragment");
+		public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Element", "Fragment");
 	}
 
 	public static class TeamColor

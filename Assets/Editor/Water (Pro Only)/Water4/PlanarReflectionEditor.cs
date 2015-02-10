@@ -1,4 +1,4 @@
-﻿#region
+#region
 
 using UnityEditor;
 using UnityEngine;
@@ -9,6 +9,9 @@ using UnityEngine;
 public class PlanarReflectionEditor : Editor
 {
 	private SerializedProperty clearColor;
+	//private SerializedProperty wavesFrequency;
+
+	// reflection
 	private SerializedProperty reflectionMask;
 	private SerializedProperty reflectSkybox;
 	private SerializedObject serObj;

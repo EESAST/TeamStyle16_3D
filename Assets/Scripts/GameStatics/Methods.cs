@@ -1,7 +1,9 @@
 ﻿#region
 
+using System;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 #endregion
 
@@ -111,7 +113,6 @@ public static class Methods
 	{
 		var screenArea = Screen.width * Screen.height;
 		Data.MiniMap.ScaleFactor = Mathf.Sqrt(screenArea / Data.MapSize.x / Data.MapSize.y) / 4;
-		//Data.MiniMap.ScaleFactor = (Screen.width + Screen.height) / (Vector2.Dot(Data.MapSize, Vector2.one * 4));
 		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
 		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
 		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
@@ -134,7 +135,7 @@ public static class Methods
 		return results;
 	}
 
-	public static Vector3 WorldCenterOfEntity(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Entity>().Center()); }
+	public static Vector3 WorldCenterOfEntity(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Element>().Center()); }
 
 	public static class Array
 	{
@@ -232,25 +233,39 @@ public static class Methods
 
 		public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
 
-		public static Vector2 JSONToExternal(JSONObject jsonPos)
+		public static Vector3 JSONToExternal(JSONObject jsonPos)
 		{
-			float posX, posY;
-			JSONToExternal(jsonPos, out posX, out posY);
-			return new Vector2(posX, posY);
+			float posX, posY, posZ;
+			JSONToExternal(jsonPos, out posX, out posY, out posZ);
+			return new Vector3(posX, posY, posZ);
 		}
 
-		public static void JSONToExternal(JSONObject jsonPos, out float posX, out float posY)
+		public static Vector3 JSONToExternal(JSONObject jsonPos, out float posX, out float posY)
+		{
+			float posZ;
+			JSONToExternal(jsonPos, out posX, out posY, out posZ);
+			return new Vector3(posX, posY, posZ);
+		}
+
+		public static Vector3 JSONToExternal(JSONObject jsonPos, out float posX, out float posY, out float posZ)
 		{
 			if (jsonPos["__class__"].str == "Rectangle")
 			{
 				posX = (jsonPos["upper_left"]["x"].n + jsonPos["lower_right"]["x"].n) / 2;
 				posY = (jsonPos["upper_left"]["y"].n + jsonPos["lower_right"]["y"].n) / 2;
+				posZ = (jsonPos["upper_left"]["z"].n + jsonPos["lower_right"]["z"].n) / 2;
 			}
 			else
 			{
 				posX = jsonPos["x"].n;
 				posY = jsonPos["y"].n;
+				posZ = jsonPos["z"].n;
 			}
+			if (Math.Abs(posZ - 2) < Mathf.Epsilon)
+				posZ = 3;
+			else if (Math.Abs(posZ - 1) < Mathf.Epsilon)
+				posZ += Data.BattleData["gamebody"]["map_info"]["types"][Mathf.RoundToInt(posX)][Mathf.RoundToInt(posY)].n;
+			return new Vector3(posX, posY, posZ);
 		}
 
 		public static Vector3 JSONToInternal(JSONObject jsonPos) { return ExternalToInternal(JSONToExternal(jsonPos)); }
@@ -307,14 +322,14 @@ public static class Methods
 		{
 			GUILayout.BeginVertical("box");
 			Data.GUI.AboutScroll = GUILayout.BeginScrollView(Data.GUI.AboutScroll);
-			GUILayout.Label("第十六届电子系队式程序设计大赛专用3D回放引擎", Data.GUI.Label.Small);
-			GUILayout.Label("电子系科协软件部队式3D组出品", Data.GUI.Label.Small);
+			GUILayout.Label("第十六届电子系队式程序设计大赛专用3D回放引擎", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("电子系科协软件部队式3D组出品", Data.GUI.Label.SmallMiddle);
 			GUILayout.FlexibleSpace();
-			GUILayout.Label("开发者：", Data.GUI.Label.Large);
-			GUILayout.Label("林圣杰", Data.GUI.Label.Small);
-			GUILayout.Label("钟元熠", Data.GUI.Label.Small);
-			GUILayout.Label("鸣谢：", Data.GUI.Label.Large);
-			GUILayout.Label("翁喆", Data.GUI.Label.Small);
+			GUILayout.Label("开发者：", Data.GUI.Label.LargeLeft);
+			GUILayout.Label("林圣杰", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("钟元熠", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("鸣谢：", Data.GUI.Label.LargeLeft);
+			GUILayout.Label("翁喆", Data.GUI.Label.SmallMiddle);
 			GUILayout.EndScrollView();
 			GUILayout.EndVertical();
 			GUILayout.FlexibleSpace();
@@ -335,7 +350,7 @@ public static class Methods
 					{
 						GUILayout.BeginHorizontal("box");
 						if (GUILayout.Button(Data.GUI.Random, Data.GUI.Button.Large, GUILayout.ExpandHeight(true)))
-							Data.TeamColor.Desired[i] = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
+							Data.TeamColor.Target[i] = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
 						GUILayout.BeginVertical();
 						GUILayout.BeginHorizontal();
 						GUILayout.Label(Data.GUI.TeamDescriptions[i], Data.GUI.Label.TeamColored[i]);
@@ -343,15 +358,15 @@ public static class Methods
 						GUILayout.EndHorizontal();
 						GUILayout.BeginHorizontal();
 						GUILayout.Label("红", Data.GUI.Label.RGB[0]);
-						Data.TeamColor.Desired[i].r = GUILayout.HorizontalSlider(Data.TeamColor.Desired[i].r, 0, 1);
+						Data.TeamColor.Target[i].r = GUILayout.HorizontalSlider(Data.TeamColor.Target[i].r, 0, 1);
 						GUILayout.EndHorizontal();
 						GUILayout.BeginHorizontal();
 						GUILayout.Label("绿", Data.GUI.Label.RGB[1]);
-						Data.TeamColor.Desired[i].g = GUILayout.HorizontalSlider(Data.TeamColor.Desired[i].g, 0, 1);
+						Data.TeamColor.Target[i].g = GUILayout.HorizontalSlider(Data.TeamColor.Target[i].g, 0, 1);
 						GUILayout.EndHorizontal();
 						GUILayout.BeginHorizontal();
 						GUILayout.Label("蓝", Data.GUI.Label.RGB[2]);
-						Data.TeamColor.Desired[i].b = GUILayout.HorizontalSlider(Data.TeamColor.Desired[i].b, 0, 1);
+						Data.TeamColor.Target[i].b = GUILayout.HorizontalSlider(Data.TeamColor.Target[i].b, 0, 1);
 						GUILayout.EndHorizontal();
 						GUILayout.EndVertical();
 						GUILayout.EndHorizontal();
@@ -363,16 +378,16 @@ public static class Methods
 				case 1:
 					Data.GUI.LegendScroll = GUILayout.BeginScrollView(Data.GUI.LegendScroll);
 					GUILayout.BeginVertical("box");
-					GUILayout.Label("尺寸", Data.GUI.Label.Large);
+					GUILayout.Label("尺寸", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(Data.MarkScaleFactor.ToString("F"), Data.GUI.Label.Small);
+					GUILayout.Label(Data.MarkScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
 					Data.MarkScaleFactor = GUILayout.HorizontalSlider(Data.MarkScaleFactor, 1, 10);
 					GUILayout.EndHorizontal();
 					GUILayout.EndVertical();
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginVertical("box");
-					GUILayout.Label("图案", Data.GUI.Label.Large);
+					GUILayout.Label("图案", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
 					Data.MarkPatternIndex = GUILayout.Toolbar(Data.MarkPatternIndex, new[] { "默认", "方块" }, Data.GUI.Button.Medium);
 					GUILayout.EndVertical();
@@ -391,7 +406,7 @@ public static class Methods
 			{
 				stagedState = MenuState.Default;
 				for (var i = 0; i < 4; i++)
-					Data.TeamColor.Desired[i] = Data.GUI.StagedTeamColor[i];
+					Data.TeamColor.Target[i] = Data.GUI.StagedTeamColor[i];
 				Data.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
 				Data.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
 			}
@@ -412,9 +427,10 @@ public static class Methods
 			Data.GUI.Button.Large = new GUIStyle("button");
 			Data.GUI.Button.Medium = new GUIStyle("button");
 			Data.GUI.Button.Small = new GUIStyle("button");
-			Data.GUI.Label.Large = new GUIStyle("label");
+			Data.GUI.Label.LargeLeft = new GUIStyle("label");
 			Data.GUI.Label.LargeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
-			Data.GUI.Label.Small = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
+			Data.GUI.Label.SmallLeft = new GUIStyle("label");
+			Data.GUI.Label.SmallMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
 			Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
 			Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
@@ -425,7 +441,7 @@ public static class Methods
 		{
 			for (var i = 0; i < 3; i++)
 			{
-				Data.GUI.TeamColoredTextures[i].SetPixel(0, 0, Data.GUI.Label.TeamColored[i].normal.textColor = Data.TeamColor.Desired[i]);
+				Data.GUI.TeamColoredTextures[i].SetPixel(0, 0, Data.GUI.Label.TeamColored[i].normal.textColor = Data.TeamColor.Target[i]);
 				Data.GUI.TeamColoredTextures[i].Apply();
 			}
 		}
@@ -438,8 +454,8 @@ public static class Methods
 			Data.GUI.Button.Large.fontSize = Mathf.RoundToInt(physicalHeight * 5);
 			Data.GUI.Button.Medium.fontSize = Mathf.RoundToInt(physicalHeight * 4);
 			Data.GUI.Button.Small.fontSize = Mathf.RoundToInt(physicalHeight * 3);
-			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.Large.fontSize = Mathf.RoundToInt(physicalHeight * 5);
-			Data.GUI.Label.Small.fontSize = Mathf.RoundToInt(physicalHeight * 4);
+			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = Mathf.RoundToInt(physicalHeight * 5);
+			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = Mathf.RoundToInt(physicalHeight * 4);
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalHeight * 3);
 		}
@@ -447,7 +463,7 @@ public static class Methods
 		public static void StageCurrentOptions()
 		{
 			for (var i = 0; i < 4; i++)
-				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Desired[i];
+				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Target[i];
 			Data.GUI.StagedMarkScaleFactor = Data.MarkScaleFactor;
 			Data.GUI.StagedMarkPatternIndex = Data.MarkPatternIndex;
 		}

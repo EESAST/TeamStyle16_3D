@@ -1,18 +1,20 @@
 ﻿#region
 
+using System.Collections;
 using UnityEngine;
 
 #endregion
 
-public class Fort : Unit
+public class Fort : Building
 {
 	private static readonly Material[][] materials = new Material[3][];
+	public int targetTeam;
 
 	public override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
 
-	protected override int Level() { return 2; }
+	protected override int Kind() { return 1; }
 
 	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Fort")) as GameObject).GetComponent<RectTransform>(); }
 
@@ -43,6 +45,24 @@ public class Fort : Unit
 			var offset = materials[2][team].mainTextureOffset;
 			offset.y = (offset.y + Time.deltaTime) % 1;
 			materials[2][team].mainTextureOffset = offset;
+		}
+	}
+
+	/*private void OnDestroy()
+	{
+		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();	//TODO:spawning new objects in OnDestroy() is dangerous
+		fort.team = targetTeam;
+		fort.StartCoroutine(fort.Rise(transform.position));
+		Data.Elements.Add(index, fort);
+	}*/
+
+	private IEnumerator Rise(Vector3 internalTargetPosition) //TODO:maybe using a sine lerp
+	{
+		transform.position = internalTargetPosition - Vector3.up * RelativeSize * Settings.ScaleFactor;
+		while ((internalTargetPosition - transform.position).y > Settings.Tolerance)
+		{
+			transform.position = Vector3.Lerp(transform.position, internalTargetPosition, 0.1f);
+			yield return new WaitForSeconds(0.04f);
 		}
 	}
 

@@ -4,26 +4,28 @@ using UnityEngine;
 
 #endregion
 
-public class Destroyer : Vessel
+public class Cargo : Ship
 {
 	private static readonly Material[][] materials = new Material[1][];
 
-	public override Vector3 Center() { return new Vector3(-0.62f, 17.21f, -0.01f); }
+	public override Vector3 Center() { return new Vector3(-0.75f, 0.01f, 0.30f); }
 
-	protected override Vector3 Dimensions() { return new Vector3(36.13f, 54.69f, 85.58f); }
+	protected override Vector3 Dimensions() { return new Vector3(28.48f, 15.18f, 46.16f); }
+
+	protected override int Kind() { return 7; }
 
 	public static void LoadMaterial()
 	{
-		string[] name = { "D" };
+		string[] name = { "C" };
 		for (var id = 0; id < 1; id++)
 		{
 			materials[id] = new Material[3];
 			for (var team = 0; team < 3; team++)
-				materials[id][team] = Resources.Load<Material>("Destroyer/Materials/" + name[id] + "_" + team);
+				materials[id][team] = Resources.Load<Material>("Cargo/Materials/" + name[id] + "_" + team);
 		}
 	}
 
-	protected override int MaxHP() { return 70; }
+	protected override int MaxHP() { return 60; }
 
 	public static void RefreshMaterialColor()
 	{

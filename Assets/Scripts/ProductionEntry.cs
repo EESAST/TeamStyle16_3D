@@ -10,11 +10,11 @@ public class ProductionEntry : MonoBehaviour
 {
 	private float currentPos;
 	private Text description;
-	private int desiredPos;
 	private RectTransform entry;
 	private float lifeSpan;
 	private int progress;
 	private float spawnTime;
+	private int targetPos;
 	private int team;
 	private Image tintedIcon;
 	private Image underlay;
@@ -40,8 +40,8 @@ public class ProductionEntry : MonoBehaviour
 		spawnTime = Time.time;
 		while ((tintedIcon.fillAmount = (Time.time - spawnTime) / lifeSpan) < 1)
 			yield return new WaitForSeconds(0.04f);
-		for (var i = 0; i < Data.ProductionList[team].Count - desiredPos - 1; i++)
-			Data.ProductionList[team][i].desiredPos--;
+		for (var i = 0; i < Data.ProductionList[team].Count - targetPos - 1; i++)
+			Data.ProductionList[team][i].targetPos--;
 		Data.ProductionList[team].Remove(this);
 		underlay.color = Color.clear;
 		var c1 = description.color;
@@ -71,7 +71,8 @@ public class ProductionEntry : MonoBehaviour
 		description.text = Constants.ChineseNames[kind];
 		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
 		foreach (var productionEntry in Data.ProductionList[team])
-			productionEntry.desiredPos++;
+			productionEntry.targetPos++;
+		Data.Bases[team].targetMetal -= Constants.Costs[kind];
 		Data.ProductionList[team].Add(this);
 	}
 
@@ -84,11 +85,11 @@ public class ProductionEntry : MonoBehaviour
 
 	private void Update()
 	{
-		if (Mathf.Abs(desiredPos - currentPos) > Settings.Tolerance)
-			currentPos = Mathf.Lerp(currentPos, desiredPos, 3 * Time.deltaTime);
-		var t = currentPos % Settings.MaxEntryNumPerRow;
-		entry.anchoredPosition = t < Settings.MaxEntryNumPerRow - 1 ? Data.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxEntryNumPerRow)) : Data.ProductionEntrySize * new Vector2((Settings.MaxEntryNumPerRow - 1) * (Settings.MaxEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxEntryNumPerRow) + t + 1 - Settings.MaxEntryNumPerRow));
+		if (Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
+			currentPos = Mathf.Lerp(currentPos, targetPos, 3 * Time.deltaTime);
+		var t = currentPos % Settings.MaxEntryPerRow;
+		entry.anchoredPosition = t < Settings.MaxEntryPerRow - 1 ? Data.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxEntryPerRow)) : Data.ProductionEntrySize * new Vector2((Settings.MaxEntryPerRow - 1) * (Settings.MaxEntryPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxEntryPerRow) + t + 1 - Settings.MaxEntryPerRow));
 		if (team == 1)
-			entry.anchoredPosition -= Vector2.up * Data.ProductionEntrySize * Mathf.Ceil((float)Data.ProductionList[0].Count / Settings.MaxEntryNumPerRow);
+			entry.anchoredPosition -= Vector2.up * Data.ProductionEntrySize * Mathf.Ceil((float)Data.ProductionList[0].Count / Settings.MaxEntryPerRow);
 	}
 }

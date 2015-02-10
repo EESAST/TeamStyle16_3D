@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class AutoRotation : MonoBehaviour, IEntityFX
+public class AutoRotation : MonoBehaviour, IElementFX
 {
 	public bool enableInParentSpace;
 	public bool enableInSelfSpace;

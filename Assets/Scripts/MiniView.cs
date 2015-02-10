@@ -8,8 +8,8 @@ using UnityEngine.UI;
 public class MiniView : MonoBehaviour
 {
 	private Color32[] clearPixels;
-	private Texture2D miniViewTexture;
 	private float lineThickness;
+	private Texture2D miniViewTexture;
 
 	private void Awake() { Delegates.ScreenSizeChanged += RefreshView; }
 

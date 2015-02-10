@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class Fighter : Unit
+public class Fighter : Plane
 {
 	private static readonly Material[][] materials = new Material[1][];
 
@@ -12,9 +12,7 @@ public class Fighter : Unit
 
 	protected override Vector3 Dimensions() { return new Vector3(4.78f, 1.93f, 5.82f); }
 
-	protected override int Level() { return 3; }
-
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Aircraft")) as GameObject).GetComponent<RectTransform>(); }
+	protected override int Kind() { return 8; }
 
 	public static void LoadMaterial()
 	{

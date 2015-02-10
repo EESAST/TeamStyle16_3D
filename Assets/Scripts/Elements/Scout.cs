@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class Scout : Unit
+public class Scout : Plane
 {
 	private static readonly Material[][] materials = new Material[2][];
 
@@ -12,9 +12,7 @@ public class Scout : Unit
 
 	protected override Vector3 Dimensions() { return new Vector3(1.59f, 0.82f, 2.51f); }
 
-	protected override int Level() { return 3; }
-
-	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Aircraft")) as GameObject).GetComponent<RectTransform>(); }
+	protected override int Kind() { return 9; }
 
 	public static void LoadMaterial()
 	{

@@ -10,7 +10,17 @@ public class Oilfield : Resource
 
 	public override Vector3 Center() { return new Vector3(0.00f, 0.04f, 0.02f); }
 
+	protected override float CurrentStorage() { return currentFuel; }
+
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.41f, 2.71f); }
+
+	public override void Initialize(JSONObject info)
+	{
+		base.Initialize(info);
+		currentFuel = targetFuel = initialStorage = Mathf.RoundToInt(info["fuel"].n);
+	}
+
+	protected override int Kind() { return 3; }
 
 	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Oilfield")) as GameObject).GetComponent<RectTransform>(); }
 
@@ -20,8 +30,6 @@ public class Oilfield : Resource
 		for (var id = 0; id < 4; id++)
 			materials[id] = Resources.Load<Material>("Oilfield/Materials/" + name[id]);
 	}
-
-	protected override int MaxHP() { return 1000; }
 
 	public static void RefreshTextureOffset()
 	{
@@ -41,4 +49,6 @@ public class Oilfield : Resource
 		for (var i = 0; i < 3; i++)
 			transform.FindChild("Pool_" + i).GetComponent<MeshRenderer>().material = materials[i + 1];
 	}
+
+	protected override string StorageDescription() { return "燃料"; }
 }

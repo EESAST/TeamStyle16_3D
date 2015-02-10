@@ -322,11 +322,11 @@ Material:
       data:
         first:
           name: _BaseColor
-        second: {r: 0, g: 0, b: .400000006, a: .600000024}
+        second: {r: .153709054, g: .268130153, b: .298507452, a: .819999993}
       data:
         first:
           name: _ReflectionColor
-        second: {r: .5, g: .5, b: 1, a: .5}
+        second: {r: .579416394, g: .684923828, b: .76119405, a: .431372553}
       data:
         first:
           name: _SpecularColor

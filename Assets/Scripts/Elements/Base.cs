@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class Base : Unit
+public class Base : Building
 {
 	private static readonly Material[][] materials = new Material[2][];
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
@@ -14,7 +14,13 @@ public class Base : Unit
 
 	protected override Vector3 Dimensions() { return new Vector3(6.22f, 5.25f, 6.23f); }
 
-	protected override int Level() { return 2; }
+	public override void Initialize(JSONObject info)
+	{
+		base.Initialize(info);
+		Data.Bases[team] = this;
+	}
+
+	protected override int Kind() { return 0; }
 
 	protected override void LoadMark() { markRect = (Instantiate(Resources.Load("Marks/Base")) as GameObject).GetComponent<RectTransform>(); }
 

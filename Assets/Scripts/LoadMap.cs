@@ -169,10 +169,8 @@ public class LoadMap : MonoBehaviour
 	{
 		foreach (var entry in Data.BattleData["key_frames"][0][0].list)
 		{
-			var entityType = entry["__class__"].str;
-			var entity = (Instantiate(Resources.Load(entityType + '/' + entityType)) as GameObject).GetComponent(entityType) as Entity;
-			entity.Info = entry;
-			Data.Entities.Add(Mathf.RoundToInt(entry["index"].n), entity);
+			var typeName = entry["__class__"].str;
+			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);
 		}
 	}
 

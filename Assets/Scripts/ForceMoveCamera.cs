@@ -18,7 +18,6 @@ public class ForceMoveCamera : MonoBehaviour
 			mobaCamera.isForcedMoving = false;
 		if (!mobaCamera.isForcedMoving)
 			return;
-		var target = Methods.Coordinates.MiniMapBasedScreenToInternal(Input.mousePosition);
-		mobaCamera.ForceDestination = target;
+		mobaCamera.ForceDestination = Methods.Coordinates.MiniMapBasedScreenToInternal(Input.mousePosition);
 	}
 }

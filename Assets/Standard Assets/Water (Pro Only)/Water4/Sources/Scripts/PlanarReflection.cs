@@ -1,4 +1,4 @@
-﻿#region
+#region
 
 using System;
 using System.Collections.Generic;
@@ -6,16 +6,17 @@ using UnityEngine;
 
 #endregion
 
-[ExecuteInEditMode, RequireComponent(typeof(WaterBase))]
+[ExecuteInEditMode]
+[RequireComponent(typeof(WaterBase))]
 public class PlanarReflection : MonoBehaviour
 {
-	// reflection
 	public Color clearColor = Color.grey;
 	// height
 	public float clipPlaneOffset = 0.07F;
 	private Dictionary<Camera, bool> helperCameras;
 	private Vector3 oldpos = Vector3.zero;
 	private Camera reflectionCamera;
+	// reflection
 	public LayerMask reflectionMask;
 	public String reflectionSampler = "_ReflectionTex";
 	public bool reflectSkybox = false;

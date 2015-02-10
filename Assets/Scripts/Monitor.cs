@@ -17,10 +17,10 @@ public class Monitor : MonoBehaviour
 	{
 		#region Current Team Color
 
-		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Desired))
+		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
 		{
 			for (var i = 0; i < 4; i++)
-				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Desired[i], Settings.TeamColor.TransitionRate * Time.deltaTime);
+				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TeamColor.TransitionRate * Time.deltaTime);
 			if (Delegates.CurrentTeamColorChanged != null)
 				Delegates.CurrentTeamColorChanged();
 		}
@@ -67,13 +67,13 @@ public class Monitor : MonoBehaviour
 		if (!Data.GUI.Initialized)
 			return;
 
-		#region Desired Team Color
+		#region Target Team Color
 
-		if (!Methods.Array.Equals(teamColor, Data.TeamColor.Desired))
+		if (!Methods.Array.Equals(teamColor, Data.TeamColor.Target))
 		{
 			Methods.GUI.RefreshTeamColoredStyles();
 			for (var i = 0; i < 4; i++)
-				teamColor[i] = Data.TeamColor.Desired[i];
+				teamColor[i] = Data.TeamColor.Target[i];
 		}
 
 		#endregion

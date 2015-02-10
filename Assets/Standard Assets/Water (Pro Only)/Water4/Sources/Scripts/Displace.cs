@@ -1,10 +1,11 @@
-﻿#region
+#region
 
 using UnityEngine;
 
 #endregion
 
-[ExecuteInEditMode, RequireComponent(typeof(WaterBase))]
+[ExecuteInEditMode]
+[RequireComponent(typeof(WaterBase))]
 public class Displace : MonoBehaviour
 {
 	public void Awake()

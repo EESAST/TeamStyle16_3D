@@ -5,7 +5,7 @@ using UnityEngine;
 
 #endregion
 
-public class Flashlight : MonoBehaviour, IEntityFX
+public class Flashlight : MonoBehaviour, IElementFX
 {
 	public float amplitude;
 	private LensFlare flare;
@@ -35,7 +35,7 @@ public class Flashlight : MonoBehaviour, IEntityFX
 			yield return new WaitForSeconds(0.04f);
 	}
 
-	public void RefreshLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Entity>().team]; }
+	public void RefreshLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Element>().team]; }
 
 	private void Update() { flare.brightness = light.intensity = amplitude * Mathf.Sin(omega * Time.time) + offset; }
 }
