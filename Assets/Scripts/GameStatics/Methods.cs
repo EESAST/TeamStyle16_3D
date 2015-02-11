@@ -215,20 +215,20 @@ public static class Methods
 
 		public static Vector2 InternalToMiniMapRatios(Vector3 internalCoordinates) { return ExternalToMiniMapRatios(InternalToExternal(internalCoordinates)); }
 
-		private static Vector3 IntersectToDefaultHeight(Vector3 lhs, Vector3 rhs)
+		private static Vector3 IntersectToCameraPivotHeight(Vector3 lhs, Vector3 rhs)
 		{
-			var t = (Settings.Camera.Movement.DefaultHeight - lhs.y) / (rhs.y - lhs.y);
+			var t = (Camera.main.transform.root.position.y - lhs.y) / (rhs.y - lhs.y);
 			return (1 - t) * lhs + t * rhs;
 		}
 
-		public static Vector3[] IntersectToDefaultHeight(Vector3 origin, Vector3[] farCorners)
+		public static Vector3[] IntersectToCameraPivotHeight(Vector3 origin, Vector3[] farCorners)
 		{
 			var flags = new bool[2];
 			for (var i = 0; i < 2; i++)
-				flags[i] = (origin.y - Settings.Camera.Movement.DefaultHeight) * (farCorners[i].y - Settings.Camera.Movement.DefaultHeight) < 0;
+				flags[i] = (origin.y - Camera.main.transform.root.position.y) * (farCorners[i].y - Camera.main.transform.root.position.y) < 0;
 			if (!flags[0] && !flags[1])
 				return null;
-			return new[] { IntersectToDefaultHeight(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToDefaultHeight(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToDefaultHeight(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToDefaultHeight(flags[0] ? origin : farCorners[2], farCorners[3]) };
+			return new[] { IntersectToCameraPivotHeight(flags[0] ? origin : farCorners[1], farCorners[0]), IntersectToCameraPivotHeight(flags[1] ? origin : farCorners[0], farCorners[1]), IntersectToCameraPivotHeight(flags[1] ? origin : farCorners[3], farCorners[2]), IntersectToCameraPivotHeight(flags[0] ? origin : farCorners[2], farCorners[3]) };
 		}
 
 		public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
@@ -247,7 +247,7 @@ public static class Methods
 			return new Vector3(posX, posY, posZ);
 		}
 
-		public static Vector3 JSONToExternal(JSONObject jsonPos, out float posX, out float posY, out float posZ)
+		public static void JSONToExternal(JSONObject jsonPos, out float posX, out float posY, out float posZ)
 		{
 			if (jsonPos["__class__"].str == "Rectangle")
 			{
@@ -265,7 +265,6 @@ public static class Methods
 				posZ = 3;
 			else if (Math.Abs(posZ - 1) < Mathf.Epsilon)
 				posZ += Data.Battle["gamebody"]["map_info"]["types"][Mathf.RoundToInt(posX)][Mathf.RoundToInt(posY)].n;
-			return new Vector3(posX, posY, posZ);
 		}
 
 		public static Vector3 JSONToInternal(JSONObject jsonPos) { return ExternalToInternal(JSONToExternal(jsonPos)); }

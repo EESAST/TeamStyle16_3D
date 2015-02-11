@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public abstract class UnitBase : Element
 {
-	private float currentAmmo;
+	protected float currentAmmo;
 	private float currentHP;
 	private Canvas hbCanvas;
 	private int hbHorizontalPixelNumber;
@@ -21,6 +21,8 @@ public abstract class UnitBase : Element
 	private int lastHPIndex;
 	public int targetAmmo;
 	public int targetHP;
+
+	protected abstract int AmmoOnce();
 
 	protected override void Awake()
 	{
@@ -105,14 +107,14 @@ public abstract class UnitBase : Element
 	public IEnumerator FireAtPosition(Vector3 internalTargetPosition)
 	{
 		yield return FaceTarget(internalTargetPosition);
-		targetAmmo -= Constants.AmmoOnce[Kind()]; //TODO:run this when firing is actually animated; firing animation;
+		targetAmmo -= AmmoOnce(); //TODO:run this when firing is actually animated; firing animation;
 		--Data.Replay.AttacksLeft;
 	}
 
 	public IEnumerator FireAtUnitBase(UnitBase targetElement, int damage)
 	{
 		yield return StartCoroutine(FireAtPosition(targetElement.transform.WorldCenterOfElement()));
-		Data.Replay.TargetScores[team] += damage;
+		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
 		targetElement.targetHP -= damage;
 	}
 
@@ -120,6 +122,8 @@ public abstract class UnitBase : Element
 	{
 		base.Initialize(info);
 		team = Mathf.RoundToInt(info["team"].n);
+		if (team < 2)
+			++Data.Replay.UnitNums[team];
 		currentHP = targetHP = Mathf.RoundToInt(info["health"].n);
 		currentFuel = targetFuel = Mathf.RoundToInt(info["fuel"].n);
 		currentAmmo = targetAmmo = float.IsPositiveInfinity(info["ammo"].n) ? -1 : Mathf.RoundToInt(info["ammo"].n);
@@ -131,6 +135,8 @@ public abstract class UnitBase : Element
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
+		if (team < 2)
+			--Data.Replay.UnitNums[team];
 		if (hbRect)
 			Destroy(hbRect.gameObject);
 	}
@@ -187,9 +193,11 @@ public abstract class UnitBase : Element
 	{
 		base.Update();
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
-			currentHP = Mathf.Lerp(currentHP, targetHP, 3 * Time.deltaTime);
+			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
+		if (currentHP < 0)
+			currentHP = targetHP = 0;
 		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
-			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, 3 * Time.deltaTime);
+			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
 
 		#region Update Health Bar
 

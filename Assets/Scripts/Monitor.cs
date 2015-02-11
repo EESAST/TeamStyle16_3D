@@ -15,6 +15,9 @@ public class Monitor : MonoBehaviour
 
 	private void Update()
 	{
+		if (!Data.Replay.ProductionPaused)
+			Data.Replay.ProductionTimer += Time.deltaTime * Data.Replay.ProductionTimeScale;
+
 		#region Current Scores
 
 		if (!Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))

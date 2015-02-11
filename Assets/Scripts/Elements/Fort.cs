@@ -10,6 +10,8 @@ public class Fort : Building
 	private static readonly Material[][] materials = new Material[3][];
 	public int targetTeam;
 
+	protected override int AmmoOnce() { return 4; }
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -39,12 +41,38 @@ public class Fort : Building
 
 	protected override void OnDestroy()
 	{
+		base.OnDestroy();
 		if (targetTeam == -1)
 			return;
+		if (team < 2)
+			--Data.FortNum[team];
 		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
-		fort.team = targetTeam;
-		fort.StartCoroutine(fort.Rise(transform.position));
-		Data.Replay.Elements.Add(index, fort);
+		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeam, targetFuel, targetAmmo, targetMetal));
+	}
+
+	public override void Initialize(JSONObject info)
+	{
+		base.Initialize(info);
+		if (team < 2)
+			++Data.FortNum[team];
+	}
+
+	private IEnumerator Reborn(Vector3 internalPosition, int index, int team, int fuel, int ammo, int metal) //TODO:maybe using a sine lerp
+	{
+		Data.Replay.Elements.Add(this.index = index, this);
+		++Data.Replay.UnitNums[this.team = team];
+		targetHP = MaxHP();
+		targetFuel = fuel;
+		targetAmmo = ammo;
+		targetFuel = metal;
+		++Data.FortNum[team];
+		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.ScaleFactor;
+		while ((internalPosition - transform.position).y > Settings.Tolerance)
+		{
+			transform.position = Vector3.Lerp(transform.position, internalPosition, 0.1f);
+			yield return new WaitForSeconds(0.04f);
+		}
+		--Data.Replay.AttacksLeft;
 	}
 
 	public static void RefreshMaterialColor()
@@ -62,17 +90,6 @@ public class Fort : Building
 			offset.y = (offset.y + Time.deltaTime) % 1;
 			materials[2][team].mainTextureOffset = offset;
 		}
-	}
-
-	private IEnumerator Rise(Vector3 internalTargetPosition) //TODO:maybe using a sine lerp
-	{
-		transform.position = internalTargetPosition - Vector3.up * RelativeSize * Settings.ScaleFactor;
-		while ((internalTargetPosition - transform.position).y > Settings.Tolerance)
-		{
-			transform.position = Vector3.Lerp(transform.position, internalTargetPosition, 0.1f);
-			yield return new WaitForSeconds(0.04f);
-		}
-		--Data.Replay.AttacksLeft;
 	}
 
 	protected override void Start()

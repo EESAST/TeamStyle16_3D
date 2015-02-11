@@ -8,6 +8,8 @@ public class Submarine : Unit
 {
 	private static readonly Material[][] materials = new Material[1][];
 
+	protected override int AmmoOnce() { return 2; }
+
 	public override Vector3 Center() { return new Vector3(0.44f, 0.00f, 1.14f); }
 
 	public override void Deselect()
@@ -36,6 +38,8 @@ public class Submarine : Unit
 	}
 
 	protected override int MaxHP() { return 35; }
+
+	protected override int Population() { return 2; }
 
 	protected override void RefreshColor()
 	{

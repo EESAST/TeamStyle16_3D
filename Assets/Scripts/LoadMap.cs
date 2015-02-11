@@ -172,6 +172,12 @@ public class LoadMap : MonoBehaviour
 			var typeName = entry["__class__"].str;
 			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);
 		}
+		for (var i = 0; i < 2; ++i)
+		{
+			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = Mathf.RoundToInt(Data.Battle["history"]["score"][0][i].n);
+			Data.Replay.Populations[i] = Mathf.RoundToInt(Data.Battle["history"]["population"][0][i].n);
+			Data.Replay.UnitNums[i] = Mathf.RoundToInt(Data.Battle["history"]["unit_num"][0][i].n);
+		}
 	}
 
 	private void Start()

@@ -13,7 +13,7 @@ public static class Settings
 	public static int MaxEntryPerRow = 5;
 	public static float ScaleFactor = 5;
 	public static int TextGranularity = 3;
-	public static float TimePerFrame = 3;
+	public static float MaxTimePerFrame = 10;
 	public static float Tolerance = 0.01f;
 	public static float TransitionRate = 3;
 	public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }

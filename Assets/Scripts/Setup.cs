@@ -39,13 +39,13 @@ public class Setup : MonoBehaviour
 		cameraSettings.zoom.minZoom = Settings.Camera.Zoom.Min;
 		cameraSettings.zoom.defaultZoom = Settings.Camera.Zoom.Default;
 		cameraSettings.zoom.zoomRate = Settings.Camera.Zoom.Rate;
+		Data.Ready = true;
 	}
 
 	private void ResetData()
 	{
 		Data.Replay.Elements = new Dictionary<int, Element>();
-		Data.Replay.ProductionList = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
-		Data.Replay.CurrentScores = new float[2];
-		Data.Replay.TargetScores = new int[2];
+		Data.Replay.ProductionLists = new[] { new List<ProductionEntry>(100), new List<ProductionEntry>(100) };
+		Data.FortNum = new int[2];
 	}
 }

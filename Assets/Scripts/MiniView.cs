@@ -28,7 +28,7 @@ public class MiniView : MonoBehaviour
 	{
 		var origin = Camera.main.transform.position;
 		var directions = new[] { Camera.main.ScreenPointToRay(new Vector2(0, 0)).direction, Camera.main.ScreenPointToRay(new Vector2(0, Screen.height)).direction, Camera.main.ScreenPointToRay(new Vector2(Screen.width, Screen.height)).direction, Camera.main.ScreenPointToRay(new Vector2(Screen.width, 0)).direction };
-		var worldPoints = Methods.Coordinates.IntersectToDefaultHeight(origin, Methods.Array.Add(Methods.Array.Multiply(directions, Methods.Array.Divide(Camera.main.farClipPlane, Methods.Array.Dot(directions, Camera.main.transform.forward))), origin));
+		var worldPoints = Methods.Coordinates.IntersectToCameraPivotHeight(origin, Methods.Array.Add(Methods.Array.Multiply(directions, Methods.Array.Divide(Camera.main.farClipPlane, Methods.Array.Dot(directions, Camera.main.transform.forward))), origin));
 		miniViewTexture.SetPixels32(clearPixels);
 		if (worldPoints != null)
 		{

@@ -8,6 +8,8 @@ public class Destroyer : Ship
 {
 	private static readonly Material[][] materials = new Material[1][];
 
+	protected override int AmmoOnce() { return 4; }
+
 	public override Vector3 Center() { return new Vector3(-0.62f, 17.21f, -0.01f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(36.13f, 54.69f, 85.58f); }
@@ -26,6 +28,8 @@ public class Destroyer : Ship
 	}
 
 	protected override int MaxHP() { return 70; }
+
+	protected override int Population() { return 3; }
 
 	public static void RefreshMaterialColor()
 	{

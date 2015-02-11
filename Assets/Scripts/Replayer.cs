@@ -8,20 +8,17 @@ using UnityEngine;
 
 public class Replayer : MonoBehaviour
 {
-	//private readonly float defaultDeltaTime = 1;
-	//private readonly float timePerFrame = 2; // 2 second(s)
+	//private JSONObject productionLists;
+	private int currentFrame;
 	//private JSONObject commands;
-	//private float dt, elapsedTime;
 	private JSONObject elements;
 	private JSONObject events;
+	private int frameCount;
 	private bool guiInitialized;
 	private Rect infoAreaRect;
 	private Rect infoContentRect;
 	public Texture2D panelBackground;
 	private GUIStyle panelStyle;
-	//private JSONObject productionLists;
-	private int round = -1;
-	private int roundCount;
 
 	private void AddProductionEntries()
 	{
@@ -82,16 +79,10 @@ public class Replayer : MonoBehaviour
 
 	private void Creates()
 	{
-		var scores = round == roundCount ? Data.Battle["gamebody"]["scores"] : Data.Battle["history"]["score"][round];
-		Data.Replay.TargetScores[0] = Mathf.RoundToInt(scores[0].n);
-		Data.Replay.TargetScores[1] = Mathf.RoundToInt(scores[1].n);
-		if (round == 0)
-			return;
 		foreach (var create in events.list.Where(create => create["__class__"].str == "Create"))
 		{
 			var typeName = Constants.TypeNames[Mathf.RoundToInt(create["kind"].n)];
-			var info = (round == roundCount ? Data.Battle["gamebody"]["map_info"]["elements"] : elements)[Mathf.RoundToInt(create["index"].n).ToString()];
-			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(info);
+			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Unit).Initialize(elements[Mathf.RoundToInt(create["index"].n).ToString()]);
 		}
 	}
 
@@ -110,6 +101,12 @@ public class Replayer : MonoBehaviour
 		Data.Replay.IsFixing = false;
 	}
 
+	private void FortCaptureScores()
+	{
+		for (var i = 0; i < 2; ++i)
+			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerFrame * Data.FortNum[i];
+	}
+
 	private void InitializeGUI()
 	{
 		Methods.GUI.InitializeStyles();
@@ -118,18 +115,14 @@ public class Replayer : MonoBehaviour
 		ResizeGUIRects();
 	}
 
-	private IEnumerator LoadFrame( /*int round, bool shallAnimate = true*/)
+	private IEnumerator LoadFrame(int frame, bool shallAnimate = true)
 	{
-		//Data.Game.Ready = false;
-		//Data.Replay.CurrentScores = Data.Battle["history"]["score"][round];
-		//Data.Replay.Populations = Data.Battle["history"]["population"][round]; //TODO:these should be updated during the corresponding period, not in the beginning
-		var keyFrame = Data.Battle["key_frames"]; //a key frame is the snapshot of the initial state of a round, which means the last key frame can't reflect the final state of the game, requiring the additional Data.Battle["gamebody"]
-		elements = keyFrame[round][0]; //an object within which lie a list of key-vals, i.e elements[i] is the ith element (key-val pair)
-		//productionLists = keyFrame[round][1]; //an array comprised of two sub-arrays, stands for two teams, e.g. productionLists[1][i] stands for the ith production of team 1, which is still a two-entry array itself, i.e. [kind, roundLeft]
-		Creates();
-
-		//commands = Data.Battle["history"]["command"][round]; //e.g. commands[0][i] stands for the ith command (object) of team 0
-		events = Data.Battle["history"]["event"][round]; //e.g. events[i] stands for the ith event (object)
+		var startTime = Time.time;
+		var keyFrame = Data.Battle["key_frames"]; //a key frame is the snapshot of the initial state of a round
+		elements = keyFrame[frame][0]; //an object within which lie a list of key-vals, i.e elements[i] is the ith element (key-val pair)
+		//productionLists = keyFrame[frame][1]; //an array comprised of two sub-arrays, standing for two teams, e.g. productionLists[1][i] stands for the ith production of team 1, which is still a two-entry array itself, i.e. [kind, framesLeft]
+		//commands = Data.Battle["history"]["command"][frame - 1]; //e.g. commands[0][i] stands for the ith command (object) of team 0
+		events = Data.Battle["history"]["event"][frame - 1]; //e.g. events[i] stands for the ith event (object)
 
 		AddProductionEntries();
 		yield return StartCoroutine(Attacks());
@@ -138,19 +131,19 @@ public class Replayer : MonoBehaviour
 		while (Data.Replay.IsSupplying || Data.Replay.IsFixing)
 			yield return new WaitForSeconds(0.04f);
 		yield return StartCoroutine(Moves());
-		StartCoroutine(Collects());
-	}
-
-	private void LoadNextFrame()
-	{
-		++round;
-		if (round < roundCount)
-			StartCoroutine(LoadFrame());
-		else
+		yield return StartCoroutine(Collects());
+		if (Time.time > startTime + Settings.MaxTimePerFrame)
+			Debug.LogError("Additional " + (Time.time - startTime - Settings.MaxTimePerFrame) + " seconds required to handle all animations!");
+		if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
 		{
-			Creates();
-			CancelInvoke("LoadNextFrame");
+			Data.Replay.ProductionTimeScale = 10;
+			yield return new WaitForSeconds((startTime + Settings.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
+			Data.Replay.ProductionTimeScale = 1;
 		}
+		Data.Replay.ProductionPaused = true;
+		Creates();
+		FortCaptureScores();
+		Data.Replay.ProductionPaused = false;
 	}
 
 	private IEnumerator Moves()
@@ -168,11 +161,7 @@ public class Replayer : MonoBehaviour
 		Data.Replay.IsMoving = false;
 	}
 
-	private void OnDestroy()
-	{
-		Delegates.ScreenSizeChanged -= ResizeGUIRects;
-		CancelInvoke();
-	}
+	private void OnDestroy() { Delegates.ScreenSizeChanged -= ResizeGUIRects; }
 
 	private void OnGUI()
 	{
@@ -180,9 +169,13 @@ public class Replayer : MonoBehaviour
 			InitializeGUI();
 		GUILayout.BeginArea(infoAreaRect, panelStyle);
 		GUILayout.BeginArea(infoContentRect);
-		GUILayout.Label("第 " + (round + 1) + " 回合", Data.GUI.Label.LargeMiddle);
+		GUILayout.Label(currentFrame == frameCount ? "比赛结束" : "第 " + currentFrame + " 回合", Data.GUI.Label.LargeMiddle);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[0]) + " : " + Mathf.RoundToInt(Data.Replay.CurrentScores[1]), Data.GUI.Label.SmallMiddle);
+		GUILayout.BeginHorizontal();
+		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[0]).ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.4f));
+		GUILayout.Label(":", Data.GUI.Label.SmallMiddle);
+		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[1]).ToString(), Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.4f));
+		GUILayout.EndHorizontal();
 		GUILayout.EndArea();
 		GUILayout.EndArea();
 	}
@@ -195,10 +188,11 @@ public class Replayer : MonoBehaviour
 		infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2, 0, infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical);
 	}
 
-	private void Start()
+	private IEnumerator Start()
 	{
-		roundCount = Data.Battle["key_frames"].Count;
-		InvokeRepeating("LoadNextFrame", 0, Settings.TimePerFrame); //Settings.TimePerFrame must suffice to allow for all procedures
+		frameCount = Data.Battle["key_frames"].Count;
+		while (++currentFrame < frameCount)
+			yield return StartCoroutine(LoadFrame(currentFrame));
 	}
 
 	private IEnumerator Supplies()

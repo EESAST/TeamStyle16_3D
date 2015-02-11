@@ -11,6 +11,8 @@ public class Base : Building
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
 	protected override int RelativeSize { get { return 3; } }
 
+	protected override int AmmoOnce() { return 6; }
+
 	public override Vector3 Center() { return new Vector3(0.01f, 2.541f, -0.01f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(6.22f, 5.25f, 6.23f); }
@@ -26,7 +28,7 @@ public class Base : Building
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		Data.Replay.Bases[team] = this;
+		Data.Bases[team] = this;
 	}
 
 	protected override int Kind() { return 0; }

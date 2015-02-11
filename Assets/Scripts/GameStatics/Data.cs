@@ -8,10 +8,13 @@ using UnityEngine;
 
 public static class Data
 {
-	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/sample.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static Base[] Bases = new Base[2];
+	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/success.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static int[] FortNum;
 	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
+	public static bool Ready;
 
 	public static class GUI
 	{
@@ -57,9 +60,8 @@ public static class Data
 	public static class Replay
 	{
 		public static int AttacksLeft;
-		public static Base[] Bases = new Base[2];
 		public static int CollectsLeft;
-		public static float[] CurrentScores;
+		public static float[] CurrentScores = new float[2];
 		public static Dictionary<int, Element> Elements;
 		public static int FixesLeft;
 		public static bool IsAttacking;
@@ -68,12 +70,15 @@ public static class Data
 		public static bool IsMoving;
 		public static bool IsSupplying;
 		public static int MovesLeft;
-		public static JSONObject Populations;
+		public static int[] Populations = new int[2];
 		public static float ProductionEntrySize;
-		public static List<ProductionEntry>[] ProductionList;
+		public static List<ProductionEntry>[] ProductionLists;
+		public static bool ProductionPaused;
+		public static float ProductionTimer;
+		public static float ProductionTimeScale = 1;
 		public static int SuppliesLeft;
-		public static int[] TargetScores;
-		public static JSONObject UnitNums;
+		public static int[] TargetScores = new int[2];
+		public static int[] UnitNums = new int[2];
 	}
 
 	public static class TeamColor

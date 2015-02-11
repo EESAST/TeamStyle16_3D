@@ -98,6 +98,7 @@ public abstract class Element : MonoBehaviour
 	public virtual void Initialize(JSONObject info)
 	{
 		index = Mathf.RoundToInt(info["index"].n);
+		Data.Replay.Elements.Add(index, this);
 		float posX, posY;
 		transform.position = Methods.Coordinates.ExternalToInternal(Methods.Coordinates.JSONToExternal(info["pos"], out posX, out posY));
 		if (Level() != 2)
@@ -150,7 +151,6 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		Data.Replay.Elements.Add(index, this);
 		transform.rotation = DefaultRotation;
 		transform.localScale = Vector3.one * RelativeSize * Settings.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		RefreshColor();
@@ -164,8 +164,8 @@ public abstract class Element : MonoBehaviour
 			highlighter.On(Data.TeamColor.Current[team]);
 		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
 		if (Mathf.Abs(targetFuel - currentFuel) > Settings.Tolerance)
-			currentFuel = Mathf.Lerp(currentFuel, targetFuel, 3 * Time.deltaTime);
+			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.deltaTime);
 		if (Mathf.Abs(targetMetal - currentMetal) > Settings.Tolerance)
-			currentMetal = Mathf.Lerp(currentMetal, targetMetal, 3 * Time.deltaTime);
+			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.deltaTime);
 	}
 }

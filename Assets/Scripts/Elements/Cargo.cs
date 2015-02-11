@@ -9,6 +9,8 @@ public class Cargo : Ship
 {
 	private static readonly Material[][] materials = new Material[1][];
 
+	protected override int AmmoOnce() { return 0; }
+
 	public override Vector3 Center() { return new Vector3(-0.75f, 0.01f, 0.30f); }
 
 	public IEnumerator Collect(Resource target, int fuel, int metal)
@@ -18,7 +20,7 @@ public class Cargo : Ship
 		targetMetal += metal;
 		target.targetFuel -= fuel;
 		target.targetMetal -= metal;
-		Data.Replay.TargetScores[team] += (fuel + metal);
+		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel + metal);
 		--Data.Replay.CollectsLeft;
 	}
 
@@ -38,6 +40,8 @@ public class Cargo : Ship
 	}
 
 	protected override int MaxHP() { return 60; }
+
+	protected override int Population() { return 1; }
 
 	public static void RefreshMaterialColor()
 	{

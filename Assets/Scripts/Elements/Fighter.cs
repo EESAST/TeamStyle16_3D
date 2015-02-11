@@ -8,6 +8,8 @@ public class Fighter : Plane
 {
 	private static readonly Material[][] materials = new Material[1][];
 
+	protected override int AmmoOnce() { return 3; }
+
 	public override Vector3 Center() { return new Vector3(0.00f, 0.24f, -0.05f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(4.78f, 1.93f, 5.82f); }
@@ -26,6 +28,8 @@ public class Fighter : Plane
 	}
 
 	protected override int MaxHP() { return 70; }
+
+	protected override int Population() { return 3; }
 
 	public static void RefreshMaterialColor()
 	{
