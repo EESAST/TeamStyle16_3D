@@ -35,7 +35,7 @@ public class Oscillation : MonoBehaviour, IElementFX
 
 	private void Update()
 	{
-		transform.Translate((transform.parent ? transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up) : Vector3.up) * omega * amplitude * Settings.ScaleFactor * Mathf.Cos(omega * (Time.time - spawnTime)) * Time.deltaTime, Space.World);
-		transform.Rotate(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.forward, angularOmega * angularAmplitude * Mathf.Cos(angularOmega * (Time.time - spawnTime)) * Time.deltaTime);
+		transform.Translate((transform.parent ? transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up) : Vector3.up) * omega * amplitude * Settings.Map.ScaleFactor * Mathf.Cos(omega * (Time.time - spawnTime)) * Time.smoothDeltaTime, Space.World);
+		transform.Rotate(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.forward, angularOmega * angularAmplitude * Mathf.Cos(angularOmega * (Time.time - spawnTime)) * Time.smoothDeltaTime);
 	}
 }

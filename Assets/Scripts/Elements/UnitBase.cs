@@ -42,12 +42,12 @@ public abstract class UnitBase : Element
 
 	private IEnumerator Explode()
 	{
-		var dummy = new GameObject(name);
+		var dummy = new GameObject();
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
-		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize * Settings.ScaleFactor;
-		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.ScaleFactor * 0.12f, 3);
+		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize * Settings.Map.ScaleFactor;
+		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.Map.ScaleFactor * 0.12f, 3);
 		var totalMass = 0f;
 		foreach (var meshFilter in meshFilters)
 		{
@@ -84,8 +84,9 @@ public abstract class UnitBase : Element
 			fragmentManager.enabled = true;
 		}
 		var detonator = Instantiate(Resources.Load("Detonator"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
-		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.ScaleFactor;
-		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.ScaleFactor, 3);
+		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.Map.ScaleFactor;
+		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.Map.ScaleFactor, 3);
+		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
 		Destroy(gameObject);
 	}
 
@@ -95,12 +96,12 @@ public abstract class UnitBase : Element
 		var c1 = markImage.color;
 		var c2 = hbImage.color;
 		var c3 = hbText.color;
-		while ((c1.a *= 0.8f) + (c2.a *= 0.8f) + (c3.a *= 0.8f) > Mathf.Epsilon)
+		while ((c1.a *= Settings.FastAttenuation) + (c2.a *= Settings.FastAttenuation) + (c3.a *= Settings.FastAttenuation) > Mathf.Epsilon)
 		{
 			markImage.color = c1;
 			hbImage.color = c2;
 			hbText.color = c3;
-			yield return new WaitForSeconds(0.04f);
+			yield return new WaitForSeconds(Settings.DeltaTime);
 		}
 	}
 
@@ -146,7 +147,7 @@ public abstract class UnitBase : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * 0.12f, Screen.width * 0.12f, Screen.height * 0.24f), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.12f, Screen.width * 0.16f, Screen.height * 0.24f), GUI.skin.box);
 		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
 		if (float.IsInfinity(currentAmmo))
@@ -193,11 +194,11 @@ public abstract class UnitBase : Element
 	{
 		base.Update();
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
-			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
+			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.smoothDeltaTime);
 		if (currentHP < 0)
 			currentHP = targetHP = 0;
 		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
-			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
+			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.smoothDeltaTime);
 
 		#region Update Health Bar
 
@@ -215,9 +216,9 @@ public abstract class UnitBase : Element
 		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
-		hbRect.localScale = Vector2.one * Monitor.ScreenSize.x / 100 / Mathf.Clamp(hbPos.z / Settings.ScaleFactor, 3, 15);
+		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.Map.ScaleFactor, 3, 15);
 		if (!isDead)
-			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.ScaleFactor / 2));
+			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.Map.ScaleFactor / 2));
 		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
 
 		#endregion

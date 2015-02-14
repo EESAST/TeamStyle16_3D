@@ -18,9 +18,9 @@ public class LoadMap : MonoBehaviour
 		#region Preparations
 
 		var mapData = Data.Battle["gamebody"]["map_info"]["types"];
-		var worldSize = realMapSize * Settings.ScaleFactor;
+		var worldSize = realMapSize * Settings.Map.ScaleFactor;
 		var resolution = Mathf.RoundToInt(Mathf.Sqrt(realMapSize.x * realMapSize.y) * Settings.Terrain.Smoothness);
-		var terrainData = new TerrainData { heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1, size = new Vector3(worldSize.y, Settings.HeightOfLevel[2], worldSize.x), alphamapResolution = resolution, baseMapResolution = resolution };
+		var terrainData = new TerrainData { heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1, size = new Vector3(worldSize.y, Settings.Map.HeightOfLevel[2], worldSize.x), alphamapResolution = resolution, baseMapResolution = resolution };
 
 		#endregion
 
@@ -40,14 +40,14 @@ public class LoadMap : MonoBehaviour
 				for (var y = Mathf.Max(-muY, -Mathf.RoundToInt(sigmaY * 3)); y < Mathf.Min(terrainData.heightmapWidth - muY, Mathf.RoundToInt(sigmaY * 3)); ++y)
 					heights[muX + x, muY + y] += h * Mathf.Exp(-Mathf.Pow(x / sigmaX, 2) - Mathf.Pow(y / sigmaY, 2));
 		}
-		var threshold = Settings.HeightOfLevel[0] / Settings.HeightOfLevel[2];
+		var threshold = Settings.Map.HeightOfLevel[0] / Settings.Map.HeightOfLevel[2] * 0.8f;
 		for (var x = 0; x < terrainData.heightmapHeight; x++)
 			for (var y = 0; y < terrainData.heightmapWidth; y++)
 			{
 				if ((heights[x, y] += threshold / 2) > threshold)
 					heights[x, y] = threshold;
-				var i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.MapSizeOffset.top;
-				var j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.MapSizeOffset.left;
+				var i = (float)x / (terrainData.heightmapHeight - 1) * realMapSize.x - Settings.Map.MapSizeOffset.top;
+				var j = (1 - (float)y / (terrainData.heightmapWidth - 1)) * realMapSize.y - Settings.Map.MapSizeOffset.left;
 				int i0 = Mathf.FloorToInt(i), j0 = Mathf.FloorToInt(j);
 				float ul = 0, ur = 0, br = 0, bl = 0, di = i - i0, dj = j - j0;
 				if (mapRect.Contains(new Vector2(i0, j0)))
@@ -74,7 +74,7 @@ public class LoadMap : MonoBehaviour
 		var splatPrototypes = new SplatPrototype[splatTextures.Length];
 		for (var i = 0; i < splatPrototypes.Length; i++)
 		{
-			var splatPrototype = new SplatPrototype { texture = splatTextures[i], tileSize = Vector2.one * Settings.ScaleFactor * 4 };
+			var splatPrototype = new SplatPrototype { texture = splatTextures[i], tileSize = Vector2.one * Settings.Map.ScaleFactor * 4 };
 			splatPrototypes[i] = splatPrototype;
 		}
 		terrainData.splatPrototypes = splatPrototypes;
@@ -101,14 +101,14 @@ public class LoadMap : MonoBehaviour
 		}
 		terrainData.treePrototypes = treePrototypes;
 		var treeInstances = new TreeInstance[Mathf.RoundToInt(landArea * Settings.Terrain.Tree.Density)];
-		var range = new Vector4(Settings.MapSizeOffset.right / realMapSize.y, 1 - Settings.MapSizeOffset.left / realMapSize.y, Settings.MapSizeOffset.top / realMapSize.x, 1 - Settings.MapSizeOffset.bottom / realMapSize.x);
+		var range = new Vector4(Settings.Map.MapSizeOffset.right / realMapSize.y, 1 - Settings.Map.MapSizeOffset.left / realMapSize.y, Settings.Map.MapSizeOffset.top / realMapSize.x, 1 - Settings.Map.MapSizeOffset.bottom / realMapSize.x);
 		for (var i = 0; i < treeInstances.Length; i++)
 		{
-			var treeScale = Random.Range(0.08f, 0.16f) * Settings.ScaleFactor;
+			var treeScale = Random.Range(0.08f, 0.16f) * Settings.Map.ScaleFactor;
 			Vector3 treePosition;
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
-			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.HeightOfLevel[1] / Settings.HeightOfLevel[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
+			while ((treePosition.y = heights[Mathf.RoundToInt(treePosition.z * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt(treePosition.x * (terrainData.heightmapWidth - 1))]) < Mathf.Lerp(Settings.Map.HeightOfLevel[1] / Settings.Map.HeightOfLevel[2], 1, 0.6f) || Methods.Coordinates.IsOccupied(Methods.Coordinates.InternalToExternal(Vector3.Scale(treePosition, new Vector3(worldSize.y, 0, worldSize.x)))));
 			var treeInstance = new TreeInstance { prototypeIndex = Random.Range(0, treePrototypes.Length), position = treePosition + Vector3.up * Settings.Terrain.Tree.VerticalPositionOffset * treeScale, color = new Color(0, 0.8f, 0, 1), lightmapColor = new Color(1, 1, 1, 1), heightScale = treeScale, widthScale = treeScale };
 			treeInstances[i] = treeInstance;
 		}
@@ -134,7 +134,7 @@ public class LoadMap : MonoBehaviour
 			{
 				var layer = Random.Range(0, detailPrototypes.Length);
 				var height = heights[Mathf.RoundToInt((float)i / (terrainData.detailResolution - 1) * (terrainData.heightmapHeight - 1)), Mathf.RoundToInt((float)j / (terrainData.detailResolution - 1) * (terrainData.heightmapWidth - 1))];
-				if (height > Mathf.Lerp(Settings.HeightOfLevel[1] / Settings.HeightOfLevel[2], 1, 0.4f))
+				if (height > Mathf.Lerp(Settings.Map.HeightOfLevel[1] / Settings.Map.HeightOfLevel[2], 1, 0.4f))
 					detailLayers[layer][i, j] = 1;
 			}
 		for (var i = 0; i < detailPrototypes.Length; i++)
@@ -158,8 +158,8 @@ public class LoadMap : MonoBehaviour
 	private void CreateOcean()
 	{
 		var ocean = Instantiate(Resources.Load("Ocean")) as GameObject;
-		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.MapSizeOffset.top, Settings.MapSizeOffset.left), 1);
-		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.ScaleFactor / 100;
+		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.Map.MapSizeOffset.top, Settings.Map.MapSizeOffset.left), 1);
+		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.Map.ScaleFactor / 100;
 		var oceanMaterial = ocean.GetComponent<WaterBase>().sharedMaterial;
 		oceanMaterial.SetColor("_BaseColor", Settings.Ocean.RefractionColor);
 		oceanMaterial.SetColor("_ReflectionColor", Settings.Ocean.ReflectionColor);
@@ -172,17 +172,11 @@ public class LoadMap : MonoBehaviour
 			var typeName = entry["__class__"].str;
 			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);
 		}
-		for (var i = 0; i < 2; ++i)
-		{
-			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = Mathf.RoundToInt(Data.Battle["history"]["score"][0][i].n);
-			Data.Replay.Populations[i] = Mathf.RoundToInt(Data.Battle["history"]["population"][0][i].n);
-			Data.Replay.UnitNums[i] = Mathf.RoundToInt(Data.Battle["history"]["unit_num"][0][i].n);
-		}
 	}
 
 	private void Start()
 	{
-		realMapSize = Data.MapSize + new Vector2(Settings.MapSizeOffset.vertical, Settings.MapSizeOffset.horizontal) - Vector2.one;
+		realMapSize = Data.MapSize + new Vector2(Settings.Map.MapSizeOffset.vertical, Settings.Map.MapSizeOffset.horizontal) - Vector2.one;
 		LoadInitialState();
 		CreateLand();
 		CreateOcean();

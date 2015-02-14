@@ -8,6 +8,7 @@ using UnityEngine;
 public class Fort : Building
 {
 	private static readonly Material[][] materials = new Material[3][];
+	private bool isReborn;
 	public int targetTeam;
 
 	protected override int AmmoOnce() { return 4; }
@@ -21,6 +22,13 @@ public class Fort : Building
 	public override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
+
+	public override void Initialize(JSONObject info)
+	{
+		base.Initialize(info);
+		if (team < 2)
+			++Data.Replay.FortNum[team];
+	}
 
 	protected override int Kind() { return 1; }
 
@@ -45,32 +53,26 @@ public class Fort : Building
 		if (targetTeam == -1)
 			return;
 		if (team < 2)
-			--Data.FortNum[team];
+			--Data.Replay.FortNum[team];
 		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
 		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeam, targetFuel, targetAmmo, targetMetal));
 	}
 
-	public override void Initialize(JSONObject info)
+	private IEnumerator Reborn(Vector3 internalPosition, int index, int targetTeam, int fuel, int ammo, int metal)
 	{
-		base.Initialize(info);
-		if (team < 2)
-			++Data.FortNum[team];
-	}
-
-	private IEnumerator Reborn(Vector3 internalPosition, int index, int team, int fuel, int ammo, int metal) //TODO:maybe using a sine lerp
-	{
+		isReborn = true;
 		Data.Replay.Elements.Add(this.index = index, this);
-		++Data.Replay.UnitNums[this.team = team];
+		++Data.Replay.UnitNums[team = targetTeam];
 		targetHP = MaxHP();
 		targetFuel = fuel;
 		targetAmmo = ammo;
-		targetFuel = metal;
-		++Data.FortNum[team];
-		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.ScaleFactor;
+		targetMetal = metal;
+		++Data.Replay.FortNum[targetTeam];
+		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.Map.ScaleFactor;
 		while ((internalPosition - transform.position).y > Settings.Tolerance)
 		{
-			transform.position = Vector3.Lerp(transform.position, internalPosition, 0.1f);
-			yield return new WaitForSeconds(0.04f);
+			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.smoothDeltaTime);
+			yield return null;
 		}
 		--Data.Replay.AttacksLeft;
 	}
@@ -87,7 +89,7 @@ public class Fort : Building
 		for (var team = 0; team < 3; team++)
 		{
 			var offset = materials[2][team].mainTextureOffset;
-			offset.y = (offset.y + Time.deltaTime) % 1;
+			offset.y = (offset.y + Time.smoothDeltaTime) % 1;
 			materials[2][team].mainTextureOffset = offset;
 		}
 	}
@@ -98,5 +100,7 @@ public class Fort : Building
 		transform.FindChild("Accessory").GetComponent<MeshRenderer>().material = materials[1][team];
 		transform.FindChild("Base").GetComponent<MeshRenderer>().material = materials[0][team];
 		transform.FindChild("Cannon").GetComponent<MeshRenderer>().materials = new[] { materials[1][team], materials[2][team] };
+		if (isReborn)
+			highlighter.ReinitMaterials();
 	}
 }

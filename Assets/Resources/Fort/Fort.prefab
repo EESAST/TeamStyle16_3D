@@ -282,7 +282,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0ad2b3d4704e64d803e8943f8cf4b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  index: 0
+  MouseOver: 0
+  targetFuel: 0
+  targetMetal: 0
   team: 0
+  targetAmmo: 0
+  targetHP: 0
+  targetTeam: 0
 --- !u!114 &11475332
 MonoBehaviour:
   m_ObjectHideFlags: 1

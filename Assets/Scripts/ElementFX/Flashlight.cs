@@ -25,14 +25,14 @@ public class Flashlight : MonoBehaviour, IElementFX
 	{
 		transform.localPosition = translationOffsetInParentSpace;
 		omega = Random.Range(minOmega, maxOmega);
-		light.range = Settings.ScaleFactor;
+		light.range = Settings.Map.ScaleFactor;
 		flare = GetComponent<LensFlare>();
 	}
 
 	private IEnumerator FadeOut()
 	{
-		while ((light.intensity *= 0.8f) + (flare.brightness *= 0.8f) > Mathf.Epsilon)
-			yield return new WaitForSeconds(0.04f);
+		while ((light.intensity *= Settings.FastAttenuation) + (flare.brightness *= Settings.FastAttenuation) > Mathf.Epsilon)
+			yield return new WaitForSeconds(Settings.DeltaTime);
 	}
 
 	public void RefreshLightColor() { flare.color = light.color = Data.TeamColor.Current[GetComponentInParent<Element>().team]; }

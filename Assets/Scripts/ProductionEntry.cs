@@ -40,11 +40,11 @@ public class ProductionEntry : MonoBehaviour
 		var c1 = description.color;
 		var c2 = tintedIcon.color;
 		Destroy(gameObject, 3);
-		while ((c1.a *= 0.8f) + (c2.a *= 0.8f) > Mathf.Epsilon)
+		while ((c1.a *= Settings.FastAttenuation) + (c2.a *= Settings.FastAttenuation) > Mathf.Epsilon)
 		{
 			description.color = c1;
 			tintedIcon.color = c2;
-			yield return new WaitForSeconds(0.04f);
+			yield return new WaitForSeconds(Settings.DeltaTime);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class ProductionEntry : MonoBehaviour
 	{
 		spawnTime = Data.Replay.ProductionTimer;
 		while ((tintedIcon.fillAmount = (Data.Replay.ProductionTimer - spawnTime) / lifeSpan) < 1)
-			yield return new WaitForSeconds(0.04f);
+			yield return null;
 		ready = true;
 	}
 
@@ -80,7 +80,7 @@ public class ProductionEntry : MonoBehaviour
 		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
 		foreach (var productionEntry in Data.Replay.ProductionLists[team])
 			productionEntry.targetPos++;
-		Data.Bases[team].targetMetal -= Constants.Costs[kind];
+		Data.Replay.Bases[team].targetMetal -= Constants.Costs[kind];
 		Data.Replay.ProductionLists[team].Add(this);
 	}
 
@@ -94,7 +94,7 @@ public class ProductionEntry : MonoBehaviour
 	private void Update()
 	{
 		if (Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
-			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.deltaTime);
+			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.smoothDeltaTime);
 		var t = currentPos % Settings.MaxEntryPerRow;
 		entry.anchoredPosition = t < Settings.MaxEntryPerRow - 1 ? Data.Replay.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxEntryPerRow)) : Data.Replay.ProductionEntrySize * new Vector2((Settings.MaxEntryPerRow - 1) * (Settings.MaxEntryPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxEntryPerRow) + t + 1 - Settings.MaxEntryPerRow));
 		if (team == 1)

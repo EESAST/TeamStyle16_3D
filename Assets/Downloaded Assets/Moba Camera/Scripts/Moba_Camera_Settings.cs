@@ -15,6 +15,5 @@ public class Moba_Camera_Settings
 	public Moba_Camera_Settings_Rotation rotation = new Moba_Camera_Settings_Rotation();
 	public float tolerance = 0.01f;
 	public bool useBoundaries = true;
-	public bool useFixedUpdate = false;
 	public Moba_Camera_Settings_Zoom zoom = new Moba_Camera_Settings_Zoom();
 }

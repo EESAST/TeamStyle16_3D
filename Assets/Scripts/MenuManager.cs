@@ -117,7 +117,7 @@ public class MenuManager : MonoBehaviour
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
-					Methods.Game.Quit();
+					Application.Quit();
 				break;
 		}
 	}
@@ -132,7 +132,7 @@ public class MenuManager : MonoBehaviour
 		optionAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.2f, optionContentRect.width + subMenuStyle.border.horizontal, optionContentRect.height + subMenuStyle.border.vertical);
 		aboutContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.3f, Screen.height * 0.5f);
 		aboutAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.3f, aboutContentRect.width + subMenuStyle.border.horizontal, aboutContentRect.height + subMenuStyle.border.vertical);
-		confirmContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.2f, Screen.height * 0.3f);
+		confirmContentRect = new Rect(subMenuStyle.border.left, subMenuStyle.border.top, Screen.width * 0.25f, Screen.height * 0.3f);
 		confirmAreaRect = new Rect(defaultAreaRect.width, Screen.height * 0.4f, confirmContentRect.width + subMenuStyle.border.horizontal, confirmContentRect.height + subMenuStyle.border.vertical);
 	}
 
@@ -144,5 +144,6 @@ public class MenuManager : MonoBehaviour
 		else
 			Methods.Game.Pause();
 		Camera.main.GetComponent<Blur>().enabled = Data.GamePaused;
+		GetComponent<SelectionManager>().enabled = !Data.GamePaused;
 	}
 }

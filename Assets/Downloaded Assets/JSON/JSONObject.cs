@@ -57,6 +57,7 @@ public class JSONObject
 	public float n;
 
 	public float f { get { return n; } }
+	public int i { get { return Mathf.RoundToInt(n); } }
 #else
 	public double n;
 	public float f {

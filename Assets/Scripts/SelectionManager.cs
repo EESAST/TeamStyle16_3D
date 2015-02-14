@@ -7,36 +7,41 @@ using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
-	private Element _lastDownElement;
-	private Element _lastOverElement;
-	private Element _lastSelectedElement;
+	private Element lastDownElement;
+	private Element lastOverElement;
+	private Element lastSelectedElement;
+
+	private void OnDisable() { Revert(); }
+
+	private void Revert()
+	{
+		if (lastOverElement)
+			lastOverElement.MouseOver = false;
+	}
 
 	private void Update()
 	{
-		if (_lastOverElement)
-			_lastOverElement.MouseOver = false;
-		if (EventSystem.current.IsPointerOverGameObject())
-			return;
-		if (Input.GetMouseButtonUp(1) && _lastSelectedElement)
+		Revert();
+		if (Input.GetMouseButtonUp(1) && lastSelectedElement)
 		{
-			_lastSelectedElement.Deselect();
-			_lastSelectedElement = null;
+			lastSelectedElement.Deselect();
+			lastSelectedElement = null;
 		}
-		if (Screen.lockCursor)
+		if (EventSystem.current.IsPointerOverGameObject() || Screen.lockCursor)
 			return;
 		Element target = null;
 		RaycastHit hitInfo;
 		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, LayerMask.GetMask("Element")))
 			target = hitInfo.transform.GetComponentInParent<Element>();
-		if (target)
-			(_lastOverElement = target).MouseOver = true;
+		if (lastOverElement = target)
+			lastOverElement.MouseOver = true;
 		if (Input.GetMouseButtonDown(0))
-			_lastDownElement = target;
-		if (Input.GetMouseButtonUp(0) && target && target == _lastDownElement)
+			lastDownElement = target;
+		if (Input.GetMouseButtonUp(0) && target && target == lastDownElement)
 		{
-			if (_lastSelectedElement)
-				_lastSelectedElement.Deselect();
-			(_lastSelectedElement = target).Select();
+			if (lastSelectedElement)
+				lastSelectedElement.Deselect();
+			(lastSelectedElement = target).Select();
 		}
 	}
 }

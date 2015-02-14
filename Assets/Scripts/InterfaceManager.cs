@@ -8,7 +8,7 @@ using UnityEngine;
 public class InterfaceManager : MonoBehaviour
 {
 	private readonly Cloud[] clouds = new Cloud[Settings.CloudNumber];
-	private Rect aboutRect = new Rect(Screen.width * 0.4f, Screen.height * 0.2f, Screen.width * 0.2f, Screen.height * 0.6f);
+	private Rect aboutRect = new Rect(Screen.width * 0.35f, Screen.height * 0.2f, Screen.width * 0.3f, Screen.height * 0.6f);
 	public Texture back;
 	public Texture background;
 	public Texture[] cloudTextures;
@@ -34,6 +34,7 @@ public class InterfaceManager : MonoBehaviour
 	{
 		Delegates.ScreenSizeChanged += OnScreenSizeChanged;
 		Methods.Game.Resume();
+		Data.Replay.TeamNames = new[] { "队伍1", "队伍2", "中立" };
 		for (var i = 0; i < clouds.Length; i++)
 		{
 			clouds[i].texture = cloudTextures[Random.Range(0, cloudTextures.Length)];
@@ -142,7 +143,7 @@ public class InterfaceManager : MonoBehaviour
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
-					Methods.Game.Quit();
+					Application.Quit();
 				break;
 		}
 	}
@@ -153,13 +154,13 @@ public class InterfaceManager : MonoBehaviour
 			clouds[i].Refresh(Monitor.ScreenSize);
 		defaultRect = new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f);
 		optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
-		aboutRect = new Rect(Screen.width * 0.4f, Screen.height * 0.2f, Screen.width * 0.2f, Screen.height * 0.6f);
+		aboutRect = new Rect(Screen.width * 0.3f, Screen.height * 0.2f, Screen.width * 0.4f, Screen.height * 0.6f);
 	}
 
 	private void Update()
 	{
 		for (var i = 0; i < clouds.Length; i++)
-			clouds[i].rect.x += clouds[i].speed * Time.deltaTime;
+			clouds[i].rect.x += clouds[i].speed * Time.smoothDeltaTime;
 	}
 
 	private struct Cloud

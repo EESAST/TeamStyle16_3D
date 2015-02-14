@@ -60,6 +60,8 @@ public class Submarine : Unit
 		highlighter.FlashingOff();
 	}
 
+	protected override int Speed() { return 6; }
+
 	protected override void Start()
 	{
 		base.Start();

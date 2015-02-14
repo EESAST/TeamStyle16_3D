@@ -29,7 +29,7 @@ public class FileBrowser
 	public bool recursiveSearch = true;
 	private Vector2 searchScroll = Vector2.zero;
 	private float searchStartTime;
-	private string searchString = "";
+	private string searchString = "*.battle";
 	private Thread searchThread;
 	public Color selectedColor = new Color(0.5f, 0.5f, 0.9f);
 	private int selectedIndex = -1;

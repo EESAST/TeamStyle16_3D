@@ -28,7 +28,7 @@ public class Base : Building
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		Data.Bases[team] = this;
+		Data.Replay.Bases[team] = this;
 	}
 
 	protected override int Kind() { return 0; }

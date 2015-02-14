@@ -10,6 +10,6 @@
 	{
 		public static int PerCollectedResource = 1;
 		public static int PerDamage = 1;
-		public static int PerFortPerFrame = 1;
+		public static int PerFortPerRound = 1;
 	}
 }

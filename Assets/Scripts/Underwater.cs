@@ -26,7 +26,7 @@ public class Underwater : MonoBehaviour
 
 	private void Update()
 	{
-		var newIsUnderwater = camera.transform.position.y < Settings.HeightOfLevel[1];
+		var newIsUnderwater = camera.transform.position.y < Settings.Map.HeightOfLevel[1];
 		if (isUnderwater == newIsUnderwater)
 			return;
 		isUnderwater = newIsUnderwater;

@@ -50,6 +50,8 @@ public class Cargo : Ship
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
 
+	protected override int Speed() { return 8; }
+
 	protected override void Start()
 	{
 		base.Start();

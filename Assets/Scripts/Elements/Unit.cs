@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -8,27 +9,23 @@ using UnityEngine;
 
 public abstract class Unit : UnitBase
 {
-	private IEnumerator AdjustOrientation(Vector3 dir)
+	private bool isOrienting;
+	private Vector3 targetPos;
+	private Quaternion targetRot;
+
+	private IEnumerator AdjustOrientation(Vector3 targetOrientation)
 	{
-		//dir.y = 0;
+		isOrienting = true;
 		var p = transform.rotation;
-		var q = Quaternion.LookRotation(dir);
-		var angle = Quaternion.Angle(p, q);
-
-		if (angle < 30)
-			yield break;
-
-		const float AngularSpeed = 120; // 120 degrees per sec
-
-		var Interpolations = 1 + (int)angle / 3;
-		var dt = 1.0f / Interpolations;
-
-		var dtime = angle / AngularSpeed / Interpolations;
-		for (float t = 0; t <= 1; t += dt)
+		var q = Quaternion.LookRotation(targetOrientation);
+		var time = Quaternion.Angle(p, q) / Speed() / 30;
+		for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
 		{
-			transform.rotation = Quaternion.Slerp(p, q, t);
-			yield return new WaitForSeconds(dtime);
+			targetRot = Quaternion.Slerp(p, q, t);
+			yield return null;
 		}
+		targetRot = q;
+		isOrienting = false;
 	}
 
 	public override void Initialize(JSONObject info)
@@ -44,66 +41,64 @@ public abstract class Unit : UnitBase
 
 	public IEnumerator Move(JSONObject nodes)
 	{
-		//transform.position = Methods.Coordinates.JSONToInternal(nodes.list[nodes.Count - 1]);
-		//TODO:animate movement according to nodes
-		/*foreach(var p in nodes.list) {
-			transform.position = Methods.Coordinates.JSONToInternal(p);
-			yield return new WaitForSeconds(0.1f);
-		}*/
-
-		// use kinematics?
-		//rigidbody.velocity = ;
-
-		const int InterpolationsPerUnitMove = 10;
-		const float TimerPerUnitMove = 0.2f; // time in seconds to go across a block
-
-		const float dt = 1.0f / InterpolationsPerUnitMove;
-		const float dtime = TimerPerUnitMove / InterpolationsPerUnitMove;
 		int i;
-		for (i = 0; i < nodes.list.Count - 2;)
+		var internalNodes = new Vector3[nodes.Count];
+		for (i = 0; i < nodes.Count; ++i)
+			internalNodes[i] = Methods.Coordinates.JSONToInternal(nodes[i]);
+		var time = 2.5f / Speed();
+		for (i = 0; i < nodes.Count - 2;)
 		{
-			var u = Methods.Coordinates.JSONToInternal(nodes.list[i]);
-			var v = Methods.Coordinates.JSONToInternal(nodes.list[i + 1]);
-			var w = Methods.Coordinates.JSONToInternal(nodes.list[i + 2]);
-			Vector3 a = v - u, b = w - v;
-			// wait for orientation adjusted
-			yield return StartCoroutine(AdjustOrientation(a));
-			if ((a - b).magnitude < 1)
-			{
-				for (float t = 0; t < 1; t += dt)
-				{
-					transform.position = //Methods.Coordinates.ExternalToInternal(
-						Vector3.Lerp(u, v, t); //);
-					yield return new WaitForSeconds(dtime);
-				}
-				i += 1;
-			}
-			else
+			var u = internalNodes[i];
+			var v = internalNodes[i + 1];
+			var w = internalNodes[i + 2];
+			var a = v - u;
+			var b = w - v;
+			StartCoroutine(AdjustOrientation(a));
+			while (isOrienting)
+				yield return null;
+			if (Math.Abs(Vector3.Dot(a, b)) < Settings.Tolerance)
 			{
 				var p = transform.rotation;
 				var q = Quaternion.LookRotation(b);
-				var o = u + b; // origin of the circle
-				b = -b;
-				for (float t = 0; t < 1; t += dt / 2)
+				var o = u + b;
+				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time / 2) < 1 - Time.smoothDeltaTime / time / 4;)
 				{
-					transform.position = o + Vector3.Slerp(b, a, t);
-					transform.rotation = Quaternion.Slerp(p, q, t);
-					yield return new WaitForSeconds(dtime);
+					targetPos = o + Vector3.Slerp(-b, a, t);
+					targetRot = Quaternion.Slerp(p, q, t);
+					yield return null;
 				}
+				targetPos = w;
+				targetRot = q;
 				i += 2;
+				targetFuel -= 2;
 			}
-		}
-		if (i == nodes.list.Count - 2)
-		{
-			var u = Methods.Coordinates.JSONToInternal(nodes.list[i]);
-			var v = Methods.Coordinates.JSONToInternal(nodes.list[i + 1]);
-			for (float t = 0; t < 1; t += dt)
+			else
 			{
-				transform.position = Vector3.Lerp(u, v, t);
-				yield return new WaitForSeconds(dtime);
+				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
+				{
+					targetPos = Vector3.Lerp(u, v, t);
+					yield return null;
+				}
+				targetPos = v;
+				++i;
+				--targetFuel;
 			}
 		}
-		transform.position = Methods.Coordinates.JSONToInternal(nodes.list[nodes.Count - 1]);
+		if (i == nodes.Count - 2)
+		{
+			var u = internalNodes[i];
+			var v = internalNodes[i + 1];
+			StartCoroutine(AdjustOrientation(v - u));
+			while (isOrienting)
+				yield return null;
+			for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
+			{
+				targetPos = Vector3.Lerp(u, v, t);
+				yield return null;
+			}
+			targetPos = v;
+			--targetFuel;
+		}
 		--Data.Replay.MovesLeft;
 	}
 
@@ -114,4 +109,22 @@ public abstract class Unit : UnitBase
 	}
 
 	protected abstract int Population();
+
+	protected abstract int Speed();
+
+	protected override void Start()
+	{
+		base.Start();
+		targetPos = transform.position;
+		targetRot = transform.rotation;
+	}
+
+	protected override void Update()
+	{
+		base.Update();
+		if ((targetPos - transform.position).magnitude > Settings.Tolerance)
+			transform.position = Vector3.Lerp(transform.position, targetPos, Settings.TransitionRate * Time.smoothDeltaTime);
+		if (Quaternion.Angle(transform.rotation, targetRot) > Settings.Tolerance)
+			transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Settings.TransitionRate * Time.smoothDeltaTime);
+	}
 }

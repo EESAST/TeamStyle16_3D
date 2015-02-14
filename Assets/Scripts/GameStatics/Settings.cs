@@ -6,30 +6,29 @@ using UnityEngine;
 
 public static class Settings
 {
-	private static readonly float[] _heightOfLevel = { 2, 2.8f, 3, 6 }; //stands for underwater, water surface, ground and air in sequence
 	private static readonly float _shadowDistance = 50;
 	public static int CloudNumber = 50;
-	public static RectOffset MapSizeOffset = new RectOffset(80, 80, 80, 80);
+	public static float DeltaTime = 0.1f;
+	public static float FastAttenuation = 0.6f;
 	public static int MaxEntryPerRow = 5;
-	public static float ScaleFactor = 5;
-	public static int TextGranularity = 3;
 	public static float MaxTimePerFrame = 10;
+	public static float SlowAttenuation = 0.9f;
+	public static int TextGranularity = 3;
 	public static float Tolerance = 0.01f;
 	public static float TransitionRate = 3;
-	public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }
-	public static float ShadowDistance { get { return _shadowDistance * ScaleFactor; } }
+	public static float ShadowDistance { get { return _shadowDistance * Map.ScaleFactor; } }
 
 	public static class Camera
 	{
 		private static readonly float _farClipPlane = 100;
 		public static Color BackgroundColor = new Color(0, 0.4f, 0.7f, 1);
-		public static float FarClipPlane { get { return _farClipPlane * ScaleFactor; } }
+		public static float FarClipPlane { get { return _farClipPlane * Map.ScaleFactor; } }
 
 		public static class Movement
 		{
 			private static readonly float _rate = 10;
-			public static float DefaultHeight = (HeightOfLevel[0] + HeightOfLevel[3]) / 2;
-			public static float Rate { get { return _rate * ScaleFactor; } }
+			public static float DefaultHeight = (Map.HeightOfLevel[0] + Map.HeightOfLevel[3]) / 2;
+			public static float Rate { get { return _rate * Map.ScaleFactor; } }
 		}
 
 		public static class Rotation
@@ -44,10 +43,10 @@ public static class Settings
 			private static readonly float _max = 16;
 			private static readonly float _min = 2;
 			private static readonly float _rate = 600;
-			public static float Default { get { return _default * ScaleFactor; } }
-			public static float Max { get { return _max * ScaleFactor; } }
-			public static float Min { get { return _min * ScaleFactor; } }
-			public static float Rate { get { return _rate * ScaleFactor; } }
+			public static float Default { get { return _default * Map.ScaleFactor; } }
+			public static float Max { get { return _max * Map.ScaleFactor; } }
+			public static float Min { get { return _min * Map.ScaleFactor; } }
+			public static float Rate { get { return _rate * Map.ScaleFactor; } }
 		}
 	}
 
@@ -67,9 +66,17 @@ public static class Settings
 		public static float VerticalPositionOffset = 1;
 	}
 
+	public static class Map
+	{
+		private static readonly float[] _heightOfLevel = { 2, 2.8f, 3, 6 }; //stands for underwater, water surface, ground and air in sequence
+		public static RectOffset MapSizeOffset = new RectOffset(80, 80, 80, 80);
+		public static float ScaleFactor = 5;
+		public static float[] HeightOfLevel { get { return Methods.Array.Multiply(_heightOfLevel, ScaleFactor); } }
+	}
+
 	public static class MiniMap
 	{
-		public static RectOffset Border = new RectOffset(19, 39, 31, 31); //Correspond to the rect offset of the mini frame sprite
+		public static RectOffset Border = new RectOffset(19, 39, 31, 31); //Corresponds to the rect offset of the mini frame sprite
 		public static int Granularity = 2; //Must be even to ensure proper display of the texture
 		public static Color LandColor = new Color(0, 0.8f, 0, 0.8f);
 		public static Color OceanColor = new Color(0, 0, 0.6f, 0.6f);
@@ -106,8 +113,8 @@ public static class Settings
 			private static readonly float _minDimension = 0.05f;
 			public static float Density = 1;
 			public static float MaxVisibleDistance = 250;
-			public static float MaxDimension { get { return _maxDimension * ScaleFactor; } }
-			public static float MinDimension { get { return _minDimension * ScaleFactor; } }
+			public static float MaxDimension { get { return _maxDimension * Map.ScaleFactor; } }
+			public static float MinDimension { get { return _minDimension * Map.ScaleFactor; } }
 
 			public static class Waving
 			{
@@ -122,7 +129,7 @@ public static class Settings
 			private static readonly float _billboardDistance = 50;
 			public static float Density = 0.15f;
 			public static float VerticalPositionOffset = -0.1f;
-			public static float BillboardDistance { get { return _billboardDistance * ScaleFactor; } }
+			public static float BillboardDistance { get { return _billboardDistance * Map.ScaleFactor; } }
 		}
 	}
 }

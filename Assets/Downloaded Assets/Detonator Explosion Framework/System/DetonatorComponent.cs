@@ -54,7 +54,7 @@ public abstract class DetonatorComponent : MonoBehaviour
 	public void SetStartValues()
 	{
 		startSize = size;
-		startForce = force *= Settings.ScaleFactor / 9.81f;
+		startForce = force *= Settings.Map.ScaleFactor / 9.81f;
 		startVelocity = velocity;
 		startDuration = duration;
 		startDetail = detail;

@@ -33,10 +33,10 @@ public abstract class Resource : Element
 	{
 		var markImage = markRect.GetComponent<RawImage>();
 		var c = markImage.color;
-		while ((c.a *= 0.8f) > Mathf.Epsilon)
+		while ((c.a *= Settings.FastAttenuation) > Mathf.Epsilon)
 		{
 			markImage.color = c;
-			yield return new WaitForSeconds(0.04f);
+			yield return new WaitForSeconds(Settings.DeltaTime);
 		}
 	}
 
@@ -47,7 +47,7 @@ public abstract class Resource : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.12f, Screen.height * 0.08f), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.16f, Screen.height * 0.08f), GUI.skin.box);
 		GUILayout.FlexibleSpace();
 		GUILayout.Label(StorageDescription() + '：' + Mathf.RoundToInt(CurrentStorage()), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();

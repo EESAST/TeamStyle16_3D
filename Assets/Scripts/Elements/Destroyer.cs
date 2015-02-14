@@ -38,6 +38,8 @@ public class Destroyer : Ship
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
 
+	protected override int Speed() { return 7; }
+
 	protected override void Start()
 	{
 		base.Start();

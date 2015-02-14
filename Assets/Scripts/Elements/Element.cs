@@ -58,8 +58,8 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Destruct()
 	{
-		isDead = true;
 		Data.Replay.Elements.Remove(index);
+		isDead = true;
 		foreach (IElementFX elementFX in GetComponentsInChildren(typeof(IElementFX)))
 			elementFX.Disable();
 		highlighter.Die();
@@ -152,7 +152,7 @@ public abstract class Element : MonoBehaviour
 	protected virtual void Start()
 	{
 		transform.rotation = DefaultRotation;
-		transform.localScale = Vector3.one * RelativeSize * Settings.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
+		transform.localScale = Vector3.one * RelativeSize * Settings.Map.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		RefreshColor();
 		RefreshMarkPattern();
 		RefreshMarkSize();
@@ -164,8 +164,8 @@ public abstract class Element : MonoBehaviour
 			highlighter.On(Data.TeamColor.Current[team]);
 		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
 		if (Mathf.Abs(targetFuel - currentFuel) > Settings.Tolerance)
-			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.deltaTime);
+			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.smoothDeltaTime);
 		if (Mathf.Abs(targetMetal - currentMetal) > Settings.Tolerance)
-			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.deltaTime);
+			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.smoothDeltaTime);
 	}
 }

@@ -1,9 +1,6 @@
 ﻿#region
 
-using System;
-using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 #endregion
 
@@ -68,7 +65,7 @@ public static class Methods
 		mesh.tangents = tangents;
 	}
 
-	private static void Line(this Texture2D texture, Vector2 lhs, Vector2 rhs, Color lineColor, float lineThickness)
+	public static void Line(this Texture2D texture, Vector2 lhs, Vector2 rhs, Color lineColor, float lineThickness)
 	{
 		var tmpPixels = texture.GetPixels32();
 		var width = texture.width;
@@ -83,10 +80,10 @@ public static class Methods
 			var stepY = k;
 			var dy = Mathf.Sqrt(1 + stepY * stepY) * lineThickness;
 			for (float x = left.x, y = left.y; x <= right.x; x++, y += stepY)
-				for (var yp = -dy / 2; yp <= dy / 2; yp++)
+				for (var yPrime = -dy / 2; yPrime <= dy / 2; yPrime++)
 				{
 					var posX = Mathf.RoundToInt(x);
-					var posY = Mathf.RoundToInt(y + yp);
+					var posY = Mathf.RoundToInt(y + yPrime);
 					if (textureRect.Contains(new Vector2(posX, posY)))
 						tmpPixels[posX + width * posY] = lineColor;
 				}
@@ -98,9 +95,9 @@ public static class Methods
 			var stepX = 1 / k;
 			var dx = Mathf.Sqrt(1 + stepX * stepX) * lineThickness;
 			for (float x = down.x, y = down.y; y <= up.y; x += stepX, y++)
-				for (var xp = -dx / 2; xp <= dx / 2; xp++)
+				for (var xPrime = -dx / 2; xPrime <= dx / 2; xPrime++)
 				{
-					var posX = Mathf.RoundToInt(x + xp);
+					var posX = Mathf.RoundToInt(x + xPrime);
 					var posY = Mathf.RoundToInt(y);
 					if (textureRect.Contains(new Vector2(posX, posY)))
 						tmpPixels[posX + width * posY] = lineColor;
@@ -117,6 +114,9 @@ public static class Methods
 		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
 		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
 		Data.Replay.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
+		Data.GUI.Dice = Object.Instantiate(Resources.Load("Dice")) as Texture2D;
+		TextureScale.Bilinear(Data.GUI.Dice, Screen.height / 8, Screen.height / 8);
+		Data.GUI.Random.image = Data.GUI.Dice;
 	}
 
 	public static void Polygon(this Texture2D texture, Vector2[] points, Color lineColor, float lineThickness)
@@ -124,6 +124,8 @@ public static class Methods
 		for (var i = 0; i < points.Length; i++)
 			texture.Line(points[i], points[(i + 1) % points.Length], lineColor, lineThickness);
 	}
+
+	public static Rect RectLerp(Rect from, Rect to, float t) { return new Rect { x = Mathf.Lerp(from.x, to.x, t), y = Mathf.Lerp(from.y, to.y, t), width = Mathf.Lerp(from.width, to.width, t), height = Mathf.Lerp(from.height, to.height, t) }; }
 
 	public static Vector3[] TransformPoints(this Transform transform, Vector3[] points, out Vector3 center)
 	{
@@ -134,6 +136,8 @@ public static class Methods
 		center /= results.Length;
 		return results;
 	}
+
+	public static float ValidScreenDPI() { return Screen.dpi > 0 ? Screen.dpi : 120; }
 
 	public static Vector3 WorldCenterOfElement(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Element>().Center()); }
 
@@ -201,17 +205,22 @@ public static class Methods
 
 	public static class Coordinates
 	{
-		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.MapSizeOffset.right - externalY) * Settings.ScaleFactor, Settings.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.MapSizeOffset.top) * Settings.ScaleFactor)); }
+		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - externalY) * Settings.Map.ScaleFactor, Settings.Map.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.Map.MapSizeOffset.top) * Settings.Map.ScaleFactor)); }
 
 		public static Vector3 ExternalToInternal(Vector3 externalCoordinates) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalCoordinates.z); }
 
 		public static Vector3 ExternalToInternal(Vector2 externalCoordinates, float externalZ) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalZ); }
 
-		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates) { return new Vector2(Screen.width - Settings.MiniMap.Border.right - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.Border.top - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor); }
+		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates)
+		{
+			if (Settings.MiniMap.Border == null)
+				Debug.LogError("Null Border!");
+			return new Vector2(Screen.width - Settings.MiniMap.Border.right - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.Border.top - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor);
+		}
 
 		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
 
-		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.ScaleFactor - Settings.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.MapSizeOffset.right - internalCoordinates.x / Settings.ScaleFactor); }
+		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.Map.ScaleFactor - Settings.Map.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - internalCoordinates.x / Settings.Map.ScaleFactor); }
 
 		public static Vector2 InternalToMiniMapRatios(Vector3 internalCoordinates) { return ExternalToMiniMapRatios(InternalToExternal(internalCoordinates)); }
 
@@ -261,9 +270,9 @@ public static class Methods
 				posY = jsonPos["y"].n;
 				posZ = jsonPos["z"].n;
 			}
-			if (Math.Abs(posZ - 2) < Mathf.Epsilon)
+			if (Mathf.Abs(posZ - 2) < Mathf.Epsilon)
 				posZ = 3;
-			else if (Math.Abs(posZ - 1) < Mathf.Epsilon)
+			else if (Mathf.Abs(posZ - 1) < Mathf.Epsilon)
 				posZ += Data.Battle["gamebody"]["map_info"]["types"][Mathf.RoundToInt(posX)][Mathf.RoundToInt(posY)].n;
 		}
 
@@ -280,15 +289,6 @@ public static class Methods
 		{
 			Data.GamePaused = true;
 			Time.timeScale = 0;
-		}
-
-		public static void Quit()
-		{
-#if UNITY_EDITOR
-			EditorApplication.isPlaying = false;
-#else
-				Application.Quit();
-#endif
 		}
 
 		public static void Resume()
@@ -352,7 +352,7 @@ public static class Methods
 							Data.TeamColor.Target[i] = new Color(Random.Range(0, 1f), Random.Range(0, 1f), Random.Range(0, 1f));
 						GUILayout.BeginVertical();
 						GUILayout.BeginHorizontal();
-						GUILayout.Label(Data.GUI.TeamDescriptions[i], Data.GUI.Label.TeamColored[i]);
+						GUILayout.Label(Data.Replay.TeamNames[i], Data.GUI.Label.TeamColored[i]);
 						GUILayout.Box("", Data.GUI.TeamColoredBoxes[i]);
 						GUILayout.EndHorizontal();
 						GUILayout.BeginHorizontal();
@@ -426,6 +426,7 @@ public static class Methods
 			Data.GUI.Button.Large = new GUIStyle("button");
 			Data.GUI.Button.Medium = new GUIStyle("button");
 			Data.GUI.Button.Small = new GUIStyle("button");
+			Data.GUI.Label.Huge = new GUIStyle("label");
 			Data.GUI.Label.LargeLeft = new GUIStyle("label");
 			Data.GUI.Label.LargeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.SmallLeft = new GUIStyle("label");
@@ -445,18 +446,18 @@ public static class Methods
 			}
 		}
 
-		public static void ResizeFonts()
+		public static void ResizeFonts(float physicalScreenHeight)
 		{
-			var physicalHeight = Screen.height / Screen.dpi;
 			for (var i = 0; i < 3; i++)
-				Data.GUI.Label.TeamColored[i].fontSize = Mathf.RoundToInt(physicalHeight * 4);
-			Data.GUI.Button.Large.fontSize = Mathf.RoundToInt(physicalHeight * 5);
-			Data.GUI.Button.Medium.fontSize = Mathf.RoundToInt(physicalHeight * 4);
-			Data.GUI.Button.Small.fontSize = Mathf.RoundToInt(physicalHeight * 3);
-			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = Mathf.RoundToInt(physicalHeight * 5);
-			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = Mathf.RoundToInt(physicalHeight * 4);
+				Data.GUI.Label.TeamColored[i].fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
+			Data.GUI.Button.Large.fontSize = Mathf.RoundToInt(physicalScreenHeight * 5);
+			Data.GUI.Button.Medium.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
+			Data.GUI.Button.Small.fontSize = Mathf.RoundToInt(physicalScreenHeight * 3);
+			Data.GUI.Label.Huge.fontSize = Mathf.RoundToInt(physicalScreenHeight * 8);
+			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = Mathf.RoundToInt(physicalScreenHeight * 5);
+			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
 			for (var i = 0; i < 3; i++)
-				Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalHeight * 3);
+				Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalScreenHeight * 3);
 		}
 
 		public static void StageCurrentOptions()

@@ -9,20 +9,17 @@ public class Monitor : MonoBehaviour
 {
 	private static int markPatternIndex;
 	private static float markScaleFactor;
-	private static Vector2 physicalScreenSize;
+	public static float PhysicalScreenHeight;
 	public static Vector2 ScreenSize;
 	private static readonly Color[] teamColor = new Color[4];
 
 	private void Update()
 	{
-		if (!Data.Replay.ProductionPaused)
-			Data.Replay.ProductionTimer += Time.deltaTime * Data.Replay.ProductionTimeScale;
-
 		#region Current Scores
 
 		if (!Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))
 			for (var i = 0; i < 2; i++)
-				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.deltaTime);
+				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.smoothDeltaTime);
 
 		#endregion
 
@@ -31,7 +28,7 @@ public class Monitor : MonoBehaviour
 		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
 		{
 			for (var i = 0; i < 4; i++)
-				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TeamColor.TransitionRate * Time.deltaTime);
+				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TeamColor.TransitionRate * Time.smoothDeltaTime);
 			if (Delegates.CurrentTeamColorChanged != null)
 				Delegates.CurrentTeamColorChanged();
 		}
@@ -89,13 +86,14 @@ public class Monitor : MonoBehaviour
 
 		#endregion
 
-		#region Physical Screen Size
+		#region Physical Screen Height
 
-		var physicalScreenSize = new Vector2(Screen.width, Screen.height) / Screen.dpi;
-		if (Monitor.physicalScreenSize != physicalScreenSize)
+		var physicalScreenHeight = Screen.height / Methods.ValidScreenDPI();
+		if (Math.Abs(PhysicalScreenHeight - physicalScreenHeight) > Mathf.Epsilon)
 		{
-			Methods.GUI.ResizeFonts();
-			Monitor.physicalScreenSize = physicalScreenSize;
+			Methods.GUI.ResizeFonts(PhysicalScreenHeight = physicalScreenHeight);
+			if (Delegates.PhysicalScreenHeightChanged != null)
+				Delegates.PhysicalScreenHeightChanged();
 		}
 
 		#endregion

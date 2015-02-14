@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Collections;
 using UnityEngine;
 
 #endregion
@@ -81,7 +82,7 @@ public class Moba_Camera : MonoBehaviour
 		if (isForcedMoving)
 		{
 			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.deltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.smoothDeltaTime);
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
@@ -89,7 +90,7 @@ public class Moba_Camera : MonoBehaviour
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.deltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.smoothDeltaTime);
 			_forceDestination = Vector3.zero;
 		}
 		else
@@ -105,11 +106,11 @@ public class Moba_Camera : MonoBehaviour
 				movementVector -= requirements.pivot.transform.forward;
 			if (movementVector != Vector3.zero)
 			{
-				requirements.pivot.position += movementVector.normalized * settings.movement.cameraMovementRate * Time.deltaTime;
+				requirements.pivot.position += movementVector.normalized * settings.movement.cameraMovementRate * Time.smoothDeltaTime;
 				_forceDestination = Vector3.zero;
 			}
 			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.deltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.smoothDeltaTime);
 		}
 	}
 
@@ -143,7 +144,7 @@ public class Moba_Camera : MonoBehaviour
 					else
 						changeInRotationY = deltaMouseHorizontal;
 			}
-			var deltaCameraRotation = Vector2.Scale(new Vector2(changeInRotationX, changeInRotationY), settings.rotation.cameraRotationRate) * Time.deltaTime;
+			var deltaCameraRotation = Vector2.Scale(new Vector2(changeInRotationX, changeInRotationY), settings.rotation.cameraRotationRate) * Time.smoothDeltaTime;
 			if (deltaCameraRotation.magnitude > settings.tolerance)
 				currentCameraRotation += deltaCameraRotation;
 		}
@@ -151,7 +152,7 @@ public class Moba_Camera : MonoBehaviour
 		{
 			Screen.lockCursor = false;
 			if (settings.rotation.cameraRotationAutoRevert && (settings.rotation.defaultRotation - _currentCameraRotation).magnitude > settings.tolerance)
-				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.deltaTime);
+				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.smoothDeltaTime);
 		}
 	}
 
@@ -227,36 +228,28 @@ public class Moba_Camera : MonoBehaviour
 			if (!settings.zoom.invertZoom)
 				inverted = -1;
 
-			targetZoomAmount += zoomChange * settings.zoom.zoomRate * inverted * Time.deltaTime;
+			targetZoomAmount += zoomChange * settings.zoom.zoomRate * inverted * Time.smoothDeltaTime;
 		}
 		if (shallRevertZoom)
 		{
 			if (Math.Abs(settings.zoom.defaultZoom - _currentZoomAmount) > settings.tolerance)
-				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.deltaTime);
+				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.smoothDeltaTime);
 		}
 		else if (Mathf.Abs(targetZoomAmount - _currentZoomAmount) > settings.tolerance)
-			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.deltaTime);
+			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.smoothDeltaTime);
 	}
 
-	// Called from Update or FixedUpdate Depending on value of useFixedUpdate
-	private void CameraUpdate()
+	private IEnumerator CameraUpdate()
 	{
-		CalculateCameraZoom();
-
-		CalculateCameraRotation();
-
-		CalculateCameraMovement();
-
-		CalculateCameraUpdates();
-
-		CalculateCameraBoundaries();
-	}
-
-	// Update is called once per frame
-	private void FixedUpdate()
-	{
-		if (settings.useFixedUpdate)
-			CameraUpdate();
+		while (true)
+		{
+			CalculateCameraZoom();
+			CalculateCameraRotation();
+			CalculateCameraMovement();
+			CalculateCameraUpdates();
+			CalculateCameraBoundaries();
+			yield return null;
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -321,14 +314,7 @@ public class Moba_Camera : MonoBehaviour
 			tmp.y = settings.movement.defaultHeight;
 			requirements.pivot.transform.position = tmp;
 		}
-		if (settings.useFixedUpdate)
-			CameraUpdate();
-	}
 
-	// Update is called once per frame
-	private void Update()
-	{
-		if (!settings.useFixedUpdate)
-			CameraUpdate();
+		StartCoroutine(CameraUpdate());
 	}
 }

@@ -36,8 +36,8 @@ public class IdleRotation : MonoBehaviour, IElementFX
 		if (Time.time < lastTime + transitionTime)
 		{
 			var pivot = transform.TransformPoint(translationOffsetInSelfSpace);
-			transform.RotateAround(pivot, transform.TransformDirection(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.left), alphaSpeed * Time.deltaTime);
-			transform.RotateAround(pivot, transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up), betaSpeed * Time.deltaTime);
+			transform.RotateAround(pivot, transform.TransformDirection(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.left), alphaSpeed * Time.smoothDeltaTime);
+			transform.RotateAround(pivot, transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up), betaSpeed * Time.smoothDeltaTime);
 		}
 		else if (Time.time > nextTime)
 		{
