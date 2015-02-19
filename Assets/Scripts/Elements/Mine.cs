@@ -1,5 +1,7 @@
 ﻿#region
 
+using System.Collections;
+using JSON;
 using UnityEngine;
 
 #endregion
@@ -8,11 +10,11 @@ public class Mine : Resource
 {
 	private static readonly Material[] materials = new Material[2];
 
-	public override Vector3 Center() { return new Vector3(-0.15f, -0.21f, -0.22f); }
+	public override Vector3 Center() { return new Vector3(0.05f, 0.21f, -0.04f); }
 
 	protected override float CurrentStorage() { return currentMetal; }
 
-	protected override Vector3 Dimensions() { return new Vector3(3.98f, 3.11f, 2.71f); }
+	protected override Vector3 Dimensions() { return new Vector3(3.44f, 3.11f, 2.71f); }
 
 	public override void Initialize(JSONObject info)
 	{
@@ -34,8 +36,8 @@ public class Mine : Resource
 	protected override void Start()
 	{
 		base.Start();
-		transform.FindChild("Minerals").GetComponent<MeshRenderer>().material = materials[0];
-		transform.FindChild("Ore").GetComponent<MeshRenderer>().material = materials[1];
+		transform.Find("Minerals").GetComponent<MeshRenderer>().material = materials[0];
+		transform.Find("Ore").GetComponent<MeshRenderer>().material = materials[1];
 	}
 
 	protected override string StorageDescription() { return "金属"; }

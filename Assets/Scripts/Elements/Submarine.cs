@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections;
 using UnityEngine;
 
 #endregion
@@ -7,10 +8,19 @@ using UnityEngine;
 public class Submarine : Unit
 {
 	private static readonly Material[][] materials = new Material[1][];
+	private Transform[] torpedo;
+
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(targetPosition - transform.position)); }
 
 	protected override int AmmoOnce() { return 2; }
 
-	public override Vector3 Center() { return new Vector3(0.44f, 0.00f, 1.14f); }
+	protected override void Awake()
+	{
+		base.Awake();
+		torpedo = new[] { transform.Find("Hull/LSP"), transform.Find("Hull/RSP") };
+	}
+
+	public override Vector3 Center() { return new Vector3(-0.00f, 0.19f, 0.04f); }
 
 	public override void Deselect()
 	{
@@ -18,7 +28,27 @@ public class Submarine : Unit
 		highlighter.FlashingOn();
 	}
 
-	protected override Vector3 Dimensions() { return new Vector3(21.10f, 34.56f, 83.97f); }
+	protected override Vector3 Dimensions() { return new Vector3(0.55f, 0.88f, 2.13f); }
+
+	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
+	{
+		explosionsLeft += 2;
+		for (var i = 0; i < 2; ++i)
+			(Instantiate(Resources.Load("Bomb"), torpedo[i].position, torpedo[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+		while (explosionsLeft > 0)
+			yield return null;
+		StartCoroutine(RevertRotation());
+	}
+
+	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
+	{
+		explosionsLeft += 2;
+		for (var i = 0; i < 2; ++i)
+			(Instantiate(Resources.Load("Bomb"), torpedo[i].position, torpedo[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
+		while (explosionsLeft > 0)
+			yield return null;
+		StartCoroutine(RevertRotation());
+	}
 
 	protected override int Kind() { return 4; }
 
@@ -52,6 +82,12 @@ public class Submarine : Unit
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
+	}
+
+	private IEnumerator RevertRotation()
+	{
+		yield return StartCoroutine(AdjustOrientation(Vector3.Scale(transform.forward, new Vector3(1,0,1))));
+		--Data.Replay.AttacksLeft;
 	}
 
 	public override void Select()

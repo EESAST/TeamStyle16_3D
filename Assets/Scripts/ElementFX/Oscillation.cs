@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-public class Oscillation : MonoBehaviour, IElementFX
+public class Oscillation : MonoBehaviour, IIdleFX
 {
 	private float amplitude;
 	private float angularAmplitude;
@@ -18,11 +18,22 @@ public class Oscillation : MonoBehaviour, IElementFX
 	public float minAngularOmega;
 	public float minOmega;
 	private float omega;
-	public Vector3 rotationOffsetInParentSpace;
-	public Vector3 rotationOffsetInSelfSpace;
+	private Vector3 originalEulerAngles;
+	private Vector3 originalPosition;
 	private float spawnTime;
+	private float stopTime;
 
-	public void Disable() { enabled = false; }
+	public void Disable()
+	{
+		stopTime = Time.time;
+		enabled = false;
+	}
+
+	public void Enable()
+	{
+		spawnTime += Time.time - stopTime;
+		enabled = true;
+	}
 
 	private void Awake()
 	{
@@ -31,11 +42,15 @@ public class Oscillation : MonoBehaviour, IElementFX
 		angularOmega = Random.Range(minAngularOmega, maxAngularOmega);
 		omega = Random.Range(minOmega, maxOmega);
 		spawnTime = Time.time;
+		originalEulerAngles = transform.localEulerAngles;
+		originalPosition = transform.localPosition;
 	}
 
 	private void Update()
 	{
-		transform.Translate((transform.parent ? transform.parent.TransformDirection(Quaternion.Euler(rotationOffsetInParentSpace) * Vector3.up) : Vector3.up) * omega * amplitude * Settings.Map.ScaleFactor * Mathf.Cos(omega * (Time.time - spawnTime)) * Time.smoothDeltaTime, Space.World);
-		transform.Rotate(Quaternion.Euler(rotationOffsetInSelfSpace) * Vector3.forward, angularOmega * angularAmplitude * Mathf.Cos(angularOmega * (Time.time - spawnTime)) * Time.smoothDeltaTime);
+		if (Mathf.Abs(angularAmplitude) > Mathf.Epsilon)
+			transform.localEulerAngles = originalEulerAngles + Vector3.forward * angularAmplitude * Mathf.Sin(angularOmega * (Time.time - spawnTime));
+		if (Mathf.Abs(amplitude) > Mathf.Epsilon)
+			transform.localPosition = originalPosition + Vector3.up * amplitude * Mathf.Sin(omega * (Time.time - spawnTime));
 	}
 }

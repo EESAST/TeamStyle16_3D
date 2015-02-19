@@ -2,13 +2,14 @@
 
 using System.Collections.Generic;
 using System.IO;
+using JSON;
 using UnityEngine;
 
 #endregion
 
 public static class Data
 {
-	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/miao.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/boom.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
@@ -57,13 +58,17 @@ public static class Data
 
 	public static class Replay
 	{
+		public static int[,] Statictics;
+		public static int CreatesLeft;
+		public static bool IsCreating;
 		public static int AttacksLeft;
 		public static Base[] Bases;
 		public static int CollectsLeft;
 		public static float[] CurrentScores;
 		public static Dictionary<int, Element> Elements;
 		public static int FixesLeft;
-		public static int[] FortNum;
+		public static List<Fort>[] Forts;
+		public static int FrameCount;
 		public static bool IsAttacking;
 		public static bool IsCollecting;
 		public static bool IsFixing;

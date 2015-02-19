@@ -109,24 +109,24 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139954}
-  m_LocalRotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: .313231319, y: .54520309, z: .381877869}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475678}
-  m_RootOrder: 1
+  m_RootOrder: 0
 --- !u!4 &439956
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 139956}
-  m_LocalRotation: {x: -.707106888, y: 0, z: -0, w: .707106769}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -.0501300357, y: .260756791, z: -.0611165985}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 475678}
-  m_RootOrder: 2
+  m_RootOrder: 1
 --- !u!4 &441092
 Transform:
   m_ObjectHideFlags: 1
@@ -164,7 +164,7 @@ Transform:
   - {fileID: 441092}
   - {fileID: 441094}
   m_Father: {fileID: 475678}
-  m_RootOrder: 0
+  m_RootOrder: 2
 --- !u!4 &475678
 Transform:
   m_ObjectHideFlags: 1
@@ -172,12 +172,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175678}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 441096}
   - {fileID: 439954}
   - {fileID: 439956}
+  - {fileID: 441096}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!12 &1241092
@@ -419,7 +419,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300012, guid: 65c1e88144da1e145bb0bee2cbc64a11, type: 3}
 --- !u!64 &6485742
 MeshCollider:
@@ -432,7 +432,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300016, guid: 65c1e88144da1e145bb0bee2cbc64a11, type: 3}
 --- !u!114 &11470298
 MonoBehaviour:
@@ -445,6 +445,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6271d8cdadd2cf46bc87a2d94ebd397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  index: 0
+  MouseOver: 0
+  targetFuel: 0
+  targetMetal: 0
   team: 0
 --- !u!1001 &100100000
 Prefab:

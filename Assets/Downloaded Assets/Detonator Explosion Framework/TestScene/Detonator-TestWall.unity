@@ -516,7 +516,7 @@ MonoBehaviour:
   - {fileID: 100000, guid: 5a5dc44bfe769d94ba1bcab91c5c3107, type: 2}
   - {fileID: 100000, guid: 49ee383306650b645b8a12b582a38b10, type: 2}
   - {fileID: 100000, guid: dc533b4ca16d3cd4d94b4d9e8b3376f0, type: 2}
-  - {fileID: 100000, guid: 13266a9cf8da28e41bfa61b378dfabc5, type: 2}
+  - {fileID: 100000, guid: ad7ddd940b7a8924e8ce8d301c68527a, type: 2}
   - {fileID: 100000, guid: 2d036894dd2a9024a978924c521444bf, type: 2}
   - {fileID: 100000, guid: b9dd5ecd168e0b54295932b5b107b983, type: 2}
   - {fileID: 100000, guid: f600b4a5a289d0548842df7f27d883ea, type: 2}
@@ -550,6 +550,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7137355c6e66543a5b75e3aa13216afb, type: 2}
+    - target: {fileID: 400000, guid: a896a51f6cc93ee41b532ed055788fe0, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a896a51f6cc93ee41b532ed055788fe0, type: 3}
   m_RootGameObject: {fileID: 10}

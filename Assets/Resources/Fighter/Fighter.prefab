@@ -232,7 +232,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163936}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 463956}
@@ -244,8 +244,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163938}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .863833547, y: -2.52398205, z: -.103978626}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: .863587677, y: -.235983059, z: 3.00959182}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -256,8 +256,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163940}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.89310336, y: .8760162, z: -.363977402}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.89335322, y: -.495983183, z: -.390408069}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -268,8 +268,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163942}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.89383197, y: .87601608, z: -.363977402}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.89358771, y: -.495983183, z: -.390408128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -280,8 +280,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163944}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.455073237, y: -1.75502098, z: -.41877079}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -.45532015, y: -.550775468, z: 2.02355409}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -292,8 +292,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163946}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .455801576, y: -1.7550211, z: -.41877076}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: .455554634, y: -.550775468, z: 2.02355409}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -304,8 +304,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163948}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.45327556, y: 1.63790059, z: -.511752784}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.45352256, y: -.643758595, z: -1.33765805}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -316,8 +316,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163950}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.37374771, y: 1.68220043, z: .33819899}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.37399495, y: .206192926, z: -1.4136678}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -328,8 +328,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163952}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.45400369, y: 1.63790059, z: -.511752725}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.45375693, y: -.643758595, z: -1.33765805}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -340,8 +340,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163954}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.37447536, y: 1.68220043, z: .338199109}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.374228, y: .206193045, z: -1.41366792}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -352,8 +352,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163956}
-  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: -.707106829}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -.000106465566, y: .312782288, z: -.32160601}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 463958}
@@ -374,8 +374,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163958}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.863106847, y: -2.52398324, z: -.10397882}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -.863353193, y: -.235983074, z: 3.00959206}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 463956}
@@ -831,7 +831,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daa917db237475247999e5a46ac7df18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  index: 0
+  MouseOver: 0
+  targetFuel: 0
+  targetMetal: 0
   team: 0
+  explosionsLeft: 0
+  targetAmmo: 0
+  targetHP: 0
+  isFalling: 0
+  isHovering: 1
 --- !u!114 &11414596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -851,8 +860,6 @@ MonoBehaviour:
   minAngularAmplitude: 10
   minAngularOmega: .600000024
   minOmega: 2
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
 --- !u!114 &11463938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -867,10 +874,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -300}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463940
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -885,10 +888,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 300}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463942
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -903,10 +902,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -300}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463944
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -921,10 +916,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463946
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -939,10 +930,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 300}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463948
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -957,10 +944,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -975,10 +958,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463952
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -993,10 +972,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463954
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1011,10 +986,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!114 &11463956
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1029,10 +1000,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -100}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 90, y: 0, z: 0}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: 0, y: 0, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

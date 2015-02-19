@@ -2,17 +2,17 @@
 
 using System.Collections;
 using System.Linq;
+using JSON;
 using UnityEngine;
 
 #endregion
 
 public class Replayer : MonoBehaviour
 {
-	private static int frameCount;
-	private readonly string[] descriptions = { "攻击命中", "攻击丢失", "占领据点", "摧毁", "采集资源", "建造", "维修", "移动", "总里程", "补给" };
+	private readonly string[] descriptions = { "攻击命中", "攻击丢失", "占领据点", "摧毁敌军", "采集燃料", "采集金属", "建造单位", "维修次数", "移动里程", "有效补给" };
 	private readonly int[] lastScores = new int[2];
 	private readonly float[] scoreFontSize = new float[2];
-	private readonly int[,] statictics = new int[10, 2];
+	private bool cancelDetail;
 	//private JSONObject productionLists;
 	private int currentFrame;
 	private int currentRectId;
@@ -48,30 +48,21 @@ public class Replayer : MonoBehaviour
 					{
 						++Data.Replay.AttacksLeft;
 						var attacker = Data.Replay.Elements[attack["index"].i] as UnitBase;
-						var target = Data.Replay.Elements[attack["target"].i] as UnitBase;
-						attacker.StartCoroutine(attacker.FireAtUnitBase(target, attack["damage"].i));
-						++statictics[0, attacker.team];
+						attacker.StartCoroutine(attacker.AttackUnitBase(Data.Replay.Elements[attack["target"].i] as UnitBase, attack["damage"].i));
+						++Data.Replay.Statictics[0, attacker.team];
 					}
 					break;
 				case "AttackMiss":
 					{
 						++Data.Replay.AttacksLeft;
 						var attacker = Data.Replay.Elements[attack["index"].i] as UnitBase;
-						attacker.StartCoroutine(attacker.FireAtPosition(Methods.Coordinates.JSONToInternal(attack["target_pos"])));
-						++statictics[1, attacker.team];
+						attacker.StartCoroutine(attacker.AttackPosition(Methods.Coordinates.JSONToInternal(attack["target_pos"])));
+						++Data.Replay.Statictics[1, attacker.team];
 					}
 					break;
 				case "Capture":
 					++Data.Replay.AttacksLeft;
-					var fort = Data.Replay.Elements[attack["index"].i] as Fort;
-					fort.targetTeam = attack["team"].i;
-					++statictics[2, fort.targetTeam];
-					break;
-				case "Destroy":
-					{
-						var target = Data.Replay.Elements[attack["index"].i] as UnitBase;
-						++statictics[3, target.team];
-					}
+					++Data.Replay.Statictics[2, (Data.Replay.Elements[attack["index"].i] as Fort).targetTeam = attack["team"].i];
 					break;
 			}
 		while (Data.Replay.AttacksLeft > 0)
@@ -85,6 +76,31 @@ public class Replayer : MonoBehaviour
 		Delegates.ScreenSizeChanged += ResizeGUIRects;
 	}
 
+	public static IEnumerator Beam(Transform beamer, Component target, float elapsedTime)
+	{
+		var beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
+		beamFX.transform.parent = beamer;
+		beamFX.transform.position = beamer.GetComponent<Element>() ? beamer.WorldCenterOfElement() : beamer.position;
+		beamFX.startSpeed = Settings.BeamSpeed;
+		beamFX.Play();
+		var element = beamer.GetComponentInParent<Element>();
+		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1;)
+		{
+			var v = target.transform.WorldCenterOfElement() - beamFX.transform.position;
+			beamFX.transform.rotation = Quaternion.LookRotation(v);
+			beamFX.startLifetime = v.magnitude / beamFX.startSpeed;
+			if (element is Mine)
+				beamFX.startColor = new Color32(245, 245, 220, 255);
+			else if (element is Oilfield)
+				beamFX.startColor = Color.green;
+			else
+				beamFX.startColor = Data.TeamColor.Current[element.team];
+			yield return null;
+		}
+		beamFX.Stop();
+		Destroy(beamFX.gameObject, beamFX.startLifetime);
+	}
+
 	private IEnumerator Collects()
 	{
 		Data.Replay.IsCollecting = true;
@@ -92,11 +108,11 @@ public class Replayer : MonoBehaviour
 		{
 			++Data.Replay.CollectsLeft;
 			var collector = Data.Replay.Elements[collect["index"].i] as Cargo;
-			var target = Data.Replay.Elements[collect["target"].i] as Resource;
 			var fuel = collect["fuel"].i;
 			var metal = collect["metal"].i;
-			collector.StartCoroutine(collector.Collect(target, fuel, metal));
-			++statictics[4, collector.team];
+			collector.StartCoroutine(collector.Collect(Data.Replay.Elements[collect["target"].i] as Resource, fuel, metal));
+			Data.Replay.Statictics[4, collector.team] += fuel;
+			Data.Replay.Statictics[5, collector.team] += metal;
 		}
 		while (Data.Replay.CollectsLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
@@ -107,11 +123,16 @@ public class Replayer : MonoBehaviour
 	{
 		foreach (var create in events.list.Where(create => create["__class__"].str == "Create"))
 		{
+			++Data.Replay.CreatesLeft;
 			var typeName = Constants.TypeNames[create["kind"].i];
-			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Unit).Initialize(elements[create["index"].i.ToString()]);
-			++statictics[5, Data.Replay.Elements[create["index"].i].team];
+			var unit = ((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Unit);
+			unit.StartCoroutine(unit.Create(elements[create["index"].i.ToString()]));
+			++Data.Replay.Statictics[6, unit.team];
 			yield return null;
 		}
+		while (Data.Replay.CreatesLeft > 0)
+			yield return new WaitForSeconds(Settings.DeltaTime);
+		Data.Replay.IsCreating = false;
 	}
 
 	private IEnumerator Fixes()
@@ -121,19 +142,24 @@ public class Replayer : MonoBehaviour
 		{
 			++Data.Replay.FixesLeft;
 			var fixer = Data.Replay.Elements[fix["index"].i] as Base;
-			var target = Data.Replay.Elements[fix["target"].i] as Unit;
-			fixer.StartCoroutine(fixer.Fix(target, fix["metal"].i, fix["health_increase"].i));
-			++statictics[6, fixer.team];
+			fixer.StartCoroutine(fixer.Fix(Data.Replay.Elements[fix["target"].i] as Unit, fix["metal"].i, fix["health_increase"].i));
+			++Data.Replay.Statictics[7, fixer.team];
 		}
 		while (Data.Replay.FixesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		Data.Replay.IsFixing = false;
 	}
 
-	private void FortCaptureScores()
+	private IEnumerator FortCaptureScores()
 	{
 		for (var i = 0; i < 2; ++i)
-			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound * Data.Replay.FortNum[i];
+		{
+			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound * Data.Replay.Forts[i].Count;
+			foreach (var fort in Data.Replay.Forts[i])
+				StartCoroutine(ShowMessageAt(fort.transform.WorldCenterOfElement() + Vector3.up * fort.RelativeSize * Settings.Map.ScaleFactor / 2, "+ " + Constants.Score.PerFortPerRound + " pts", Settings.DefaultMessageTime));
+		}
+		if (Data.Replay.Forts.Any(fortList => fortList.Count > 0))
+			yield return new WaitForSeconds(Settings.DefaultMessageTime);
 	}
 
 	private Rect GetInfoContentRect()
@@ -145,7 +171,7 @@ public class Replayer : MonoBehaviour
 	private Rect GetInfoContentRect(ref int id)
 	{
 		var rects = new[] { new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.24f, Screen.height * 0.16f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.24f, Screen.height * 0.32f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.6f, Screen.height * 0.8f) };
-		return rects[id = id < 0 ? stagedShowDetail ? (currentFrame == frameCount ? 2 : 1) : 0 : id];
+		return rects[id = id < 0 ? stagedShowDetail ? (currentFrame == Data.Replay.FrameCount ? 2 : 1) : 0 : id];
 	}
 
 	private void InitializeGUI()
@@ -164,7 +190,6 @@ public class Replayer : MonoBehaviour
 		//productionLists = keyFrame[frame][1]; //an array comprised of two sub-arrays, standing for two teams, e.g. productionLists[1][i] stands for the ith production of team 1, which is still a two-entry array itself, i.e. [kind, framesLeft]
 		//commands = Data.Battle["history"]["command"][frame - 1]; //e.g. commands[0][i] stands for the ith command (object) of team 0
 		events = Data.Battle["history"]["event"][frame - 1]; //e.g. events[i] stands for the ith event (object)
-
 		AddProductionEntries();
 		yield return StartCoroutine(Attacks());
 		StartCoroutine(Supplies());
@@ -174,7 +199,7 @@ public class Replayer : MonoBehaviour
 		yield return StartCoroutine(Moves());
 		yield return StartCoroutine(Collects());
 		if (Time.time > startTime + Settings.MaxTimePerFrame)
-			Debug.LogError("Additional " + (Time.time - startTime - Settings.MaxTimePerFrame) + " seconds required targetRectId handle all animations!");
+			Debug.LogError("Additional " + (Time.time - startTime - Settings.MaxTimePerFrame) + " seconds required to handle all animations!");
 		if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
 		{
 			Data.Replay.ProductionTimeScale = 5;
@@ -183,8 +208,8 @@ public class Replayer : MonoBehaviour
 		}
 		Data.Replay.ProductionTimeScale = 0;
 		yield return StartCoroutine(Creates());
+		yield return StartCoroutine(FortCaptureScores());
 		Data.Replay.ProductionTimeScale = 1;
-		FortCaptureScores();
 	}
 
 	private IEnumerator Moves()
@@ -196,9 +221,13 @@ public class Replayer : MonoBehaviour
 			var mover = Data.Replay.Elements[move["index"].i] as Unit;
 			var nodes = move["nodes"];
 			mover.StartCoroutine(mover.Move(nodes));
-			++statictics[7, mover.team];
-			statictics[8, mover.team] += nodes.Count - 1;
+			Data.Replay.Statictics[8, mover.team] += nodes.Count - 1;
 		}
+		foreach (var plane in Data.Replay.Elements.Values.Select(element => element as Plane).Where(plane => plane))
+			if (plane.isHovering)
+				--plane.targetFuel;
+			else
+				plane.isHovering = true;
 		while (Data.Replay.MovesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		Data.Replay.IsMoving = false;
@@ -219,8 +248,10 @@ public class Replayer : MonoBehaviour
 		GUILayout.BeginArea(infoAreaRect, panelStyle);
 		GUILayout.BeginArea(infoContentRect);
 		GUILayout.BeginHorizontal(GUILayout.Height(Data.GUI.Label.LargeMiddle.CalcHeight(GUIContent.none, 0)));
-		GUILayout.Label(currentFrame == frameCount ? "比赛结束" : "第 " + currentFrame + " 回合", Data.GUI.Label.LargeMiddle);
-		if ((GUILayout.Button(showDetail ? "-" : "+", Data.GUI.Button.Large, GUILayout.Width(Screen.width * 0.03f)) || showDetail && currentFrame == frameCount && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape) && !resizingInfoRect)
+		GUILayout.Label(currentFrame == Data.Replay.FrameCount ? "比赛结束" : "第 " + currentFrame + " 回合", Data.GUI.Label.LargeMiddle);
+		if (resizingInfoRect || Data.GamePaused)
+			GUILayout.Button("…", Data.GUI.Button.Large, GUILayout.Width(Screen.width * 0.03f));
+		else if (GUILayout.Button(showDetail ? "-" : "+", Data.GUI.Button.Large, GUILayout.Width(Screen.width * 0.03f)))
 		{
 			stagedShowDetail = !showDetail;
 			StartCoroutine(ResizeInfoRect());
@@ -233,7 +264,7 @@ public class Replayer : MonoBehaviour
 		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[1]).ToString(), new GUIStyle(Data.GUI.Label.TeamColored[1]) { fontSize = Mathf.RoundToInt(scoreFontSize[1]) }, GUILayout.Width(infoContentRect.width * 0.35f), GUILayout.ExpandHeight(true));
 		GUILayout.EndHorizontal();
 		if (showDetail)
-			if (currentFrame == frameCount)
+			if (currentFrame == Data.Replay.FrameCount)
 			{
 				summaryScroll = GUILayout.BeginScrollView(summaryScroll);
 				GUILayout.Label("积分", Data.GUI.Label.LargeLeft);
@@ -245,9 +276,9 @@ public class Replayer : MonoBehaviour
 				for (var i = 0; i < 10; ++i)
 				{
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(statictics[i, 0].ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
+					GUILayout.Label(Data.Replay.Statictics[i, 0].ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
 					GUILayout.Label(descriptions[i], Data.GUI.Label.SmallMiddle);
-					GUILayout.Label(statictics[i, 1].ToString(), Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
+					GUILayout.Label(Data.Replay.Statictics[i, 1].ToString(), Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
 					GUILayout.EndHorizontal();
 				}
 				GUILayout.EndScrollView();
@@ -269,7 +300,14 @@ public class Replayer : MonoBehaviour
 		GUILayout.EndArea();
 	}
 
-	private void RefreshInfoAreaRect(float t) { infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2, (Screen.height - infoContentRect.height - panelStyle.border.vertical) / 2 * t, infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical); }
+	private void RefreshGraphs()
+	{
+		scoreGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "score");
+		unitNumGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "unit_num");
+		populationGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "population");
+	}
+
+	private void RefreshInfoAreaRect(float t) { infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2 * (2 - t), Mathf.Lerp(Data.MiniMap.Rect.height + Settings.MiniMap.Border.vertical, (Screen.height - infoContentRect.height - panelStyle.border.vertical) / 2, t), infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical); }
 
 	private void ResizeFonts()
 	{
@@ -284,9 +322,7 @@ public class Replayer : MonoBehaviour
 		resizingInfoRect = false;
 		infoContentRect = GetInfoContentRect();
 		RefreshInfoAreaRect(currentRectId == 2 ? 1 : 0);
-		scoreGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "score");
-		unitNumGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "unit_num");
-		populationGraph = new GUILineGraph(Screen.width / 2, Screen.height / 3, "population");
+		RefreshGraphs();
 	}
 
 	private IEnumerator ResizeInfoRect(int targetRectId = -1, float time = 1)
@@ -305,7 +341,22 @@ public class Replayer : MonoBehaviour
 			RefreshInfoAreaRect(Mathf.Lerp(from, to, t));
 			yield return null;
 		}
+		infoContentRect = targetContentRect;
+		RefreshInfoAreaRect(to);
 		resizingInfoRect = false;
+	}
+
+	public static IEnumerator ShowMessageAt(Vector3 position, string message, float elapsedTime)
+	{
+		var textFX = (Instantiate(Resources.Load("TextFX")) as GameObject).GetComponent<EffectManager>();
+		textFX.transform.position = position;
+		textFX.SetText(message);
+		textFX.PlayAnimation();
+		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1&&textFX;)
+		{
+			textFX.transform.rotation = Quaternion.LookRotation(position - Camera.main.transform.position);
+			yield return null;
+		}
 	}
 
 	private IEnumerator ShowSummary()
@@ -327,8 +378,7 @@ public class Replayer : MonoBehaviour
 				Data.Replay.TeamNames[i] = Data.Battle["team_names"][i].str;
 			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = lastScores[i] = Data.Battle["history"]["score"][i].i;
 		}
-		frameCount = Data.Battle["key_frames"].Count;
-		while (++currentFrame < frameCount)
+		while (++currentFrame < Data.Replay.FrameCount)
 			yield return StartCoroutine(LoadFrame(currentFrame));
 		StartCoroutine(ShowSummary());
 	}
@@ -340,12 +390,12 @@ public class Replayer : MonoBehaviour
 		{
 			++Data.Replay.SuppliesLeft;
 			var supplier = Data.Replay.Elements[supply["index"].i] as UnitBase;
-			var target = Data.Replay.Elements[supply["target"].i] as UnitBase;
 			var fuel = supply["fuel"].i;
 			var ammo = supply["ammo"].i;
 			var metal = supply["metal"].i;
-			supplier.StartCoroutine(supplier.Supply(target, fuel, ammo, metal));
-			++statictics[9, supplier.team];
+			supplier.StartCoroutine(supplier.Supply(Data.Replay.Elements[supply["target"].i] as UnitBase, fuel, ammo, metal));
+			if (fuel + ammo + metal > 0)
+				++Data.Replay.Statictics[9, supplier.team];
 		}
 		while (Data.Replay.SuppliesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
@@ -357,6 +407,14 @@ public class Replayer : MonoBehaviour
 		Data.Replay.ProductionTimer += Time.smoothDeltaTime * Data.Replay.ProductionTimeScale;
 		if (!guiInitialized)
 			return;
+		if (showDetail && currentFrame == Data.Replay.FrameCount && Input.GetKeyUp(KeyCode.Escape))
+			cancelDetail = true;
+		if (cancelDetail && !resizingInfoRect)
+		{
+			stagedShowDetail = false;
+			StartCoroutine(ResizeInfoRect());
+			cancelDetail = false;
+		}
 		for (var i = 0; i < 2; ++i)
 		{
 			if (lastScores[i] != Mathf.RoundToInt(Data.Replay.CurrentScores[i]))
@@ -381,18 +439,18 @@ public class Replayer : MonoBehaviour
 					graph.SetPixel(x, y, x % 10 == 0 || y % 5 == 0 ? Color.gray : Color.black);
 			var values = Data.Battle["history"][key];
 			float maxVal = 0;
-			for (var i = 0; i < frameCount; ++i)
+			for (var i = 0; i < Data.Replay.FrameCount; ++i)
 				for (var j = 0; j < 2; ++j)
 					maxVal = Mathf.Max(maxVal, values[i][j].n);
-			var deltaX = (float)width / frameCount;
+			var deltaX = (float)width / Data.Replay.FrameCount;
 			var deltaY = height / (maxVal + 1);
 			var p0 = new Vector2(0, values[0][0].n * deltaY);
 			var p1 = new Vector2(0, values[0][1].n * deltaY);
-			for (var i = 1; i < frameCount; ++i)
+			for (var i = 1; i < Data.Replay.FrameCount; ++i)
 				if (values[i][0].i == values[i][1].i && values[i - 1][0].i == values[i - 1][1].i)
 				{
 					var p = new Vector2(i * deltaX, values[i][0].n * deltaY);
-					var c = (Data.TeamColor.Current[0] + Data.TeamColor.Current[1]) / 2;
+					var c = (Data.TeamColor.Target[0] + Data.TeamColor.Target[1]) / 2;
 					graph.Line(p0, p, c, 1);
 					graph.Line(p1, p, c, 1);
 					p1 = p0 = p;
@@ -400,10 +458,10 @@ public class Replayer : MonoBehaviour
 				else
 				{
 					var p = new Vector2(i * deltaX, values[i][0].n * deltaY);
-					graph.Line(p0, p, Data.TeamColor.Current[0], 1);
+					graph.Line(p0, p, Data.TeamColor.Target[0], 1);
 					p0 = p;
 					p = new Vector2(i * deltaX, values[i][1].n * deltaY);
-					graph.Line(p1, p, Data.TeamColor.Current[1], 1);
+					graph.Line(p1, p, Data.TeamColor.Target[1], 1);
 					p1 = p;
 				}
 			graph.Apply();

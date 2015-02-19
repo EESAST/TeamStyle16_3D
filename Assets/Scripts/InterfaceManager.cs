@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.IO;
+using JSON;
 using UnityEngine;
 
 #endregion
@@ -18,6 +19,8 @@ public class InterfaceManager : MonoBehaviour
 	public Texture file;
 	private FileBrowser fileBrowser;
 	private bool guiInitialized;
+	public Texture logo;
+	public Material logoMaterial;
 	private Rect optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
 	public Texture ship;
 	private MenuState stagedState = MenuState.Default;
@@ -54,18 +57,19 @@ public class InterfaceManager : MonoBehaviour
 
 	private void DrawBackground()
 	{
-		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), background);
+		Graphics.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), background);
 		for (var i = 0; i < clouds.Length; i++)
 			if (clouds[i].layer == 0)
-				GUI.DrawTexture(clouds[i].rect, clouds[i].texture);
-		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), ship);
+				Graphics.DrawTexture(clouds[i].rect, clouds[i].texture);
+		Graphics.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), ship);
 		for (var i = 0; i < clouds.Length; i++)
 		{
 			if (clouds[i].layer == 1)
-				GUI.DrawTexture(clouds[i].rect, clouds[i].texture);
+				Graphics.DrawTexture(clouds[i].rect, clouds[i].texture);
 			if (clouds[i].rect.x > Screen.width || clouds[i].rect.x < -clouds[i].rect.width)
 				clouds[i].Reset();
 		}
+		Graphics.DrawTexture(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.7f), logo, logoMaterial);
 	}
 
 	private void DrawDefaultInterface()

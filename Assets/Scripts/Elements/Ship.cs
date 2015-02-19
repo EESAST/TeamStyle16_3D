@@ -13,6 +13,8 @@ public abstract class Ship : Unit
 	protected override void Start()
 	{
 		base.Start();
-		transform.FindChild("Water Surface Splash").localPosition = Vector3.Scale(Center(), new Vector3(1, 0, 1));
+		var waterSplash = (Instantiate(Resources.Load("Water Surface Splash")) as GameObject).transform;
+		waterSplash.parent = transform;
+		waterSplash.localPosition = Vector3.Scale(Center(), new Vector3(1, 0, 1));
 	}
 }

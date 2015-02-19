@@ -13,7 +13,6 @@ public class Flashlight : MonoBehaviour, IElementFX
 	public float minOmega;
 	public float offset;
 	private float omega;
-	public Vector3 translationOffsetInParentSpace;
 
 	public void Disable()
 	{
@@ -23,7 +22,6 @@ public class Flashlight : MonoBehaviour, IElementFX
 
 	private void Awake()
 	{
-		transform.localPosition = translationOffsetInParentSpace;
 		omega = Random.Range(minOmega, maxOmega);
 		light.range = Settings.Map.ScaleFactor;
 		flare = GetComponent<LensFlare>();

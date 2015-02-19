@@ -1,21 +1,38 @@
 ﻿#region
 
 using System.Collections;
+using JSON;
 using UnityEngine;
 
 #endregion
 
 public class Fort : Building
 {
+	private static readonly float cannonSteeringRate = 100;
 	private static readonly Material[][] materials = new Material[3][];
+	private Transform bomb;
+	private Transform cannon;
+	private Component[] idleFXs;
 	private bool isReborn;
 	public int targetTeam;
+
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
+	{
+		foreach (IIdleFX idleFX in idleFXs)
+			idleFX.Disable();
+		var targetRotation = Quaternion.LookRotation(targetPosition - cannon.position);
+		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, cannonSteeringRate * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+			yield return null;
+	}
 
 	protected override int AmmoOnce() { return 4; }
 
 	protected override void Awake()
 	{
 		base.Awake();
+		cannon = transform.Find("Cannon");
+		bomb = cannon.Find("SP");
+		idleFXs = cannon.GetComponents(typeof(IIdleFX));
 		targetTeam = -1;
 	}
 
@@ -23,11 +40,33 @@ public class Fort : Building
 
 	protected override Vector3 Dimensions() { return new Vector3(2.47f, 1.87f, 2.47f); }
 
+	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
+	{
+		++explosionsLeft;
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+		while (explosionsLeft > 0)
+			yield return null;
+		foreach (IIdleFX idleFX in idleFXs)
+			idleFX.Disable();
+		--Data.Replay.AttacksLeft;
+	}
+
+	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
+	{
+		++explosionsLeft;
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
+		while (explosionsLeft > 0)
+			yield return null;
+		foreach (IIdleFX idleFX in idleFXs)
+			idleFX.Disable();
+		--Data.Replay.AttacksLeft;
+	}
+
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
 		if (team < 2)
-			++Data.Replay.FortNum[team];
+			Data.Replay.Forts[team].Add(this);
 	}
 
 	protected override int Kind() { return 1; }
@@ -53,7 +92,7 @@ public class Fort : Building
 		if (targetTeam == -1)
 			return;
 		if (team < 2)
-			--Data.Replay.FortNum[team];
+			Data.Replay.Forts[team].Remove(this);
 		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
 		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeam, targetFuel, targetAmmo, targetMetal));
 	}
@@ -62,12 +101,12 @@ public class Fort : Building
 	{
 		isReborn = true;
 		Data.Replay.Elements.Add(this.index = index, this);
+		Data.Replay.Forts[team].Add(this);
 		++Data.Replay.UnitNums[team = targetTeam];
 		targetHP = MaxHP();
 		targetFuel = fuel;
 		targetAmmo = ammo;
 		targetMetal = metal;
-		++Data.Replay.FortNum[targetTeam];
 		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.Map.ScaleFactor;
 		while ((internalPosition - transform.position).y > Settings.Tolerance)
 		{
@@ -97,9 +136,9 @@ public class Fort : Building
 	protected override void Start()
 	{
 		base.Start();
-		transform.FindChild("Accessory").GetComponent<MeshRenderer>().material = materials[1][team];
-		transform.FindChild("Base").GetComponent<MeshRenderer>().material = materials[0][team];
-		transform.FindChild("Cannon").GetComponent<MeshRenderer>().materials = new[] { materials[1][team], materials[2][team] };
+		transform.Find("Accessory").GetComponent<MeshRenderer>().material = materials[1][team];
+		transform.Find("Base").GetComponent<MeshRenderer>().material = materials[0][team];
+		cannon.GetComponent<MeshRenderer>().materials = new[] { materials[1][team], materials[2][team] };
 		if (isReborn)
 			highlighter.ReinitMaterials();
 	}

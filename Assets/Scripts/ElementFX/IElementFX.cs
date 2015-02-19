@@ -1,4 +1,4 @@
-﻿internal interface IElementFX
+﻿public interface IElementFX
 {
 	void Disable();
 }

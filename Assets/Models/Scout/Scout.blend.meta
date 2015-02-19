@@ -6,20 +6,26 @@ ModelImporter:
     100000: Ribbon
     100002: //RootNode
     100004: Scout
+    100006: Airframe
     400000: Ribbon
     400002: //RootNode
     400004: Scout
+    400006: Airframe
     2300000: Ribbon
     2300002: Scout
     2300004: //RootNode
+    2300006: Airframe
     3300000: Ribbon
     3300002: Scout
     3300004: //RootNode
+    3300006: Airframe
     4300000: Ribbon
     4300002: Scout
+    4300004: Airframe
     6400000: Ribbon
     6400002: Scout
     6400004: //RootNode
+    6400006: Airframe
     7400000: Default Take
     9500000: //RootNode
   materials:

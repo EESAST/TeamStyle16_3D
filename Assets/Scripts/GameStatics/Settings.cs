@@ -6,16 +6,21 @@ using UnityEngine;
 
 public static class Settings
 {
+	private static readonly float _beamSpeed = 1.5f;
 	private static readonly float _shadowDistance = 50;
+	public static float AngularTolerance = 0.05f;
 	public static int CloudNumber = 50;
+	public static float CreateTime = 3;
 	public static float DeltaTime = 0.1f;
 	public static float FastAttenuation = 0.6f;
 	public static int MaxEntryPerRow = 5;
 	public static float MaxTimePerFrame = 10;
 	public static float SlowAttenuation = 0.9f;
-	public static int TextGranularity = 3;
+	public static int TextGranularity = 5;
 	public static float Tolerance = 0.01f;
 	public static float TransitionRate = 3;
+	public static float DefaultMessageTime = 2;
+	public static float BeamSpeed { get { return _beamSpeed * Map.ScaleFactor; } }
 	public static float ShadowDistance { get { return _shadowDistance * Map.ScaleFactor; } }
 
 	public static class Camera
@@ -52,10 +57,8 @@ public static class Settings
 
 	public static class Fragment
 	{
-		public static float FastAttenuation = 0.8f;
 		public static float MaxLifeSpan = 16;
 		public static float MinLifeSpan = 8;
-		public static float SlowAttenuation = 0.95f;
 		public static float ThicknessPerUnitSize = 0.03f;
 	}
 
@@ -63,7 +66,7 @@ public static class Settings
 	{
 		public static Color EmptyColor = Color.gray;
 		public static Color FullColor = new Color(0.6f, 0, 0);
-		public static float VerticalPositionOffset = 1;
+		public static float VerticalPositionOffset = 0.3f;
 	}
 
 	public static class Map
@@ -94,7 +97,7 @@ public static class Settings
 		public static float FogDensity = 0.02f;
 		public static Color ReflectionColor = new Color(0.5f, 0.5f, 1, 0.5f);
 		public static Color RefractionColor = new Color(0, 0, 0.4f, 0.6f);
-		public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Element", "Fragment");
+		public static LayerMask UnderwaterCullingMask = LayerMask.GetMask("Water", "UI", "Element", "Fragment", "Shell");
 	}
 
 	public static class TeamColor

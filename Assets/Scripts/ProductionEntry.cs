@@ -26,9 +26,9 @@ public class ProductionEntry : MonoBehaviour
 		Delegates.CurrentTeamColorChanged += RefreshColor;
 		Delegates.ScreenSizeChanged += RefreshEntryRect;
 		(entry = GetComponent<RectTransform>()).SetParent(GameObject.Find("ProductionLists").transform);
-		description = entry.FindChild("Description").GetComponent<Text>();
-		tintedIcon = entry.FindChild("TintedIcon").GetComponent<Image>();
-		underlay = entry.FindChild("Underlay").GetComponent<Image>();
+		description = entry.Find("Description").GetComponent<Text>();
+		tintedIcon = entry.Find("TintedIcon").GetComponent<Image>();
+		underlay = entry.Find("Underlay").GetComponent<Image>();
 	}
 
 	public IEnumerator Done()

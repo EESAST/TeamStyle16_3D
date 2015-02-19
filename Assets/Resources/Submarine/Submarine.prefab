@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &178332
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 478332}
+  m_Layer: 0
+  m_Name: LSP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &178334
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 478334}
+  m_Layer: 0
+  m_Name: RSP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &188212
 GameObject:
   m_ObjectHideFlags: 0
@@ -73,6 +103,30 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &478332
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178332}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -.192375451, y: -.00279751606, z: .824262738}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 488214}
+  m_RootOrder: 2
+--- !u!4 &478334
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178334}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .202279523, y: -.0014049866, z: .822795451}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 488214}
+  m_RootOrder: 3
 --- !u!4 &488212
 Transform:
   m_ObjectHideFlags: 1
@@ -80,7 +134,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188212}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 488214}
@@ -92,12 +146,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188214}
-  m_LocalRotation: {x: -.896355569, y: -.103607312, z: -.300464153, w: .309085071}
-  m_LocalPosition: {x: .402439505, y: -3.05175781e-05, z: 2.39941049}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: .000105742831, y: .000241307542, z: .0176970363}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 488218}
   - {fileID: 488216}
+  - {fileID: 478332}
+  - {fileID: 478334}
   m_Father: {fileID: 488212}
   m_RootOrder: 0
 --- !u!4 &488216
@@ -106,8 +162,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188216}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: .177997231, y: -.0131883807, z: -1.01477337}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 488214}
@@ -118,8 +174,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188218}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -.190112308, y: -.014467001, z: -1.0134033}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 488214}
@@ -190,21 +246,21 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188214}
-  m_Mesh: {fileID: 4300002, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!33 &3388214
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188216}
-  m_Mesh: {fileID: 4300000, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300004, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!33 &3388216
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 188218}
-  m_Mesh: {fileID: 4300004, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!64 &6488212
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -217,7 +273,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300002, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!64 &6488214
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -230,7 +286,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300004, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!64 &6488216
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -243,7 +299,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300004, guid: 6969287c582ec0348a149ae63f115fdc, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 2304f998cc44e604489cdbed4b8714b6, type: 3}
 --- !u!114 &11417372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -255,7 +311,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25bf88c7c9622f2498c29b09a186ba90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  index: 0
+  MouseOver: 0
+  targetFuel: 0
+  targetMetal: 0
   team: 0
+  explosionsLeft: 0
+  targetAmmo: 0
+  targetHP: 0
 --- !u!114 &11456780
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -275,8 +338,6 @@ MonoBehaviour:
   minAngularAmplitude: 5
   minAngularOmega: .300000012
   minOmega: 1
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 29.4615803, y: 136.195206, z: 154.744995}
 --- !u!114 &11478474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -291,10 +352,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: 1000}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 29.4599991, y: 136.199997, z: 154.75}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: -19.8999996, y: 29.6000004, z: 24.8199997}
 --- !u!114 &11478476
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -309,10 +366,6 @@ MonoBehaviour:
   enableInParentSpace: 0
   enableInSelfSpace: 1
   omega: {x: 0, y: 0, z: -1000}
-  rotationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  rotationOffsetInSelfSpace: {x: 29.4599991, y: 136.199997, z: 154.75}
-  translationOffsetInParentSpace: {x: 0, y: 0, z: 0}
-  translationOffsetInSelfSpace: {x: -31.4500008, y: 24.2600002, z: 17.9200001}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

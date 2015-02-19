@@ -1,7 +1,9 @@
 ﻿#region
 
 using System.Collections;
+
 using HighlightingSystem;
+using JSON;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,8 +23,9 @@ public abstract class Element : MonoBehaviour
 	public int targetFuel;
 	public int targetMetal;
 	public int team;
+	public virtual Transform Beamer { get { return transform; } }
 	protected virtual Quaternion DefaultRotation { get { return Quaternion.Euler(0, Random.Range(-180f, 180), 0); } }
-	protected virtual int RelativeSize { get { return 1; } }
+	public virtual int RelativeSize { get { return 1; } }
 
 	protected virtual void Awake()
 	{
@@ -48,6 +51,23 @@ public abstract class Element : MonoBehaviour
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Element");
 	}
 
+	/*public virtual IEnumerator Beam(ParticleSystem beam, Component target, float elapsedTime)
+	{
+		beam.transform.parent = Beamer;
+		beam.transform.position = Beamer.GetComponent<UnitBase>() ? Beamer.WorldCenterOfElement() : Beamer.position;
+		beam.startSpeed = Settings.Map.ScaleFactor * 2;
+		beam.Play();
+		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1;)
+		{
+			var v = target.transform.WorldCenterOfElement() - beam.transform.position;
+			beam.transform.rotation = Quaternion.LookRotation(v);
+			beam.startLifetime = v.magnitude / beam.startSpeed;
+			beam.startColor = Data.TeamColor.Current[team];
+			yield return null;
+		}
+		beam.Stop();
+	}*/
+
 	public abstract Vector3 Center();
 
 	public virtual void Deselect()
@@ -58,8 +78,8 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Destruct()
 	{
-		Data.Replay.Elements.Remove(index);
 		isDead = true;
+		Data.Replay.Elements.Remove(index);
 		foreach (IElementFX elementFX in GetComponentsInChildren(typeof(IElementFX)))
 			elementFX.Disable();
 		highlighter.Die();
@@ -67,31 +87,6 @@ public abstract class Element : MonoBehaviour
 	}
 
 	protected abstract Vector3 Dimensions();
-
-	protected IEnumerator FaceTarget(Vector3 internalTargetPosition)
-	{
-		yield break;
-		/*var dir = Methods.Coordinates.ExternalToInternal(internalTargetPosition) - transform.position;
-		dir.y = 0;
-		var p = transform.rotation;
-		var q = Quaternion.FromToRotation(Vector3.forward, //this.transform.TransformDirection (Vector3.forward),
-			dir);
-		for (float t = 0; t <= 1; t += 0.1f)
-		{
-			transform.rotation = Quaternion.Slerp(p, q, t);
-			yield return new WaitForSeconds(0.01f);
-		}*/
-		//this.transform.rotation = q;
-
-		//var angles0 = this.transform.rotation.eulerAngles;
-		//var angles1 = Quaternion.LookRotation();
-		//var angles = new Vector3(angles0);
-		//angles
-		//this.transform.eulerAngles
-
-		//this.rigidbody.
-		//this.rigidbody.velocity = new Vector3(posX - this.rigidbody.position
-	}
 
 	protected abstract IEnumerator FadeOut();
 

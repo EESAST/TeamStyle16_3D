@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Linq;
+using JSON;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +10,10 @@ using UnityEngine.UI;
 
 public abstract class UnitBase : Element
 {
+	private readonly float supplyRate = 30;
 	protected float currentAmmo;
 	private float currentHP;
+	public int explosionsLeft;
 	private Canvas hbCanvas;
 	private int hbHorizontalPixelNumber;
 	private RawImage hbImage;
@@ -22,16 +25,35 @@ public abstract class UnitBase : Element
 	public int targetAmmo;
 	public int targetHP;
 
+	protected abstract IEnumerator AimAtPosition(Vector3 targetPosition);
+
 	protected abstract int AmmoOnce();
+
+	public IEnumerator AttackPosition(Vector3 targetPosition)
+	{
+		yield return StartCoroutine(AimAtPosition(targetPosition));
+		targetAmmo -= AmmoOnce();
+		yield return StartCoroutine(FireAtPosition(targetPosition));
+		yield return StartCoroutine(Replayer.ShowMessageAt(targetPosition, "Missed...", Settings.DefaultMessageTime));
+	}
+
+	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
+	{
+		yield return StartCoroutine(AimAtPosition(targetUnitBase.transform.WorldCenterOfElement()));
+		targetAmmo -= AmmoOnce();
+		yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
+		targetUnitBase.targetHP -= damage;
+		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
+	}
 
 	protected override void Awake()
 	{
 		base.Awake();
 		(hbCanvas = (Instantiate(Resources.Load("HealthBar")) as GameObject).GetComponent<Canvas>()).worldCamera = Camera.main;
-		hbRect = hbCanvas.transform.FindChild("HBRect").GetComponent<RectTransform>();
-		hbImage = hbRect.FindChild("HBImage").GetComponent<RawImage>();
-		hbText = hbRect.FindChild("HBText").GetComponent<Text>();
-		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 25);
+		hbRect = hbCanvas.transform.Find("HBRect").GetComponent<RectTransform>();
+		hbImage = hbRect.Find("HBImage").GetComponent<RawImage>();
+		hbText = hbRect.Find("HBText").GetComponent<Text>();
+		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 10);
 	}
 
 	protected override void Destruct()
@@ -83,7 +105,7 @@ public abstract class UnitBase : Element
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
-		var detonator = Instantiate(Resources.Load("Detonator"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
+		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.Map.ScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.Map.ScaleFactor, 3);
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
@@ -105,19 +127,9 @@ public abstract class UnitBase : Element
 		}
 	}
 
-	public IEnumerator FireAtPosition(Vector3 internalTargetPosition)
-	{
-		yield return FaceTarget(internalTargetPosition);
-		targetAmmo -= AmmoOnce(); //TODO:run this when firing is actually animated; firing animation;
-		--Data.Replay.AttacksLeft;
-	}
+	protected abstract IEnumerator FireAtPosition(Vector3 targetPosition);
 
-	public IEnumerator FireAtUnitBase(UnitBase targetElement, int damage)
-	{
-		yield return StartCoroutine(FireAtPosition(targetElement.transform.WorldCenterOfElement()));
-		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
-		targetElement.targetHP -= damage;
-	}
+	protected abstract IEnumerator FireAtUnitBase(UnitBase targetUnitBase);
 
 	public override void Initialize(JSONObject info)
 	{
@@ -137,7 +149,10 @@ public abstract class UnitBase : Element
 	{
 		base.OnDestroy();
 		if (team < 2)
+		{
 			--Data.Replay.UnitNums[team];
+			++Data.Replay.Statictics[3, 1 - team];
+		}
 		if (hbRect)
 			Destroy(hbRect.gameObject);
 	}
@@ -163,10 +178,10 @@ public abstract class UnitBase : Element
 		base.Start();
 		var hbImageRect = hbImage.GetComponent<RectTransform>();
 		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, hbHorizontalPixelNumber);
-		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 10);
+		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 4);
 		var hbTextRect = hbText.GetComponent<RectTransform>();
 		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.TextGranularity * hbHorizontalPixelNumber);
-		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.TextGranularity * 10);
+		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.TextGranularity * 4);
 		hbTextRect.localScale = Vector2.one / Settings.TextGranularity;
 		hbImage.texture = hbTexture = new Texture2D(hbHorizontalPixelNumber, 4) { wrapMode = TextureWrapMode.Clamp };
 		hbPixels = hbTexture.GetPixels32();
@@ -180,25 +195,58 @@ public abstract class UnitBase : Element
 
 	public IEnumerator Supply(UnitBase target, int fuel, int ammo, int metal)
 	{
-		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
-		targetFuel -= fuel;
-		targetAmmo -= ammo;
-		targetMetal -= metal;
-		target.targetFuel += fuel;
-		target.targetAmmo += ammo;
-		target.targetMetal += metal;
+		var elapsedTime = (fuel + ammo + metal) / supplyRate;
+		StartCoroutine(Replayer.Beam(Beamer, target, elapsedTime));
+		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.BeamSpeed);
+		var effectedFuel = 0;
+		var effectedAmmo = 0;
+		var effectedMetal = 0;
+		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
+		{
+			var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
+			if (deltaFuel > 0)
+			{
+				targetFuel -= deltaFuel;
+				target.targetFuel += deltaFuel;
+				effectedFuel += deltaFuel;
+			}
+			var deltaAmmo = Mathf.RoundToInt(ammo * t - effectedAmmo);
+			if (deltaAmmo > 0)
+			{
+				targetAmmo -= deltaAmmo;
+				target.targetAmmo += deltaAmmo;
+				effectedAmmo += deltaAmmo;
+			}
+			var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
+			if (deltaMetal > 0)
+			{
+				targetMetal -= deltaMetal;
+				target.targetMetal += deltaMetal;
+				effectedMetal += deltaMetal;
+			}
+			yield return null;
+		}
+		targetFuel -= fuel - effectedFuel;
+		target.targetFuel += fuel - effectedFuel;
+		targetAmmo -= ammo - effectedAmmo;
+		target.targetAmmo += ammo - effectedAmmo;
+		targetMetal -= metal - effectedMetal;
+		target.targetMetal += metal - effectedMetal;
+		yield return StartCoroutine(Replayer.ShowMessageAt(target.transform.WorldCenterOfElement() + Vector3.up * (target.RelativeSize + 1) / 2 * Settings.Map.ScaleFactor, "+ " + (fuel + ammo + metal) + " !", Settings.DefaultMessageTime));
 		--Data.Replay.SuppliesLeft;
 	}
 
 	protected override void Update()
 	{
 		base.Update();
+		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
+			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.smoothDeltaTime);
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
 			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.smoothDeltaTime);
 		if (currentHP < 0)
 			currentHP = targetHP = 0;
-		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
-			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.smoothDeltaTime);
+		if (Mathf.RoundToInt(currentHP) <= 0 && !isDead)
+			Destruct();
 
 		#region Update Health Bar
 
@@ -213,17 +261,14 @@ public abstract class UnitBase : Element
 			hbTexture.Apply();
 			lastHPIndex = hpIndex;
 		}
-		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + Vector3.up * (Dimensions().y / 2 + Settings.HealthBar.VerticalPositionOffset) * transform.lossyScale.y);
+		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + (Dimensions().y * transform.lossyScale.y / 2 + Settings.HealthBar.VerticalPositionOffset * Settings.Map.ScaleFactor) * Vector3.up);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
 		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.Map.ScaleFactor, 3, 15);
 		if (!isDead)
-			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(5 - hbPos.z / Settings.Map.ScaleFactor / 2));
+			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(3 - hbPos.z / Settings.Map.ScaleFactor / 2));
 		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
 
 		#endregion
-
-		if (currentHP <= 0 && !isDead)
-			Destruct();
 	}
 }

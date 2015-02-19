@@ -13,6 +13,7 @@ ModelImporter:
     100014: Cannon
     100016: Ribbon
     100018: Accessory
+    100020: SP
     400000: Bldg_Protoss_PhotonCannon_Base
     400002: Hide_Me
     400004: Hide_Me_02
@@ -23,6 +24,7 @@ ModelImporter:
     400014: Cannon
     400016: Ribbon
     400018: Accessory
+    400020: SP
     2300000: Bldg_Protoss_PhotonCannon_Base
     2300002: Hide_Me
     2300004: Hide_Me_02

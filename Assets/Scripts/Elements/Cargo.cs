@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,24 +8,56 @@ using UnityEngine;
 
 public class Cargo : Ship
 {
+	private static readonly float collectRate = 30;
 	private static readonly Material[][] materials = new Material[1][];
 
-	protected override int AmmoOnce() { return 0; }
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
 
-	public override Vector3 Center() { return new Vector3(-0.75f, 0.01f, 0.30f); }
+	protected override int AmmoOnce() { throw new NotImplementedException(); }
+
+	public override Vector3 Center() { return new Vector3(0.00f, 0.03f, 0.09f); }
 
 	public IEnumerator Collect(Resource target, int fuel, int metal)
 	{
-		yield return StartCoroutine(FaceTarget(target.transform.WorldCenterOfElement()));
-		targetFuel += fuel;
-		targetMetal += metal;
-		target.targetFuel -= fuel;
-		target.targetMetal -= metal;
-		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel + metal);
+		yield return AimAtPosition(target.transform.WorldCenterOfElement());
+		var elapsedTime = (fuel + metal) / collectRate;
+		StartCoroutine(Replayer.Beam(target.Beamer, this, elapsedTime));
+		yield return new WaitForSeconds((transform.TransformPoint(Center()) - target.transform.WorldCenterOfElement()).magnitude / Settings.BeamSpeed);
+		var effectedFuel = 0;
+		var effectedMetal = 0;
+		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
+		{
+			var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
+			if (deltaFuel > 0)
+			{
+				targetFuel += deltaFuel;
+				target.targetFuel -= deltaFuel;
+				effectedFuel += deltaFuel;
+			}
+			var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
+			if (deltaMetal > 0)
+			{
+				targetMetal += deltaMetal;
+				target.targetMetal -= deltaMetal;
+				effectedMetal += deltaMetal;
+			}
+			Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (deltaFuel + deltaMetal);
+			yield return null;
+		}
+		targetFuel += fuel - effectedFuel;
+		target.targetFuel -= fuel - effectedFuel;
+		targetMetal += metal - effectedMetal;
+		target.targetMetal -= metal - effectedMetal;
+		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel - effectedFuel + metal - effectedMetal);
+		yield return StartCoroutine(Replayer.ShowMessageAt(transform.TransformPoint(Center()) + Vector3.up * (target.RelativeSize + 1) / 2 * Settings.Map.ScaleFactor, "+ " + (fuel + metal) + " !", Settings.DefaultMessageTime));
 		--Data.Replay.CollectsLeft;
 	}
 
-	protected override Vector3 Dimensions() { return new Vector3(28.48f, 15.18f, 46.16f); }
+	protected override Vector3 Dimensions() { return new Vector3(0.72f, 0.38f, 1.17f); }
+
+	protected override IEnumerator FireAtPosition(Vector3 targetPosition) { throw new NotImplementedException(); }
+
+	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase) { throw new NotImplementedException(); }
 
 	protected override int Kind() { return 7; }
 

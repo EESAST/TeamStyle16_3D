@@ -1,18 +1,34 @@
 ﻿#region
 
+using System;
+using System.Collections;
 using UnityEngine;
 
 #endregion
 
-public class Carrier : Ship
+public class Carrier : Ship	//TODO: add attack effects
 {
 	private static readonly Material[][] materials = new Material[1][];
 
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { throw new NotImplementedException(); }
+
 	protected override int AmmoOnce() { return 2; }
 
-	public override Vector3 Center() { return new Vector3(0.00f, 13.00f, -0.01f); }
+	public override Vector3 Center() { return new Vector3(-0.02f, 0.26f, 0.15f); }
 
-	protected override Vector3 Dimensions() { return new Vector3(45.01f, 71.31f, 118.43f); }
+	protected override Vector3 Dimensions() { return new Vector3(1.14f, 1.82f, 3.01f); }
+
+	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
+	{
+		throw new NotImplementedException();
+		--Data.Replay.AttacksLeft; //TODO:当拦截机就绪时执行
+	}
+
+	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
+	{
+		throw new NotImplementedException();
+		--Data.Replay.AttacksLeft;
+	}
 
 	protected override int Kind() { return 6; }
 
