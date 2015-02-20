@@ -27,8 +27,8 @@ public abstract class Unit : UnitBase
 	{
 		Initialize(info);
 		StartCoroutine(ShowCreateFX());
-		yield return new WaitForSeconds(Settings.CreateTime * 0.6f);
-		yield return StartCoroutine(Replayer.ShowMessageAt(transform.WorldCenterOfElement() + Vector3.up * RelativeSize * Settings.Map.ScaleFactor / 2, "Created!", Settings.CreateTime * 0.4f));
+		yield return new WaitForSeconds(Settings.CreateTime - Settings.MessageTime);
+		yield return StartCoroutine(Replayer.ShowMessageAt(TopCenter() + Settings.MessagePositionOffset, "Created!"));
 		--Data.Replay.CreatesLeft;
 	}
 
@@ -119,7 +119,7 @@ public abstract class Unit : UnitBase
 
 	private IEnumerator ShowCreateFX()
 	{
-		var radius = RelativeSize * Settings.Map.ScaleFactor / 2;
+		var radius = RelativeSize * Settings.DimensionScaleFactor / 2;
 		var center = transform.TransformPoint(Center()) + Vector3.down * radius;
 		var createFX = Instantiate(Resources.Load("CreateFX"), center + Vector3.right * radius, Quaternion.identity) as GameObject;
 		var particleEmitters = createFX.GetComponentsInChildren<ParticleEmitter>();
@@ -133,7 +133,6 @@ public abstract class Unit : UnitBase
 		foreach (var emitter in particleEmitters)
 			emitter.emit = false;
 		Destroy(createFX, maxEnergy);
-		--Data.Replay.CreatesLeft;
 	}
 
 	protected abstract int Speed();
@@ -150,7 +149,7 @@ public abstract class Unit : UnitBase
 		var plane = this as Plane;
 		if (plane && plane.isFalling)
 			return;
-		if ((targetPosition - transform.position).magnitude > Settings.Tolerance)
+		if ((targetPosition - transform.position).magnitude > Settings.DimensionalTolerance)
 			transform.position = Vector3.Lerp(transform.position, targetPosition, Settings.TransitionRate * Time.smoothDeltaTime);
 	}
 }

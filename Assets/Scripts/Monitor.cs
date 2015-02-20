@@ -28,7 +28,7 @@ public class Monitor : MonoBehaviour
 		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
 		{
 			for (var i = 0; i < 4; i++)
-				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TeamColor.TransitionRate * Time.smoothDeltaTime);
+				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TransitionRate * Time.smoothDeltaTime);
 			if (Delegates.CurrentTeamColorChanged != null)
 				Delegates.CurrentTeamColorChanged();
 		}

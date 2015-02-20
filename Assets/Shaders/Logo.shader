@@ -95,7 +95,7 @@
                         brightness = rate; 
                     } 
                 } 
-                brightness= max(brightness,0); 
+                brightness= max(brightness, 0); 
                 
                 //返回颜色 = 纯白色 * 亮度 
                 float4 col = float4(1,1,1,1) *brightness; 
@@ -111,7 +111,7 @@
         
                 //传进i.uv等参数，得到亮度值 
                 float tmpBrightness; 
-                tmpBrightness = inFlash(75,i.uv,0.25f,5,2,0.15f,0.7f); 
+                tmpBrightness = inFlash(75, i.uv, 0.25f, 2, 0, 0, 0.6f);
             
                 //图像区域，判定设置为 颜色的A > 0.5,输出为材质颜色+光亮值 
                 if(texCol.w >0.5) 
@@ -119,7 +119,6 @@
                 //空白区域，判定设置为 颜色的A <=0.5,输出空白 
                 else 
                     outp =float4(0,0,0,0); 
-
 
                 return outp; 
             } 

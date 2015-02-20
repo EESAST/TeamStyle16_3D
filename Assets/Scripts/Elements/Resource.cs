@@ -65,7 +65,7 @@ public abstract class Resource : Element
 			particleEmitters[i].maxEmission = initialMaxEmission[i] * ratio;
 			particleEmitters[i].minEmission = initialMinEmission[i] * ratio;
 		}
-		if (Mathf.RoundToInt(CurrentStorage()) <= 0&&!isDead)
+		if (Mathf.RoundToInt(CurrentStorage()) <= 0 && !isDead)
 			Destruct();
 	}
 }

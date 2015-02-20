@@ -2085,6 +2085,18 @@
 			}
 		}],
 		[{
+			"__class__": "AttackMiss",
+			"__module__": "platform.logic.event",
+			"index": 3337,
+			"target_pos": {
+				"__class__": "Position",
+				"__module__": "platform.logic.basic",
+				"x": 3,
+				"y": 2,
+				"z": 2
+			}
+		},
+		{
 			"__class__": "Move",
 			"__module__": "platform.logic.event",
 			"index": 4737,

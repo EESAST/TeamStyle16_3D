@@ -69,7 +69,7 @@ public class InterfaceManager : MonoBehaviour
 			if (clouds[i].rect.x > Screen.width || clouds[i].rect.x < -clouds[i].rect.width)
 				clouds[i].Reset();
 		}
-		Graphics.DrawTexture(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.7f), logo, logoMaterial);
+		Graphics.DrawTexture(new Rect(Screen.width * 0.02f, Screen.height * 0.02f, Screen.width * 0.32f, Screen.height * 0.32f), logo, logoMaterial);
 	}
 
 	private void DrawDefaultInterface()
@@ -147,7 +147,7 @@ public class InterfaceManager : MonoBehaviour
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
-					Application.Quit();
+					Methods.Game.Quit();
 				break;
 		}
 	}

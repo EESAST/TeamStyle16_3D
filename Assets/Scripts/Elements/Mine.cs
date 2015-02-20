@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Collections;
 using JSON;
 using UnityEngine;
 

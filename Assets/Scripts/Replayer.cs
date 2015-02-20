@@ -13,10 +13,9 @@ public class Replayer : MonoBehaviour
 	private readonly int[] lastScores = new int[2];
 	private readonly float[] scoreFontSize = new float[2];
 	private bool cancelDetail;
-	//private JSONObject productionLists;
+	//private JSONObject commands;
 	private int currentFrame;
 	private int currentRectId;
-	//private JSONObject commands;
 	private JSONObject elements;
 	private JSONObject events;
 	private bool guiInitialized;
@@ -25,6 +24,7 @@ public class Replayer : MonoBehaviour
 	public Texture2D panelBackground;
 	private GUIStyle panelStyle;
 	private GUILineGraph populationGraph;
+	//private JSONObject productionLists;
 	private bool resizingInfoRect;
 	private GUILineGraph scoreGraph;
 	private bool showDetail;
@@ -156,10 +156,10 @@ public class Replayer : MonoBehaviour
 		{
 			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound * Data.Replay.Forts[i].Count;
 			foreach (var fort in Data.Replay.Forts[i])
-				StartCoroutine(ShowMessageAt(fort.transform.WorldCenterOfElement() + Vector3.up * fort.RelativeSize * Settings.Map.ScaleFactor / 2, "+ " + Constants.Score.PerFortPerRound + " pts", Settings.DefaultMessageTime));
+				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "+ " + Constants.Score.PerFortPerRound + " pts!"));
 		}
 		if (Data.Replay.Forts.Any(fortList => fortList.Count > 0))
-			yield return new WaitForSeconds(Settings.DefaultMessageTime);
+			yield return new WaitForSeconds(Settings.MessageTime);
 	}
 
 	private Rect GetInfoContentRect()
@@ -204,7 +204,6 @@ public class Replayer : MonoBehaviour
 		{
 			Data.Replay.ProductionTimeScale = 5;
 			yield return new WaitForSeconds((startTime + Settings.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
-			Data.Replay.ProductionTimeScale = 1;
 		}
 		Data.Replay.ProductionTimeScale = 0;
 		yield return StartCoroutine(Creates());
@@ -346,13 +345,13 @@ public class Replayer : MonoBehaviour
 		resizingInfoRect = false;
 	}
 
-	public static IEnumerator ShowMessageAt(Vector3 position, string message, float elapsedTime)
+	public static IEnumerator ShowMessageAt(Vector3 position, string message)
 	{
 		var textFX = (Instantiate(Resources.Load("TextFX")) as GameObject).GetComponent<EffectManager>();
 		textFX.transform.position = position;
 		textFX.SetText(message);
 		textFX.PlayAnimation();
-		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1&&textFX;)
+		while (textFX)
 		{
 			textFX.transform.rotation = Quaternion.LookRotation(position - Camera.main.transform.position);
 			yield return null;

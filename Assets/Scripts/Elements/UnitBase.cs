@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public abstract class UnitBase : Element
 {
 	private readonly float supplyRate = 30;
-	protected float currentAmmo;
+	private float currentAmmo;
 	private float currentHP;
 	public int explosionsLeft;
 	private Canvas hbCanvas;
@@ -22,7 +22,7 @@ public abstract class UnitBase : Element
 	private Text hbText;
 	private Texture2D hbTexture;
 	private int lastHPIndex;
-	public int targetAmmo;
+	protected int targetAmmo;
 	public int targetHP;
 
 	protected abstract IEnumerator AimAtPosition(Vector3 targetPosition);
@@ -34,7 +34,7 @@ public abstract class UnitBase : Element
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
 		yield return StartCoroutine(FireAtPosition(targetPosition));
-		yield return StartCoroutine(Replayer.ShowMessageAt(targetPosition, "Missed...", Settings.DefaultMessageTime));
+		yield return StartCoroutine(Replayer.ShowMessageAt(targetPosition, "Miss..."));
 	}
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
@@ -64,12 +64,13 @@ public abstract class UnitBase : Element
 
 	private IEnumerator Explode()
 	{
+		rigidbody.isKinematic = true;
 		var dummy = new GameObject();
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
-		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize * Settings.Map.ScaleFactor;
-		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.Map.ScaleFactor * 0.12f, 3);
+		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize;
+		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.DimensionScaleFactor * 0.12f, 3);
 		var totalMass = 0f;
 		foreach (var meshFilter in meshFilters)
 		{
@@ -94,7 +95,7 @@ public abstract class UnitBase : Element
 					fragment.transform.parent = dummy.transform;
 					var smokeTrail = fragment.GetComponentInChildren<ParticleEmitter>();
 					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
-					if (++count % 5 == 0)
+					if (++count % 10 == 0)
 						yield return null;
 				}
 			}
@@ -106,8 +107,8 @@ public abstract class UnitBase : Element
 			fragmentManager.enabled = true;
 		}
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
-		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.Map.ScaleFactor;
-		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.Map.ScaleFactor, 3);
+		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor;
+		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
 		Destroy(gameObject);
 	}
@@ -195,7 +196,7 @@ public abstract class UnitBase : Element
 
 	public IEnumerator Supply(UnitBase target, int fuel, int ammo, int metal)
 	{
-		var elapsedTime = (fuel + ammo + metal) / supplyRate;
+		var elapsedTime = Mathf.Max((fuel + ammo + metal) / supplyRate, 0.1f);
 		StartCoroutine(Replayer.Beam(Beamer, target, elapsedTime));
 		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.BeamSpeed);
 		var effectedFuel = 0;
@@ -232,7 +233,7 @@ public abstract class UnitBase : Element
 		target.targetAmmo += ammo - effectedAmmo;
 		targetMetal -= metal - effectedMetal;
 		target.targetMetal += metal - effectedMetal;
-		yield return StartCoroutine(Replayer.ShowMessageAt(target.transform.WorldCenterOfElement() + Vector3.up * (target.RelativeSize + 1) / 2 * Settings.Map.ScaleFactor, "+ " + (fuel + ammo + metal) + " !", Settings.DefaultMessageTime));
+		yield return StartCoroutine(Replayer.ShowMessageAt(target.TopCenter() + Settings.MessagePositionOffset, "+ " + (fuel + ammo + metal) + " !"));
 		--Data.Replay.SuppliesLeft;
 	}
 
@@ -261,12 +262,12 @@ public abstract class UnitBase : Element
 			hbTexture.Apply();
 			lastHPIndex = hpIndex;
 		}
-		var hbPos = Camera.main.WorldToScreenPoint(transform.TransformPoint(Center()) + (Dimensions().y * transform.lossyScale.y / 2 + Settings.HealthBar.VerticalPositionOffset * Settings.Map.ScaleFactor) * Vector3.up);
+		var hbPos = Camera.main.WorldToScreenPoint(TopCenter() + Settings.HealthBar.PositionOffset);
 		hbCanvas.planeDistance = hbPos.z;
 		hbRect.anchoredPosition = hbPos;
-		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.Map.ScaleFactor, 3, 15);
+		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.DimensionScaleFactor, 3, 15);
 		if (!isDead)
-			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(3 - hbPos.z / Settings.Map.ScaleFactor / 2));
+			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(3 - hbPos.z / Settings.DimensionScaleFactor / 2));
 		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
 
 		#endregion

@@ -107,8 +107,8 @@ public class Fort : Building
 		targetFuel = fuel;
 		targetAmmo = ammo;
 		targetMetal = metal;
-		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.Map.ScaleFactor;
-		while ((internalPosition - transform.position).y > Settings.Tolerance)
+		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.DimensionScaleFactor;
+		while ((internalPosition - transform.position).y > Settings.DimensionalTolerance)
 		{
 			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.smoothDeltaTime);
 			yield return null;

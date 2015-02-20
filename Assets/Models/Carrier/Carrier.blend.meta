@@ -6,17 +6,75 @@ ModelImporter:
     100000: //RootNode
     100002: Hull
     100004: Radar
+    100006: Airframe_Left
+    100008: Airframe_Right
+    100010: Interceptor_Left
+    100012: Interceptor_Right
+    100014: LIP
+    100016: LSP_Left
+    100018: LSP_Right
+    100020: RIP
+    100022: RSP_Left
+    100024: RSP_Right
+    100026: FIP
+    100028: Interceptor_Front
+    100030: Interceptor_Rear
+    100032: LSP_Front
+    100034: LSP_Rear
+    100036: RSP_Front
+    100038: RSP_Rear
+    100040: Airframe_Front
+    100042: Airframe_Rear
+    100044: FrontSeat
+    100046: RearSeat
     400000: //RootNode
     400002: Hull
     400004: Radar
+    400006: Airframe_Left
+    400008: Airframe_Right
+    400010: Interceptor_Left
+    400012: Interceptor_Right
+    400014: LIP
+    400016: LSP_Left
+    400018: LSP_Right
+    400020: RIP
+    400022: RSP_Left
+    400024: RSP_Right
+    400026: FIP
+    400028: Interceptor_Front
+    400030: Interceptor_Rear
+    400032: LSP_Front
+    400034: LSP_Rear
+    400036: RSP_Front
+    400038: RSP_Rear
+    400040: Airframe_Front
+    400042: Airframe_Rear
+    400044: FrontSeat
+    400046: RearSeat
     2300000: Hull
     2300002: Radar
+    2300004: Airframe_Left
+    2300006: Airframe_Right
+    2300008: Airframe_Front
+    2300010: Airframe_Rear
     3300000: Hull
     3300002: Radar
+    3300004: Airframe_Left
+    3300006: Airframe_Right
+    3300008: Airframe_Front
+    3300010: Airframe_Rear
     4300000: Hull
     4300002: Radar
+    4300004: Airframe_Left
+    4300006: Airframe_Right
+    4300008: Airframe_Rear
+    4300010: Airframe_Front
     6400000: Hull
     6400002: Radar
+    6400004: Airframe_Left
+    6400006: Airframe_Right
+    6400008: Airframe_Front
+    6400010: Airframe_Rear
     7400000: Default Take
     9500000: //RootNode
   materials:

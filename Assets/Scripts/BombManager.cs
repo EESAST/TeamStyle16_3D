@@ -14,19 +14,20 @@ public class BombManager : MonoBehaviour
 		Large
 	}
 
+	private readonly float _speed = 4;
 	private readonly float angularCorrectionRate = 360;
 	private readonly float noise = 1;
-	private readonly float speed = 4;
 	private UnitBase attacker;
 	private bool exploded;
 	private BombLevel level;
 	private Vector3 targetPosition;
 	private UnitBase targetUnitBase;
+	private float Speed { get { return _speed * Settings.DimensionScaleFactor; } }
 
 	private void Awake()
 	{
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
-			childCollider.gameObject.layer = LayerMask.NameToLayer("Shell");
+			childCollider.gameObject.layer = LayerMask.NameToLayer("Bomb");
 	}
 
 	private static Vector3 Dimensions() { return new Vector3(0.12f, 0.12f, 0.74f); }
@@ -46,7 +47,7 @@ public class BombManager : MonoBehaviour
 				detonator = "Detonator_Large";
 				break;
 		}
-		(Instantiate(Resources.Load(detonator), rigidbody.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.Map.ScaleFactor;
+		(Instantiate(Resources.Load(detonator), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
 		--attacker.explosionsLeft;
 		exploded = true;
 		StartCoroutine(FadeOut());
@@ -54,22 +55,11 @@ public class BombManager : MonoBehaviour
 
 	private IEnumerator FadeOut()
 	{
-		rigidbody.Sleep();
 		GetComponent<MeshRenderer>().enabled = false;
 		var trail = transform.Find("Trail").particleSystem;
 		while ((trail.emissionRate *= Settings.FastAttenuation) > 10)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		Destroy(gameObject);
-	}
-
-	private void FixedUpdate()
-	{
-		if (exploded)
-			return;
-		rigidbody.velocity = (transform.forward + Random.insideUnitSphere * noise / ((float)level + 1)) * speed * Settings.Map.ScaleFactor;
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - rigidbody.position), Time.fixedDeltaTime * angularCorrectionRate);
-		if ((targetPosition - rigidbody.position).magnitude < Settings.Map.ScaleFactor * 0.4f)
-			Explode();
 	}
 
 	private void OnTriggerEnter(Component collider)
@@ -98,5 +88,16 @@ public class BombManager : MonoBehaviour
 		level = bombLevel;
 	}
 
-	private void Start() { transform.localScale = Vector3.one * ((int)level + 2) * Settings.Map.ScaleFactor * 0.1f / ((Dimensions().x + Dimensions().z)); }
+	private IEnumerator Start()
+	{
+		transform.localScale = Vector3.one * ((int)level + 1) * 0.1f * Settings.DimensionScaleFactor / ((Dimensions().x + Dimensions().z));
+		while (!exploded && (targetPosition - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Speed)
+		{
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position), Time.smoothDeltaTime * angularCorrectionRate);
+			transform.Translate((Vector3.forward + Random.insideUnitSphere * noise / ((float)level + 2)) * Speed * Time.smoothDeltaTime);
+			yield return null;
+		}
+		if (!exploded)
+			Explode();
+	}
 }

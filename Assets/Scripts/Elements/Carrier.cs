@@ -1,18 +1,31 @@
 ﻿#region
 
-using System;
 using System.Collections;
 using UnityEngine;
 
 #endregion
 
-public class Carrier : Ship	//TODO: add attack effects
+public class Carrier : Ship
 {
-	private static readonly Material[][] materials = new Material[1][];
+	private static readonly Material[][] materials = new Material[2][];
+	private Interceptor[] interceptors;
+	public int movingInterceptorsLeft;
 
-	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { throw new NotImplementedException(); }
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
+	{
+		foreach (var interceptor in interceptors)
+			StartCoroutine(interceptor.AimAtPosition(targetPosition));
+		while (movingInterceptorsLeft > 0)
+			yield return null;
+	}
 
 	protected override int AmmoOnce() { return 2; }
+
+	protected override void Awake()
+	{
+		base.Awake();
+		interceptors = GetComponentsInChildren<Interceptor>();
+	}
 
 	public override Vector3 Center() { return new Vector3(-0.02f, 0.26f, 0.15f); }
 
@@ -20,22 +33,36 @@ public class Carrier : Ship	//TODO: add attack effects
 
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
-		throw new NotImplementedException();
-		--Data.Replay.AttacksLeft; //TODO:当拦截机就绪时执行
+		explosionsLeft += interceptors.Length * 2;
+		foreach (var interceptor in interceptors)
+		{
+			interceptor.FireAtPosition(targetPosition);
+			StartCoroutine(interceptor.Return());
+		}
+		while (explosionsLeft > 0)
+			yield return null;
+		StartCoroutine(MonitorInterceptorReturns());
 	}
 
 	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
 	{
-		throw new NotImplementedException();
-		--Data.Replay.AttacksLeft;
+		explosionsLeft += interceptors.Length * 2;
+		foreach (var interceptor in interceptors)
+		{
+			interceptor.FireAtUnitBase(targetUnitBase);
+			StartCoroutine(interceptor.Return());
+		}
+		while (explosionsLeft > 0)
+			yield return null;
+		StartCoroutine(MonitorInterceptorReturns());
 	}
 
 	protected override int Kind() { return 6; }
 
 	public static void LoadMaterial()
 	{
-		string[] name = { "C" };
-		for (var id = 0; id < 1; id++)
+		string[] name = { "C", "I" };
+		for (var id = 0; id < 2; id++)
 		{
 			materials[id] = new Material[3];
 			for (var team = 0; team < 3; team++)
@@ -45,11 +72,18 @@ public class Carrier : Ship	//TODO: add attack effects
 
 	protected override int MaxHP() { return 120; }
 
+	private IEnumerator MonitorInterceptorReturns()
+	{
+		while (movingInterceptorsLeft > 0)
+			yield return null;
+		--Data.Replay.AttacksLeft;
+	}
+
 	protected override int Population() { return 4; }
 
 	public static void RefreshMaterialColor()
 	{
-		for (var id = 0; id < 1; id++)
+		for (var id = 0; id < 2; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
@@ -59,7 +93,8 @@ public class Carrier : Ship	//TODO: add attack effects
 	protected override void Start()
 	{
 		base.Start();
-		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
-			meshRenderer.material = materials[0][team];
+		transform.Find("Hull").GetComponent<MeshRenderer>().material = materials[0][team];
+		foreach (var interceptor in interceptors)
+			interceptor.GetComponentInChildren<MeshRenderer>().material = materials[1][team];
 	}
 }

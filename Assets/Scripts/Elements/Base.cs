@@ -33,7 +33,7 @@ public class Base : Building
 			yield return null;
 		var targetRotation_BG = Quaternion.LookRotation(targetPosition - bigGuns.position);
 		var targetRotation_SG = Quaternion.LookRotation(targetPosition - smallGuns.position);
-		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, bgSteeringRate * Time.smoothDeltaTime), targetRotation_BG) + Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, sgSteeringRate * Time.smoothDeltaTime), targetRotation_SG) > Settings.AngularTolerance * 2)
+		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, bgSteeringRate * Time.smoothDeltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, sgSteeringRate * Time.smoothDeltaTime), targetRotation_SG) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -87,7 +87,7 @@ public class Base : Building
 
 	public IEnumerator Fix(Unit target, int metal, int healthIncrease)
 	{
-		var elapsedTime = healthIncrease / fixRate;
+		var elapsedTime = Mathf.Max(healthIncrease / fixRate, 0.1f);
 		StartCoroutine(Replayer.Beam(Beamer, target, elapsedTime));
 		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.BeamSpeed);
 		var effectedHP = 0;
@@ -110,7 +110,7 @@ public class Base : Building
 		}
 		target.targetHP += healthIncrease - effectedHP;
 		targetMetal -= metal - effectedMetal;
-		yield return StartCoroutine(Replayer.ShowMessageAt(target.transform.WorldCenterOfElement() + Vector3.up * (target.RelativeSize + 1) / 2 * Settings.Map.ScaleFactor, "+ " + healthIncrease + " !", Settings.DefaultMessageTime));
+		yield return StartCoroutine(Replayer.ShowMessageAt(target.TopCenter() + Settings.MessagePositionOffset, "+ " + healthIncrease + " !"));
 		--Data.Replay.FixesLeft;
 	}
 

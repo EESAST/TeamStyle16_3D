@@ -95,9 +95,9 @@ public class ProductionEntry : MonoBehaviour
 	{
 		if (Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
 			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.smoothDeltaTime);
-		var t = currentPos % Settings.MaxEntryPerRow;
-		entry.anchoredPosition = t < Settings.MaxEntryPerRow - 1 ? Data.Replay.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxEntryPerRow)) : Data.Replay.ProductionEntrySize * new Vector2((Settings.MaxEntryPerRow - 1) * (Settings.MaxEntryPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxEntryPerRow) + t + 1 - Settings.MaxEntryPerRow));
+		var t = currentPos % Settings.MaxProductionEntryNumPerRow;
+		entry.anchoredPosition = t < Settings.MaxProductionEntryNumPerRow - 1 ? Data.Replay.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxProductionEntryNumPerRow)) : Data.Replay.ProductionEntrySize * new Vector2((Settings.MaxProductionEntryNumPerRow - 1) * (Settings.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxProductionEntryNumPerRow) + t + 1 - Settings.MaxProductionEntryNumPerRow));
 		if (team == 1)
-			entry.anchoredPosition -= Vector2.up * Data.Replay.ProductionEntrySize * Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.MaxEntryPerRow);
+			entry.anchoredPosition -= Vector2.up * Data.Replay.ProductionEntrySize * Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.MaxProductionEntryNumPerRow);
 	}
 }

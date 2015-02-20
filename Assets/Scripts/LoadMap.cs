@@ -18,7 +18,7 @@ public class LoadMap : MonoBehaviour
 		#region Preparations
 
 		var mapData = Data.Battle["gamebody"]["map_info"]["types"];
-		var worldSize = realMapSize * Settings.Map.ScaleFactor;
+		var worldSize = realMapSize * Settings.DimensionScaleFactor;
 		var resolution = Mathf.RoundToInt(Mathf.Sqrt(realMapSize.x * realMapSize.y) * Settings.Terrain.Smoothness);
 		var terrainData = new TerrainData { heightmapResolution = Mathf.ClosestPowerOfTwo(resolution) + 1, size = new Vector3(worldSize.y, Settings.Map.HeightOfLevel[2], worldSize.x), alphamapResolution = resolution, baseMapResolution = resolution };
 
@@ -74,7 +74,7 @@ public class LoadMap : MonoBehaviour
 		var splatPrototypes = new SplatPrototype[splatTextures.Length];
 		for (var i = 0; i < splatPrototypes.Length; i++)
 		{
-			var splatPrototype = new SplatPrototype { texture = splatTextures[i], tileSize = Vector2.one * Settings.Map.ScaleFactor * 4 };
+			var splatPrototype = new SplatPrototype { texture = splatTextures[i], tileSize = Vector2.one * Settings.DimensionScaleFactor * 4 };
 			splatPrototypes[i] = splatPrototype;
 		}
 		terrainData.splatPrototypes = splatPrototypes;
@@ -104,7 +104,7 @@ public class LoadMap : MonoBehaviour
 		var range = new Vector4(Settings.Map.MapSizeOffset.right / realMapSize.y, 1 - Settings.Map.MapSizeOffset.left / realMapSize.y, Settings.Map.MapSizeOffset.top / realMapSize.x, 1 - Settings.Map.MapSizeOffset.bottom / realMapSize.x);
 		for (var i = 0; i < treeInstances.Length; i++)
 		{
-			var treeScale = Random.Range(0.08f, 0.16f) * Settings.Map.ScaleFactor;
+			var treeScale = Random.Range(0.08f, 0.16f) * Settings.DimensionScaleFactor;
 			Vector3 treePosition;
 			do
 				treePosition = new Vector3(Random.Range(range.x, range.y), 0, Random.Range(range.z, range.w));
@@ -159,7 +159,7 @@ public class LoadMap : MonoBehaviour
 	{
 		var ocean = Instantiate(Resources.Load("Ocean")) as GameObject;
 		ocean.transform.position = Methods.Coordinates.ExternalToInternal(realMapSize / 2 - new Vector2(Settings.Map.MapSizeOffset.top, Settings.Map.MapSizeOffset.left), 1);
-		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.Map.ScaleFactor / 100;
+		ocean.transform.localScale = new Vector3(realMapSize.y, 0, realMapSize.x) * Settings.DimensionScaleFactor / 100;
 		var oceanMaterial = ocean.GetComponent<WaterBase>().sharedMaterial;
 		oceanMaterial.SetColor("_BaseColor", Settings.Ocean.RefractionColor);
 		oceanMaterial.SetColor("_ReflectionColor", Settings.Ocean.ReflectionColor);

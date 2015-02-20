@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class Cargo : Ship
 {
-	private static readonly float collectRate = 30;
+	private static readonly float collectRate = 50;
 	private static readonly Material[][] materials = new Material[1][];
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
@@ -20,7 +20,7 @@ public class Cargo : Ship
 	public IEnumerator Collect(Resource target, int fuel, int metal)
 	{
 		yield return AimAtPosition(target.transform.WorldCenterOfElement());
-		var elapsedTime = (fuel + metal) / collectRate;
+		var elapsedTime = Mathf.Max((fuel + metal) / collectRate, 0.1f);
 		StartCoroutine(Replayer.Beam(target.Beamer, this, elapsedTime));
 		yield return new WaitForSeconds((transform.TransformPoint(Center()) - target.transform.WorldCenterOfElement()).magnitude / Settings.BeamSpeed);
 		var effectedFuel = 0;
@@ -49,7 +49,7 @@ public class Cargo : Ship
 		targetMetal += metal - effectedMetal;
 		target.targetMetal -= metal - effectedMetal;
 		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel - effectedFuel + metal - effectedMetal);
-		yield return StartCoroutine(Replayer.ShowMessageAt(transform.TransformPoint(Center()) + Vector3.up * (target.RelativeSize + 1) / 2 * Settings.Map.ScaleFactor, "+ " + (fuel + metal) + " !", Settings.DefaultMessageTime));
+		yield return StartCoroutine(Replayer.ShowMessageAt(TopCenter() + Settings.MessagePositionOffset, "+ " + (fuel + metal) + " !"));
 		--Data.Replay.CollectsLeft;
 	}
 

@@ -1,0 +1,6 @@
+public enum LETTER_ANIMATION_STATE
+{
+	PLAYING,
+	STOPPED,
+	WAITING
+}

@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections;
-
 using HighlightingSystem;
 using JSON;
 using UnityEngine;
@@ -147,11 +146,13 @@ public abstract class Element : MonoBehaviour
 	protected virtual void Start()
 	{
 		transform.rotation = DefaultRotation;
-		transform.localScale = Vector3.one * RelativeSize * Settings.Map.ScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
+		transform.localScale = Vector3.one * RelativeSize * Settings.DimensionScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		RefreshColor();
 		RefreshMarkPattern();
 		RefreshMarkSize();
 	}
+
+	public Vector3 TopCenter() { return transform.TransformPoint(Center()) + Dimensions().y * transform.lossyScale.y / 2 * Vector3.up; }
 
 	protected virtual void Update()
 	{

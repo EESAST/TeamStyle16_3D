@@ -9,7 +9,7 @@ using UnityEngine;
 
 public static class Data
 {
-	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/boom.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
+	public static JSONObject Battle = new JSONObject(File.ReadAllText("Assets/Files/Battles/aihuman.battle").Replace("\"{", "{").Replace("}\"", "}").Replace("\\\"", "\""));
 	public static bool GamePaused;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
@@ -58,12 +58,10 @@ public static class Data
 
 	public static class Replay
 	{
-		public static int[,] Statictics;
-		public static int CreatesLeft;
-		public static bool IsCreating;
 		public static int AttacksLeft;
 		public static Base[] Bases;
 		public static int CollectsLeft;
+		public static int CreatesLeft;
 		public static float[] CurrentScores;
 		public static Dictionary<int, Element> Elements;
 		public static int FixesLeft;
@@ -71,6 +69,7 @@ public static class Data
 		public static int FrameCount;
 		public static bool IsAttacking;
 		public static bool IsCollecting;
+		public static bool IsCreating;
 		public static bool IsFixing;
 		public static bool IsMoving;
 		public static bool IsSupplying;
@@ -80,6 +79,7 @@ public static class Data
 		public static List<ProductionEntry>[] ProductionLists;
 		public static float ProductionTimer;
 		public static float ProductionTimeScale = 1;
+		public static int[,] Statictics;
 		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static string[] TeamNames;

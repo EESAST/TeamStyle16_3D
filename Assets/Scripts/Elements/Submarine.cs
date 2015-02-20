@@ -86,7 +86,7 @@ public class Submarine : Unit
 
 	private IEnumerator RevertRotation()
 	{
-		yield return StartCoroutine(AdjustOrientation(Vector3.Scale(transform.forward, new Vector3(1,0,1))));
+		yield return StartCoroutine(AdjustOrientation(Vector3.Scale(transform.forward, new Vector3(1, 0, 1))));
 		--Data.Replay.AttacksLeft;
 	}
 

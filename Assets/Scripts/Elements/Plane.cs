@@ -15,8 +15,6 @@ public abstract class Plane : Unit
 	private IEnumerator Fall()
 	{
 		isFalling = true;
-		foreach (IIdleFX idleFX in GetComponentsInChildren(typeof(IIdleFX)))
-			idleFX.Disable();
 		rigidbody.isKinematic = false;
 		rigidbody.WakeUp();
 		while (--targetHP > 0)
@@ -30,7 +28,7 @@ public abstract class Plane : Unit
 	private void OnCollisionEnter()
 	{
 		if (isFalling)
-			targetHP -= 20;
+			targetHP -= Mathf.RoundToInt(rigidbody.velocity.sqrMagnitude / Mathf.Pow(Settings.DimensionScaleFactor, 2)) * MaxHP() / 3;
 	}
 
 	protected override void Update()

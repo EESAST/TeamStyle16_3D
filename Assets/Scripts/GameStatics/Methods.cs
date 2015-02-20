@@ -2,6 +2,10 @@
 
 using JSON;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+
+#endif
 
 #endregion
 
@@ -174,7 +178,7 @@ public static class Methods
 			if (len != rhs.Length)
 				return false;
 			for (var i = 0; i < len; i++)
-				if (((Vector4)(lhs[i] - rhs[i])).magnitude > Settings.TeamColor.Tolerance)
+				if (((Vector4)(lhs[i] - rhs[i])).magnitude > Settings.Tolerance)
 					return false;
 			return true;
 		}
@@ -206,7 +210,7 @@ public static class Methods
 
 	public static class Coordinates
 	{
-		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - externalY) * Settings.Map.ScaleFactor, Settings.Map.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.Map.MapSizeOffset.top) * Settings.Map.ScaleFactor)); }
+		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - externalY) * Settings.DimensionScaleFactor, Settings.Map.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.Map.MapSizeOffset.top) * Settings.DimensionScaleFactor)); }
 
 		public static Vector3 ExternalToInternal(Vector3 externalCoordinates) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalCoordinates.z); }
 
@@ -221,7 +225,7 @@ public static class Methods
 
 		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
 
-		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.Map.ScaleFactor - Settings.Map.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - internalCoordinates.x / Settings.Map.ScaleFactor); }
+		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.DimensionScaleFactor - Settings.Map.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - internalCoordinates.x / Settings.DimensionScaleFactor); }
 
 		public static Vector2 InternalToMiniMapRatios(Vector3 internalCoordinates) { return ExternalToMiniMapRatios(InternalToExternal(internalCoordinates)); }
 
@@ -279,7 +283,7 @@ public static class Methods
 
 		public static Vector3 JSONToInternal(JSONObject jsonPos) { return ExternalToInternal(JSONToExternal(jsonPos)); }
 
-		public static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.Border.top - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.Border.right - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
+		private static Vector2 MiniMapBasedScreenToExternal(Vector2 screenPosition) { return new Vector2((Screen.height - Settings.MiniMap.Border.top - screenPosition.y) / Data.MiniMap.ScaleFactor - 0.5f, Data.MapSize.y - (Screen.width - Settings.MiniMap.Border.right - screenPosition.x) / Data.MiniMap.ScaleFactor - 0.5f); }
 
 		public static Vector3 MiniMapBasedScreenToInternal(Vector2 screenPosition) { return ExternalToInternal(MiniMapBasedScreenToExternal(screenPosition)); }
 	}
@@ -290,6 +294,15 @@ public static class Methods
 		{
 			Data.GamePaused = true;
 			Time.timeScale = 0;
+		}
+
+		public static void Quit()
+		{
+#if UNITY_EDITOR
+			EditorApplication.isPlaying = false;
+#else
+			Application.Quit();
+#endif
 		}
 
 		public static void Resume()

@@ -23,7 +23,7 @@ public class Destroyer : Ship
 		do
 		{
 			yield return null;
-			targetRotation = Quaternion.LookRotation(swivel.TransformDirection(Vector3.Scale(swivel.InverseTransformPoint(targetPosition), new Vector3(1,0,1))), swivel.up);
+			targetRotation = Quaternion.LookRotation(swivel.TransformDirection(Vector3.Scale(swivel.InverseTransformPoint(targetPosition), new Vector3(1, 0, 1))), swivel.up);
 			swivel.rotation = Quaternion.RotateTowards(swivel.rotation, targetRotation, swivelSteeringRate * Time.smoothDeltaTime);
 		}
 		while (Quaternion.Angle(swivel.rotation, targetRotation) > Settings.AngularTolerance);

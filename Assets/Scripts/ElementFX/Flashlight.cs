@@ -23,7 +23,7 @@ public class Flashlight : MonoBehaviour, IElementFX
 	private void Awake()
 	{
 		omega = Random.Range(minOmega, maxOmega);
-		light.range = Settings.Map.ScaleFactor;
+		light.range = Settings.DimensionScaleFactor;
 		flare = GetComponent<LensFlare>();
 	}
 
