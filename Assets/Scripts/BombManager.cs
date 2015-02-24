@@ -7,47 +7,36 @@ using UnityEngine;
 
 public class BombManager : MonoBehaviour
 {
-	public enum BombLevel
+	public enum Level
 	{
 		Small,
 		Medium,
 		Large
 	}
 
-	private readonly float _speed = 4;
-	private readonly float angularCorrectionRate = 360;
-	private readonly float noise = 1;
 	private UnitBase attacker;
 	private bool exploded;
-	private BombLevel level;
+	private Level level;
 	private Vector3 targetPosition;
 	private UnitBase targetUnitBase;
-	private float Speed { get { return _speed * Settings.DimensionScaleFactor; } }
 
 	private void Awake()
 	{
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Bomb");
+		audio.dopplerLevel /= Settings.DimensionScaleFactor;
+		audio.maxDistance = Settings.Audio.MaxAudioDistance;
+		audio.volume = Settings.Audio.Volume.Bomb;
 	}
 
 	private static Vector3 Dimensions() { return new Vector3(0.12f, 0.12f, 0.74f); }
 
 	private void Explode()
 	{
-		var detonator = string.Empty;
-		switch (level)
-		{
-			case BombLevel.Small:
-				detonator = "Detonator_Small";
-				break;
-			case BombLevel.Medium:
-				detonator = "Detonator_Medium";
-				break;
-			case BombLevel.Large:
-				detonator = "Detonator_Large";
-				break;
-		}
-		(Instantiate(Resources.Load(detonator), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
+		audio.clip = Resources.Load<AudioClip>("Sounds/Impact_" + level);
+		audio.dopplerLevel = 0;
+		audio.Play();
+		(Instantiate(Resources.Load("Detonator_" + level), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
 		--attacker.explosionsLeft;
 		exploded = true;
 		StartCoroutine(FadeOut());
@@ -57,30 +46,12 @@ public class BombManager : MonoBehaviour
 	{
 		GetComponent<MeshRenderer>().enabled = false;
 		var trail = transform.Find("Trail").particleSystem;
-		while ((trail.emissionRate *= Settings.FastAttenuation) > 10)
+		while ((trail.emissionRate *= Settings.FastAttenuation) > 3 || audio.isPlaying)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		Destroy(gameObject);
 	}
 
-	private void OnTriggerEnter(Component collider)
-	{
-		if (exploded)
-			return;
-		var unitBase = collider.GetComponentInParent(typeof(UnitBase));
-		if (!unitBase || unitBase != targetUnitBase)
-			return;
-		Explode();
-	}
-
-	public void Setup(UnitBase attacker, UnitBase targetUnitBase, BombLevel bombLevel = BombLevel.Medium)
-	{
-		this.attacker = attacker;
-		this.targetUnitBase = targetUnitBase;
-		targetPosition = targetUnitBase.transform.WorldCenterOfElement();
-		level = bombLevel;
-	}
-
-	public void Setup(UnitBase attacker, Vector3 targetPosition, BombLevel bombLevel = BombLevel.Medium)
+	public void Initialize(UnitBase attacker, Vector3 targetPosition, Level bombLevel = Level.Medium)
 	{
 		this.attacker = attacker;
 		targetUnitBase = null;
@@ -88,13 +59,32 @@ public class BombManager : MonoBehaviour
 		level = bombLevel;
 	}
 
+	private void OnTriggerEnter(Component other)
+	{
+		if (exploded)
+			return;
+		var unitBase = other.GetComponentInParent(typeof(UnitBase));
+		if (!unitBase || unitBase != targetUnitBase)
+			return;
+		Explode();
+	}
+
+	public void Setup(UnitBase attacker, UnitBase targetUnitBase, Level bombLevel = Level.Medium)
+	{
+		this.attacker = attacker;
+		this.targetUnitBase = targetUnitBase;
+		targetPosition = targetUnitBase.transform.WorldCenterOfElement();
+		level = bombLevel;
+	}
+
 	private IEnumerator Start()
 	{
+		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Launcher_" + level));
 		transform.localScale = Vector3.one * ((int)level + 1) * 0.1f * Settings.DimensionScaleFactor / ((Dimensions().x + Dimensions().z));
-		while (!exploded && (targetPosition - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Speed)
+		while (!exploded && (targetPosition - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Bomb.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position), Time.smoothDeltaTime * angularCorrectionRate);
-			transform.Translate((Vector3.forward + Random.insideUnitSphere * noise / ((float)level + 2)) * Speed * Time.smoothDeltaTime);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position), Time.smoothDeltaTime * Settings.Bomb.AngularCorrectionRate);
+			transform.Translate((Vector3.forward + Random.insideUnitSphere * Settings.Bomb.Noise / ((float)level + 2)) * Settings.Bomb.Speed * Time.smoothDeltaTime);
 			yield return null;
 		}
 		if (!exploded)

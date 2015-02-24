@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public abstract class UnitBase : Element
 {
-	private readonly float supplyRate = 30;
 	private float currentAmmo;
 	private float currentHP;
 	public int explosionsLeft;
@@ -34,7 +33,7 @@ public abstract class UnitBase : Element
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
 		yield return StartCoroutine(FireAtPosition(targetPosition));
-		yield return StartCoroutine(Replayer.ShowMessageAt(targetPosition, "Miss..."));
+		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(targetPosition + Settings.MessagePositionOffset, "Miss..."));
 	}
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
@@ -65,7 +64,7 @@ public abstract class UnitBase : Element
 	private IEnumerator Explode()
 	{
 		rigidbody.isKinematic = true;
-		var dummy = new GameObject();
+		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
@@ -106,6 +105,10 @@ public abstract class UnitBase : Element
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
+		dummy.audio.dopplerLevel = 0;
+		dummy.audio.maxDistance = Settings.Audio.MaxAudioDistance;
+		dummy.audio.volume = RelativeSize == 3 ? Settings.Audio.Volume.Death3 : Settings.Audio.Volume.Death1;
+		dummy.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Death_" + RelativeSize));
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
@@ -150,10 +153,7 @@ public abstract class UnitBase : Element
 	{
 		base.OnDestroy();
 		if (team < 2)
-		{
 			--Data.Replay.UnitNums[team];
-			++Data.Replay.Statictics[3, 1 - team];
-		}
 		if (hbRect)
 			Destroy(hbRect.gameObject);
 	}
@@ -163,7 +163,7 @@ public abstract class UnitBase : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.12f, Screen.width * 0.16f, Screen.height * 0.24f), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.12f, Screen.width * 0.16f, Screen.height * 0.24f).FitScreen(), GUI.skin.box);
 		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
 		if (float.IsInfinity(currentAmmo))
@@ -174,6 +174,17 @@ public abstract class UnitBase : Element
 		GUILayout.EndArea();
 	}
 
+	private void RefreshHealthBar()
+	{
+		var hbPos = Camera.main.WorldToScreenPoint(TopCenter() + Settings.HealthBar.PositionOffset);
+		hbCanvas.planeDistance = hbPos.z;
+		hbRect.anchoredPosition = hbPos;
+		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.DimensionScaleFactor, 3, 15);
+		if (tag != "Doodad")
+			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(4 - hbPos.z / Settings.DimensionScaleFactor / 2));
+		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
+	}
+
 	protected override void Start()
 	{
 		base.Start();
@@ -181,24 +192,27 @@ public abstract class UnitBase : Element
 		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, hbHorizontalPixelNumber);
 		hbImageRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 4);
 		var hbTextRect = hbText.GetComponent<RectTransform>();
-		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.TextGranularity * hbHorizontalPixelNumber);
-		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.TextGranularity * 4);
-		hbTextRect.localScale = Vector2.one / Settings.TextGranularity;
+		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Settings.GUI.TextGranularity * hbHorizontalPixelNumber);
+		hbTextRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Settings.GUI.TextGranularity * 4);
+		hbTextRect.localScale = Vector2.one / Settings.GUI.TextGranularity;
 		hbImage.texture = hbTexture = new Texture2D(hbHorizontalPixelNumber, 4) { wrapMode = TextureWrapMode.Clamp };
 		hbPixels = hbTexture.GetPixels32();
+		lastHPIndex = Mathf.RoundToInt(currentHP / MaxHP() * hbHorizontalPixelNumber);
 		for (var i = 0; i < hbHorizontalPixelNumber; i++)
 			for (var j = 0; j < 4; j++)
 				if (j != 1)
-					hbPixels[i + hbHorizontalPixelNumber * j] = Settings.HealthBar.EmptyColor;
+					hbPixels[i + hbHorizontalPixelNumber * j] = i < lastHPIndex ? Settings.HealthBar.FullColor : Settings.HealthBar.EmptyColor;
 		hbTexture.SetPixels32(hbPixels);
 		hbTexture.Apply();
+		RefreshHealthBar();
+		hbCanvas.gameObject.SetActive(true);
 	}
 
 	public IEnumerator Supply(UnitBase target, int fuel, int ammo, int metal)
 	{
-		var elapsedTime = Mathf.Max((fuel + ammo + metal) / supplyRate, 0.1f);
-		StartCoroutine(Replayer.Beam(Beamer, target, elapsedTime));
-		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.BeamSpeed);
+		var elapsedTime = Mathf.Max((fuel + ammo + metal) / Settings.Replay.SupplyRate, 0.1f);
+		StartCoroutine(Beam(target, elapsedTime, BeamType.Supply));
+		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.Replay.BeamSpeed);
 		var effectedFuel = 0;
 		var effectedAmmo = 0;
 		var effectedMetal = 0;
@@ -233,7 +247,15 @@ public abstract class UnitBase : Element
 		target.targetAmmo += ammo - effectedAmmo;
 		targetMetal -= metal - effectedMetal;
 		target.targetMetal += metal - effectedMetal;
-		yield return StartCoroutine(Replayer.ShowMessageAt(target.TopCenter() + Settings.MessagePositionOffset, "+ " + (fuel + ammo + metal) + " !"));
+		string message;
+		if (metal == 0)
+			if (ammo == 0)
+				message = fuel > 0 ? "F: +" + fuel + "!" : "0";
+			else
+				message = (fuel > 0 ? "F: +" + fuel + "! " : "") + "A: +" + ammo + "!";
+		else
+			message = (fuel > 0 ? "F: +" + fuel + "! " : "") + (ammo > 0 ? "A: +" + ammo + "! " : "") + "M: +" + metal + "!";
+		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, message));
 		--Data.Replay.SuppliesLeft;
 	}
 
@@ -246,7 +268,7 @@ public abstract class UnitBase : Element
 			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.smoothDeltaTime);
 		if (currentHP < 0)
 			currentHP = targetHP = 0;
-		if (Mathf.RoundToInt(currentHP) <= 0 && !isDead)
+		if (Mathf.RoundToInt(currentHP) <= 0 && tag != "Doodad")
 			Destruct();
 
 		#region Update Health Bar
@@ -262,13 +284,7 @@ public abstract class UnitBase : Element
 			hbTexture.Apply();
 			lastHPIndex = hpIndex;
 		}
-		var hbPos = Camera.main.WorldToScreenPoint(TopCenter() + Settings.HealthBar.PositionOffset);
-		hbCanvas.planeDistance = hbPos.z;
-		hbRect.anchoredPosition = hbPos;
-		hbRect.localScale = Vector2.one * Screen.width / 100 / Mathf.Clamp(hbPos.z / Settings.DimensionScaleFactor, 3, 15);
-		if (!isDead)
-			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(3 - hbPos.z / Settings.DimensionScaleFactor / 2));
-		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
+		RefreshHealthBar();
 
 		#endregion
 	}

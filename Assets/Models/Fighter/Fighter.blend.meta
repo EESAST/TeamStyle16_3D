@@ -17,6 +17,14 @@ ModelImporter:
     100022: Tube_RRU
     100024: Airframe
     100026: Barrel_FL
+    100028: PFL
+    100030: PFR
+    100032: PRL
+    100034: PRMD
+    100036: PRML
+    100038: PRMR
+    100040: PRMU
+    100042: PRR
     400000: Barrel_FR
     400002: Barrel_RL
     400004: Barrel_RR
@@ -31,6 +39,14 @@ ModelImporter:
     400022: Tube_RRU
     400024: Airframe
     400026: Barrel_FL
+    400028: PFL
+    400030: PFR
+    400032: PRL
+    400034: PRMD
+    400036: PRML
+    400038: PRMR
+    400040: PRMU
+    400042: PRR
     2300000: Barrel_FR
     2300002: Barrel_RL
     2300004: Barrel_RR

@@ -1,0 +1,52 @@
+Initialize engine version: 4.6.3f1 (4753d8b6ef2b)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) HD Graphics Family (ID=0xa16)
+    Vendor:   Intel
+    VRAM:     896 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-CSharp-firstpass.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-CSharp-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-Boo.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-Boo.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript-firstpass.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript-firstpass.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+- Completed reload, in  0.201 seconds
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.dll (this message is harmless)
+WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
+UnloadTime: 2.173227 ms
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 673.
+Total: 3.770348 ms (FindLiveObjects: 0.042839 ms CreateObjectMapping: 0.017403 ms MarkObjects: 3.119718 ms  DeleteObjects: 0.064259 ms)
+
+WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Xml.dll (this message is harmless)
+Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Boo.Lang.dll (this message is harmless)
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.Component:InternalGetGameObject ()
+  at UnityEngine.Component.get_gameObject () [0x00000] in <filename unknown>:0 
+  at Carrier.OnDestroy () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.Component:InternalGetGameObject ()
+  at UnityEngine.Component.get_gameObject () [0x00000] in <filename unknown>:0 
+  at Carrier.OnDestroy () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+

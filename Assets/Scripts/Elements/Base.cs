@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using JSON;
 using UnityEngine;
 
@@ -8,11 +9,7 @@ using UnityEngine;
 
 public class Base : Building
 {
-	private static readonly float bgSteeringRate = 10;
-	private static readonly float fixRate = 20;
-	private static readonly float headSteeringRate = 100;
 	private static readonly Material[][] materials = new Material[2][];
-	private static readonly float sgSteeringRate = 10;
 	private Transform[] bigBombs;
 	private Transform bigGuns;
 	private Transform head;
@@ -20,20 +17,20 @@ public class Base : Building
 	private Transform lightPod;
 	private Transform[] smallBombs;
 	private Transform smallGuns;
-	public override Transform Beamer { get { return lightPod; } }
+	protected override Transform Beamer { get { return lightPod; } }
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
-	public override int RelativeSize { get { return 3; } }
+	protected override int RelativeSize { get { return 3; } }
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - head.position);
-		while (Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, headSteeringRate * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, Settings.SteeringRate.Base_Head * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 		var targetRotation_BG = Quaternion.LookRotation(targetPosition - bigGuns.position);
 		var targetRotation_SG = Quaternion.LookRotation(targetPosition - smallGuns.position);
-		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, bgSteeringRate * Time.smoothDeltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, sgSteeringRate * Time.smoothDeltaTime), targetRotation_SG) > Settings.AngularTolerance)
+		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, Settings.SteeringRate.Base_BigGuns * Time.smoothDeltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, Settings.SteeringRate.Base_SmallGuns * Time.smoothDeltaTime), targetRotation_SG) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -60,12 +57,12 @@ public class Base : Building
 		explosionsLeft += 4;
 		for (var i = 0; i < 2; ++i)
 		{
-			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition, BombManager.BombLevel.Large);
-			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition, BombManager.BombLevel.Small);
+			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Large);
+			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Small);
 		}
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}
@@ -75,21 +72,21 @@ public class Base : Building
 		explosionsLeft += 4;
 		for (var i = 0; i < 2; ++i)
 		{
-			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.BombLevel.Large);
-			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.BombLevel.Small);
+			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.Level.Large);
+			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.Level.Small);
 		}
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}
 
 	public IEnumerator Fix(Unit target, int metal, int healthIncrease)
 	{
-		var elapsedTime = Mathf.Max(healthIncrease / fixRate, 0.1f);
-		StartCoroutine(Replayer.Beam(Beamer, target, elapsedTime));
-		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.BeamSpeed);
+		var elapsedTime = Mathf.Max(healthIncrease / Settings.Replay.FixRate, 0.1f);
+		StartCoroutine(Beam(target, elapsedTime, BeamType.Fix));
+		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.Replay.BeamSpeed);
 		var effectedHP = 0;
 		var effectedMetal = 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
@@ -110,7 +107,7 @@ public class Base : Building
 		}
 		target.targetHP += healthIncrease - effectedHP;
 		targetMetal -= metal - effectedMetal;
-		yield return StartCoroutine(Replayer.ShowMessageAt(target.TopCenter() + Settings.MessagePositionOffset, "+ " + healthIncrease + " !"));
+		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, healthIncrease > 0 ? "HP: +" + healthIncrease + "!" : "0"));
 		--Data.Replay.FixesLeft;
 	}
 

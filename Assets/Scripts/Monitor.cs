@@ -9,7 +9,7 @@ public class Monitor : MonoBehaviour
 {
 	private static int markPatternIndex;
 	private static float markScaleFactor;
-	public static float PhysicalScreenHeight;
+	private static float physicalScreenHeight;
 	public static Vector2 ScreenSize;
 	private static readonly Color[] teamColor = new Color[4];
 
@@ -62,7 +62,7 @@ public class Monitor : MonoBehaviour
 		var screenSize = new Vector2(Screen.width, Screen.height);
 		if (ScreenSize != screenSize)
 		{
-			Methods.OnScreenSizeChanged();
+			Methods.GUI.OnScreenSizeChanged();
 			if (Delegates.ScreenSizeChanged != null)
 				Delegates.ScreenSizeChanged();
 			ScreenSize = screenSize;
@@ -88,10 +88,10 @@ public class Monitor : MonoBehaviour
 
 		#region Physical Screen Height
 
-		var physicalScreenHeight = Screen.height / Methods.ValidScreenDPI();
-		if (Math.Abs(PhysicalScreenHeight - physicalScreenHeight) > Mathf.Epsilon)
+		var newPhysicalScreenHeight = Screen.height / Methods.ValidScreenDPI();
+		if (Math.Abs(physicalScreenHeight - newPhysicalScreenHeight) > Mathf.Epsilon)
 		{
-			Methods.GUI.ResizeFonts(PhysicalScreenHeight = physicalScreenHeight);
+			Methods.GUI.ResizeFonts(physicalScreenHeight = newPhysicalScreenHeight);
 			if (Delegates.PhysicalScreenHeightChanged != null)
 				Delegates.PhysicalScreenHeightChanged();
 		}

@@ -27,6 +27,10 @@ ModelImporter:
     100042: Airframe_Rear
     100044: FrontSeat
     100046: RearSeat
+    100048: PL_Front
+    100050: PL_Rear
+    100052: PR_Front
+    100054: PR_Rear
     400000: //RootNode
     400002: Hull
     400004: Radar
@@ -51,6 +55,10 @@ ModelImporter:
     400042: Airframe_Rear
     400044: FrontSeat
     400046: RearSeat
+    400048: PL_Front
+    400050: PL_Rear
+    400052: PR_Front
+    400054: PR_Rear
     2300000: Hull
     2300002: Radar
     2300004: Airframe_Left

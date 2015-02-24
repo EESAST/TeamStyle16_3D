@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Collections.Generic;
 using JSON;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -46,7 +47,6 @@ public static class Methods
 			var t2 = w3.y - w1.y;
 
 			var r = 1.0f / (s1 * t2 - s2 * t1);
-
 			var sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
 			var tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
 
@@ -69,6 +69,8 @@ public static class Methods
 
 		mesh.tangents = tangents;
 	}
+
+	public static Rect FitScreen(this Rect rect) { return new Rect(Mathf.Min(Mathf.Max(rect.x, 0), Screen.width - rect.width), Mathf.Min(Mathf.Max(rect.y, 0), Screen.height - rect.height), rect.width, rect.height); }
 
 	public static void Line(this Texture2D texture, Vector2 lhs, Vector2 rhs, Color lineColor, float lineThickness)
 	{
@@ -111,26 +113,13 @@ public static class Methods
 		texture.SetPixels32(tmpPixels);
 	}
 
-	public static void OnScreenSizeChanged()
-	{
-		var screenArea = Screen.width * Screen.height;
-		Data.MiniMap.ScaleFactor = Mathf.Sqrt(screenArea / Data.MapSize.x / Data.MapSize.y) / 4;
-		var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
-		var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
-		Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
-		Data.Replay.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
-		Data.GUI.Dice = Object.Instantiate(Resources.Load("Dice")) as Texture2D;
-		TextureScale.Bilinear(Data.GUI.Dice, Screen.height / 8, Screen.height / 8);
-		Data.GUI.Random.image = Data.GUI.Dice;
-	}
-
 	public static void Polygon(this Texture2D texture, Vector2[] points, Color lineColor, float lineThickness)
 	{
 		for (var i = 0; i < points.Length; i++)
 			texture.Line(points[i], points[(i + 1) % points.Length], lineColor, lineThickness);
 	}
 
-	public static Rect RectLerp(Rect from, Rect to, float t) { return new Rect { x = Mathf.Lerp(from.x, to.x, t), y = Mathf.Lerp(from.y, to.y, t), width = Mathf.Lerp(from.width, to.width, t), height = Mathf.Lerp(from.height, to.height, t) }; }
+	public static Rect RectLerp(this Rect from, Rect to, float t) { return new Rect { x = Mathf.Lerp(from.x, to.x, t), y = Mathf.Lerp(from.y, to.y, t), width = Mathf.Lerp(from.width, to.width, t), height = Mathf.Lerp(from.height, to.height, t) }; }
 
 	public static Vector3[] TransformPoints(this Transform transform, Vector3[] points, out Vector3 center)
 	{
@@ -191,14 +180,6 @@ public static class Methods
 			return result;
 		}
 
-		public static Vector3[] Multiply(Vector3[] terms, float multiplier)
-		{
-			var result = new Vector3[terms.Length];
-			for (var i = 0; i < result.Length; i++)
-				result[i] = terms[i] * multiplier;
-			return result;
-		}
-
 		public static Vector3[] Multiply(Vector3[] terms, float[] multipliers)
 		{
 			var result = new Vector3[terms.Length];
@@ -210,20 +191,15 @@ public static class Methods
 
 	public static class Coordinates
 	{
-		public static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - externalY) * Settings.DimensionScaleFactor, Settings.Map.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.Map.MapSizeOffset.top) * Settings.DimensionScaleFactor)); }
+		private static Vector3 ExternalToInternal(float externalX, float externalY, float externalZ = 0) { return new Vector3((Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - externalY) * Settings.DimensionScaleFactor, Settings.Map.HeightOfLevel[Mathf.RoundToInt(externalZ)], ((externalX + Settings.Map.MapSizeOffset.top) * Settings.DimensionScaleFactor)); }
 
 		public static Vector3 ExternalToInternal(Vector3 externalCoordinates) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalCoordinates.z); }
 
 		public static Vector3 ExternalToInternal(Vector2 externalCoordinates, float externalZ) { return ExternalToInternal(externalCoordinates.x, externalCoordinates.y, externalZ); }
 
-		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates)
-		{
-			if (Settings.MiniMap.Border == null)
-				Debug.LogError("Null Border!");
-			return new Vector2(Screen.width - Settings.MiniMap.Border.right - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.Border.top - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor);
-		}
+		public static Vector2 ExternalToMiniMapBasedScreen(Vector2 externalCoordinates) { return new Vector2(Screen.width - Settings.MiniMap.Border.right - (Data.MapSize.y - externalCoordinates.y - 0.5f) * Data.MiniMap.ScaleFactor, Screen.height - Settings.MiniMap.Border.top - (externalCoordinates.x + 0.5f) * Data.MiniMap.ScaleFactor); }
 
-		public static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
+		private static Vector2 ExternalToMiniMapRatios(Vector2 externalCoordinates) { return new Vector2((externalCoordinates.y + 0.5f) / Data.MapSize.y, 1 - (externalCoordinates.x + 0.5f) / Data.MapSize.x); }
 
 		public static Vector2 InternalToExternal(Vector3 internalCoordinates) { return new Vector3(internalCoordinates.z / Settings.DimensionScaleFactor - Settings.Map.MapSizeOffset.top, Data.MapSize.y - 1 + Settings.Map.MapSizeOffset.right - internalCoordinates.x / Settings.DimensionScaleFactor); }
 
@@ -247,7 +223,7 @@ public static class Methods
 
 		public static bool IsOccupied(Vector2 externalCoordinates) { return (Data.IsOccupied[Mathf.RoundToInt(externalCoordinates.x), Mathf.RoundToInt(externalCoordinates.y)]); }
 
-		public static Vector3 JSONToExternal(JSONObject jsonPos)
+		private static Vector3 JSONToExternal(JSONObject jsonPos)
 		{
 			float posX, posY, posZ;
 			JSONToExternal(jsonPos, out posX, out posY, out posZ);
@@ -261,7 +237,7 @@ public static class Methods
 			return new Vector3(posX, posY, posZ);
 		}
 
-		public static void JSONToExternal(JSONObject jsonPos, out float posX, out float posY, out float posZ)
+		private static void JSONToExternal(JSONObject jsonPos, out float posX, out float posY, out float posZ)
 		{
 			if (jsonPos["__class__"].str == "Rectangle")
 			{
@@ -342,7 +318,7 @@ public static class Methods
 			GUILayout.Label("林圣杰", Data.GUI.Label.SmallMiddle);
 			GUILayout.Label("钟元熠", Data.GUI.Label.SmallMiddle);
 			GUILayout.Label("鸣谢：", Data.GUI.Label.LargeLeft);
-			GUILayout.Label("翁喆", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("队式开发组全体成员", Data.GUI.Label.SmallMiddle);
 			GUILayout.EndScrollView();
 			GUILayout.EndVertical();
 			GUILayout.FlexibleSpace();
@@ -352,7 +328,7 @@ public static class Methods
 
 		public static void DrawOptions(ref MenuState stagedState)
 		{
-			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例" }, Data.GUI.Button.Large);
+			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例", "窗口模式" }, Data.GUI.Button.Large);
 			GUILayout.BeginVertical("box");
 			GUILayout.FlexibleSpace();
 			switch (Data.GUI.OptionSelected)
@@ -406,6 +382,13 @@ public static class Methods
 					GUILayout.EndVertical();
 					GUILayout.EndScrollView();
 					break;
+				case 2:
+					GUILayout.BeginHorizontal("box");
+					GUILayout.FlexibleSpace();
+					Screen.fullScreen = GUILayout.Toggle(Screen.fullScreen, "全屏显示", Data.GUI.MediumToggle);
+					GUILayout.FlexibleSpace();
+					GUILayout.EndHorizontal();
+					break;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndVertical();
@@ -413,7 +396,6 @@ public static class Methods
 			GUILayout.FlexibleSpace();
 			if (GUILayout.Button("确定", Data.GUI.Button.Small) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 				stagedState = MenuState.Default;
-			;
 			GUILayout.FlexibleSpace();
 			if (GUILayout.Button("取消", Data.GUI.Button.Small) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
 			{
@@ -422,6 +404,7 @@ public static class Methods
 					Data.TeamColor.Target[i] = Data.GUI.StagedTeamColor[i];
 				Data.MiniMap.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
 				Data.MiniMap.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
+				Screen.fullScreen = Data.GUI.StagedFullScreen;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -448,7 +431,22 @@ public static class Methods
 			Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
 			Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
 			Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
+			Data.GUI.MediumToggle = new GUIStyle("toggle");
 			Data.GUI.Initialized = true;
+		}
+
+		public static void OnScreenSizeChanged()
+		{
+			var screenArea = Screen.width * Screen.height;
+			Data.MiniMap.ScaleFactor = Mathf.Sqrt(screenArea / Data.MapSize.x / Data.MapSize.y) / 4;
+			var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
+			var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
+			Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
+			Data.GUI.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
+			Data.GUI.LineThickness = Settings.GUI.LineThickness * Mathf.Sqrt(screenArea) / 1000;
+			Data.GUI.Dice = Object.Instantiate(Resources.Load("Dice")) as Texture2D;
+			TextureScale.Bilinear(Data.GUI.Dice, Screen.height / 8, Screen.height / 8);
+			Data.GUI.Random.image = Data.GUI.Dice;
 		}
 
 		public static void RefreshTeamColoredStyles()
@@ -472,6 +470,7 @@ public static class Methods
 			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalScreenHeight * 3);
+			Data.GUI.MediumToggle.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
 		}
 
 		public static void StageCurrentOptions()
@@ -480,6 +479,35 @@ public static class Methods
 				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Target[i];
 			Data.GUI.StagedMarkScaleFactor = Data.MiniMap.MarkScaleFactor;
 			Data.GUI.StagedMarkPatternIndex = Data.MiniMap.MarkPatternIndex;
+			Data.GUI.StagedFullScreen = Screen.fullScreen;
+		}
+	}
+
+	public static class Replay
+	{
+		public static void ClearReplayData()
+		{
+			Data.Replay.ProductionTimeScale = 1;
+			Data.Replay.AttacksLeft = 0;
+			Data.Replay.CollectsLeft = 0;
+			Data.Replay.CreatesLeft = 0;
+			Data.Replay.FixesLeft = 0;
+			Data.Replay.MovesLeft = 0;
+			Data.Replay.SuppliesLeft = 0;
+		}
+
+		public static void InitializeReplayData()
+		{
+			Data.Replay.Bases = new Base[2];
+			Data.Replay.CurrentScores = new float[2];
+			Data.Replay.Elements = new Dictionary<int, Element>();
+			Data.Replay.Forts = new[] { new List<Fort>(), new List<Fort>() };
+			Data.Replay.Populations = new int[2];
+			Data.Replay.ProductionLists = new[] { new List<ProductionEntry>(), new List<ProductionEntry>() };
+			Data.Replay.TargetScores = new int[2];
+			Data.Replay.TeamNames = new[] { "队伍1", "队伍2", "中立" };
+			Data.Replay.UnitNums = new int[2];
+			ClearReplayData();
 		}
 	}
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class InterfaceManager : MonoBehaviour
 {
-	private readonly Cloud[] clouds = new Cloud[Settings.CloudNumber];
+	private readonly Cloud[] clouds = new Cloud[Settings.MainInterface_CloudNum];
 	private Rect aboutRect = new Rect(Screen.width * 0.35f, Screen.height * 0.2f, Screen.width * 0.3f, Screen.height * 0.6f);
 	public Texture back;
 	public Texture background;
@@ -28,7 +28,7 @@ public class InterfaceManager : MonoBehaviour
 
 	private void AboutWindow(int windowID)
 	{
-		GUILayout.Label("关于", Data.GUI.Label.LargeMiddle);
+		GUILayout.Label("深蓝", Data.GUI.Label.LargeMiddle);
 		Methods.GUI.DrawAbout(ref stagedState);
 		GUI.DragWindow();
 	}

@@ -123,7 +123,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 497226}
-  - 114: {fileID: 11484440}
+  - 114: {fileID: 11468548}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -663,8 +663,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaEnabled: 1
-  alphaMax: 10
-  alphaMin: -20
+  alphaMax: 15
+  alphaMin: -15
   angularSpeed: 10
   betaEnabled: 0
   betaMax: 0
@@ -681,8 +681,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaEnabled: 1
-  alphaMax: 10
-  alphaMin: -20
+  alphaMax: 15
+  alphaMin: -15
   angularSpeed: 10
   betaEnabled: 0
   betaMax: 0
@@ -699,8 +699,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaEnabled: 1
-  alphaMax: 30
-  alphaMin: -15
+  alphaMax: 15
+  alphaMin: -30
   angularSpeed: 100
   betaEnabled: 1
   betaMax: 180
@@ -720,7 +720,7 @@ MonoBehaviour:
   maxOmega: 2
   minOmega: 5
   offset: .200000003
---- !u!114 &11484440
+--- !u!114 &11468548
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -731,7 +731,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53336248ba069f548b442126425c9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 0
   MouseOver: 0
   targetFuel: 0
   targetMetal: 0

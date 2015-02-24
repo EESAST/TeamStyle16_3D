@@ -18,7 +18,7 @@ public class Scout : Plane
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), transform.position, transform.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+		(Instantiate(Resources.Load("Bomb"), transform.position, transform.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;

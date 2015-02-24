@@ -1,15 +1,14 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 #endregion
 
 public class Destroyer : Ship
 {
-	private static readonly float barrelSterringRate = 20;
 	private static readonly Material[][] materials = new Material[1][];
-	private static readonly float swivelSteeringRate = 100;
 	private Transform barrel;
 	private Transform bomb;
 	private Component[] idleFXs;
@@ -17,18 +16,18 @@ public class Destroyer : Ship
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		Quaternion targetRotation;
 		do
 		{
 			yield return null;
 			targetRotation = Quaternion.LookRotation(swivel.TransformDirection(Vector3.Scale(swivel.InverseTransformPoint(targetPosition), new Vector3(1, 0, 1))), swivel.up);
-			swivel.rotation = Quaternion.RotateTowards(swivel.rotation, targetRotation, swivelSteeringRate * Time.smoothDeltaTime);
+			swivel.rotation = Quaternion.RotateTowards(swivel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Swivel * Time.smoothDeltaTime);
 		}
 		while (Quaternion.Angle(swivel.rotation, targetRotation) > Settings.AngularTolerance);
 		targetRotation = Quaternion.LookRotation(targetPosition - barrel.position, barrel.up);
-		while (Quaternion.Angle(barrel.rotation = Quaternion.RotateTowards(barrel.rotation, targetRotation, barrelSterringRate * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(barrel.rotation = Quaternion.RotateTowards(barrel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Barrel * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -50,10 +49,10 @@ public class Destroyer : Ship
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}
@@ -64,7 +63,7 @@ public class Destroyer : Ship
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}

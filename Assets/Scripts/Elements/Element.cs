@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using HighlightingSystem;
 using JSON;
 using UnityEngine;
@@ -14,17 +15,16 @@ public abstract class Element : MonoBehaviour
 	protected float currentMetal;
 	private bool guiInitialized;
 	protected Highlighter highlighter;
-	public int index;
-	protected bool isDead;
+	protected int index;
 	protected RectTransform markRect;
-	protected Texture markTexture;
+	private Texture markTexture;
 	public bool MouseOver;
 	public int targetFuel;
 	public int targetMetal;
 	public int team;
-	public virtual Transform Beamer { get { return transform; } }
+	protected virtual Transform Beamer { get { return transform; } }
 	protected virtual Quaternion DefaultRotation { get { return Quaternion.Euler(0, Random.Range(-180f, 180), 0); } }
-	public virtual int RelativeSize { get { return 1; } }
+	protected virtual int RelativeSize { get { return 1; } }
 
 	protected virtual void Awake()
 	{
@@ -48,24 +48,58 @@ public abstract class Element : MonoBehaviour
 		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Element");
+		gameObject.AddComponent<AudioSource>();
+		audio.dopplerLevel = 0;
+		audio.maxDistance = Settings.Audio.MaxAudioDistance;
+		audio.rolloffMode = AudioRolloffMode.Linear;
+		transform.rotation = DefaultRotation;
+		transform.localScale = Vector3.one * RelativeSize * Settings.DimensionScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 	}
 
-	/*public virtual IEnumerator Beam(ParticleSystem beam, Component target, float elapsedTime)
+	public IEnumerator Beam(Component target, float elapsedTime, BeamType beamType)
 	{
-		beam.transform.parent = Beamer;
-		beam.transform.position = Beamer.GetComponent<UnitBase>() ? Beamer.WorldCenterOfElement() : Beamer.position;
-		beam.startSpeed = Settings.Map.ScaleFactor * 2;
-		beam.Play();
+		var beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
+		beamFX.transform.parent = Beamer;
+		beamFX.transform.position = Beamer.GetComponent<Element>() ? Beamer.WorldCenterOfElement() : Beamer.position;
+		beamFX.startSpeed = Settings.Replay.BeamSpeed;
+		var beamAudio = beamFX.audio;
+		beamAudio.clip = Resources.Load<AudioClip>("Sounds/Beam_" + beamType);
+		beamAudio.dopplerLevel = 0;
+		beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
+		beamAudio.volume = Settings.Audio.Volume.Beam;
+		beamAudio.Play();
+		beamFX.Play();
+		var element = Beamer.GetComponentInParent<Element>();
 		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1;)
 		{
-			var v = target.transform.WorldCenterOfElement() - beam.transform.position;
-			beam.transform.rotation = Quaternion.LookRotation(v);
-			beam.startLifetime = v.magnitude / beam.startSpeed;
-			beam.startColor = Data.TeamColor.Current[team];
+			var v = target.transform.WorldCenterOfElement() - beamFX.transform.position;
+			beamFX.transform.rotation = Quaternion.LookRotation(v);
+			beamFX.startLifetime = v.magnitude / beamFX.startSpeed;
+			if (element is Mine)
+				beamFX.startColor = new Color32(245, 245, 220, 255);
+			else if (element is Oilfield)
+				beamFX.startColor = Color.green;
+			else
+				beamFX.startColor = Data.TeamColor.Current[element.team];
 			yield return null;
 		}
-		beam.Stop();
-	}*/
+		beamFX.Stop();
+		Destroy(beamFX.gameObject, beamFX.startLifetime);
+		var time = Time.time;
+		beamAudio.loop = false;
+		while (beamAudio && beamAudio.isPlaying)
+			yield return null;
+		if (!beamAudio)
+			yield break;
+		var loopsLeft = Mathf.FloorToInt((beamFX.startLifetime - Time.time + time) / beamAudio.clip.length);
+		if (loopsLeft <= 0)
+			yield break;
+		beamAudio.loop = true;
+		beamAudio.Play();
+		yield return new WaitForSeconds(loopsLeft * beamAudio.clip.length);
+		if (beamAudio)
+			beamAudio.Stop();
+	}
 
 	public abstract Vector3 Center();
 
@@ -77,9 +111,9 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Destruct()
 	{
-		isDead = true;
 		Data.Replay.Elements.Remove(index);
-		foreach (IElementFX elementFX in GetComponentsInChildren(typeof(IElementFX)))
+		tag = "Doodad";
+		foreach (var elementFX in GetComponentsInChildren(typeof(IElementFX)).Cast<IElementFX>())
 			elementFX.Disable();
 		highlighter.Die();
 		StartCoroutine(FadeOut());
@@ -103,6 +137,12 @@ public abstract class Element : MonoBehaviour
 				Data.IsOccupied[x, y] = true;
 	}
 
+	private void InitializeGUI()
+	{
+		Methods.GUI.InitializeStyles();
+		guiInitialized = true;
+	}
+
 	protected abstract int Kind();
 
 	protected abstract int Level();
@@ -122,7 +162,8 @@ public abstract class Element : MonoBehaviour
 	protected virtual void OnGUI()
 	{
 		GUI.depth = -1;
-		Methods.GUI.InitializeStyles();
+		if (!guiInitialized)
+			InitializeGUI();
 	}
 
 	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
@@ -145,8 +186,6 @@ public abstract class Element : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		transform.rotation = DefaultRotation;
-		transform.localScale = Vector3.one * RelativeSize * Settings.DimensionScaleFactor * 2 / ((Dimensions().x + Dimensions().z));
 		RefreshColor();
 		RefreshMarkPattern();
 		RefreshMarkSize();

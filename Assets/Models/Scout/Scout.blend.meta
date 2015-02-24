@@ -7,10 +7,12 @@ ModelImporter:
     100002: //RootNode
     100004: Scout
     100006: Airframe
+    100008: P
     400000: Ribbon
     400002: //RootNode
     400004: Scout
     400006: Airframe
+    400008: P
     2300000: Ribbon
     2300002: Scout
     2300004: //RootNode

@@ -26,7 +26,7 @@ public class Fighter : Plane
 	{
 		explosionsLeft += 4;
 		for (var i = 0; i < 4; ++i)
-			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition, BombManager.BombLevel.Small);
+			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Small);
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;
@@ -36,7 +36,7 @@ public class Fighter : Plane
 	{
 		explosionsLeft += 4;
 		for (var i = 0; i < 4; ++i)
-			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.BombLevel.Small);
+			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.Level.Small);
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;

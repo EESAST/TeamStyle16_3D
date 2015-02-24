@@ -10,26 +10,52 @@ using UnityEngine;
 
 public abstract class Unit : UnitBase
 {
+	private bool isActive;
 	private bool isOrienting;
+	private int movementNum;
 	private Vector3 targetPosition;
 	private float AngularSpeed { get { return Speed() * 30; } }
+
+	protected virtual void Activate()
+	{
+		audio.Play();
+		isActive = true;
+	}
 
 	protected IEnumerator AdjustOrientation(Vector3 targetOrientation)
 	{
 		isOrienting = true;
+		var ship = this as Ship;
+		if (!ship)
+			++movementNum;
 		var targetRotation = Quaternion.LookRotation(targetOrientation);
 		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, AngularSpeed * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
+		if (!ship)
+			--movementNum;
 		isOrienting = false;
+	}
+
+	protected override void Awake()
+	{
+		base.Awake();
+		audio.clip = Resources.Load<AudioClip>("Sounds/" + Constants.TypeNames[Kind()] + "_Launching");
+		audio.volume = Settings.Audio.Volume.Unit;
 	}
 
 	public IEnumerator Create(JSONObject info)
 	{
 		Initialize(info);
 		StartCoroutine(ShowCreateFX());
-		yield return new WaitForSeconds(Settings.CreateTime - Settings.MessageTime);
-		yield return StartCoroutine(Replayer.ShowMessageAt(TopCenter() + Settings.MessagePositionOffset, "Created!"));
+		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Create_" + team));
+		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(this, "Created!"));
 		--Data.Replay.CreatesLeft;
+	}
+
+	protected virtual void Deactivate()
+	{
+		audio.Stop();
+		isActive = false;
 	}
 
 	public override void Initialize(JSONObject info)
@@ -46,7 +72,7 @@ public abstract class Unit : UnitBase
 	public IEnumerator Move(JSONObject nodes)
 	{
 		var plane = this as Plane;
-		if (plane != null)
+		if (plane)
 			plane.isHovering = false;
 		int i;
 		var internalNodes = new Vector3[nodes.Count];
@@ -68,6 +94,7 @@ public abstract class Unit : UnitBase
 				var p = transform.rotation;
 				var q = Quaternion.LookRotation(b);
 				var o = u + b;
+				++movementNum;
 				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time / 2) < 1 - Time.smoothDeltaTime / time / 4;)
 				{
 					targetPosition = o + Vector3.Slerp(-b, a, t);
@@ -76,17 +103,20 @@ public abstract class Unit : UnitBase
 				}
 				targetPosition = w;
 				transform.rotation = q;
+				--movementNum;
 				i += 2;
 				targetFuel -= 2;
 			}
 			else
 			{
+				++movementNum;
 				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
 				{
 					targetPosition = Vector3.Lerp(u, v, t);
 					yield return null;
 				}
 				targetPosition = v;
+				--movementNum;
 				++i;
 				--targetFuel;
 			}
@@ -98,12 +128,14 @@ public abstract class Unit : UnitBase
 			StartCoroutine(AdjustOrientation(v - u));
 			while (isOrienting)
 				yield return null;
+			++movementNum;
 			for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
 			{
 				targetPosition = Vector3.Lerp(u, v, t);
 				yield return null;
 			}
 			targetPosition = v;
+			--movementNum;
 			--targetFuel;
 		}
 		--Data.Replay.MovesLeft;
@@ -124,7 +156,7 @@ public abstract class Unit : UnitBase
 		var createFX = Instantiate(Resources.Load("CreateFX"), center + Vector3.right * radius, Quaternion.identity) as GameObject;
 		var particleEmitters = createFX.GetComponentsInChildren<ParticleEmitter>();
 		var maxEnergy = particleEmitters.Max(emitter => emitter.maxEnergy);
-		for (float t, startTime = Time.time; (t = (Time.time - startTime) / (Settings.CreateTime - maxEnergy)) < 1;)
+		for (float t, startTime = Time.time; (t = (Time.time - startTime) / (Settings.Replay.CreateTime - maxEnergy)) < 1;)
 		{
 			var theta = 3 * Mathf.PI * t;
 			createFX.transform.position = center + radius * new Vector3(Mathf.Cos(theta), 2 * t, Mathf.Sin(theta));
@@ -151,5 +183,9 @@ public abstract class Unit : UnitBase
 			return;
 		if ((targetPosition - transform.position).magnitude > Settings.DimensionalTolerance)
 			transform.position = Vector3.Lerp(transform.position, targetPosition, Settings.TransitionRate * Time.smoothDeltaTime);
+		if (movementNum > 0 && !isActive)
+			Activate();
+		if (movementNum == 0 && isActive)
+			Deactivate();
 	}
 }

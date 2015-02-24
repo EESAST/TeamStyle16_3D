@@ -1,7 +1,7 @@
 ﻿#region
 
+using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 #endregion
 
@@ -11,37 +11,48 @@ public class SelectionManager : MonoBehaviour
 	private Element lastOverElement;
 	private Element lastSelectedElement;
 
-	private void OnDisable() { Revert(); }
-
-	private void Revert()
-	{
-		if (lastOverElement)
-			lastOverElement.MouseOver = false;
-	}
-
-	private void Update()
+	private void LateUpdate()
 	{
 		Revert();
 		if (Input.GetMouseButtonUp(1) && lastSelectedElement)
 		{
 			lastSelectedElement.Deselect();
 			lastSelectedElement = null;
+			Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Deselect"));
 		}
-		if (EventSystem.current.IsPointerOverGameObject() || Screen.lockCursor)
-			return;
-		Element target = null;
-		RaycastHit hitInfo;
-		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, LayerMask.GetMask("Element")))
-			target = hitInfo.transform.GetComponentInParent<Element>();
-		if (lastOverElement = target)
-			lastOverElement.MouseOver = true;
-		if (Input.GetMouseButtonDown(0))
-			lastDownElement = target;
-		if (Input.GetMouseButtonUp(0) && target && target == lastDownElement)
+		if (Data.GUI.OccupiedRects.Any(rect => rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y))) || Screen.lockCursor)
+			lastOverElement = null;
+		else
 		{
-			if (lastSelectedElement)
-				lastSelectedElement.Deselect();
-			(lastSelectedElement = target).Select();
+			Element target = null;
+			RaycastHit hitInfo;
+			if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo, Mathf.Infinity, LayerMask.GetMask("Element")))
+				target = hitInfo.transform.GetComponentInParent<Element>();
+			if (target)
+			{
+				if (lastOverElement != target)
+					Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Over"));
+				target.MouseOver = true;
+			}
+			lastOverElement = target;
+			if (Input.GetMouseButtonDown(0))
+				lastDownElement = target;
+			if (Input.GetMouseButtonUp(0) && target && target == lastDownElement)
+			{
+				if (lastSelectedElement)
+					lastSelectedElement.Deselect();
+				(lastSelectedElement = target).Select();
+				Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Select"));
+			}
 		}
+		Data.GUI.OccupiedRects.Clear();
+	}
+
+	private void OnDisable() { Revert(); }
+
+	private void Revert()
+	{
+		if (lastOverElement)
+			lastOverElement.MouseOver = false;
 	}
 }

@@ -13,11 +13,9 @@ public class ProductionEntry : MonoBehaviour
 	private RectTransform entry;
 	public int kind;
 	private float lifeSpan;
-	private int progress;
 	public bool ready;
-	private float spawnTime;
 	private int targetPos;
-	public int team;
+	private int team;
 	private Image tintedIcon;
 	private Image underlay;
 
@@ -56,32 +54,37 @@ public class ProductionEntry : MonoBehaviour
 
 	private IEnumerator Progress()
 	{
-		spawnTime = Data.Replay.ProductionTimer;
-		while ((tintedIcon.fillAmount = (Data.Replay.ProductionTimer - spawnTime) / lifeSpan) < 1)
+		while ((tintedIcon.fillAmount += Time.smoothDeltaTime * Data.Replay.ProductionTimeScale / lifeSpan) < 1)
 			yield return null;
 		ready = true;
 	}
 
-	public void RefreshColor() { tintedIcon.color = description.color = Data.TeamColor.Current[team]; }
+	private void RefreshColor() { tintedIcon.color = description.color = Data.TeamColor.Current[team]; }
 
-	public void RefreshEntryRect()
+	private void RefreshEntryRect()
 	{
-		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.Replay.ProductionEntrySize);
-		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.Replay.ProductionEntrySize);
+		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.GUI.ProductionEntrySize);
+		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.GUI.ProductionEntrySize);
 	}
 
-	public void Setup(int team, int kind)
+	public void Setup(int team, int kind, int roundsLeft)
 	{
 		this.team = team;
 		this.kind = kind;
 		lifeSpan = Settings.MaxTimePerFrame * Constants.BuildRounds[kind];
-		currentPos = -1;
 		description.text = Constants.ChineseNames[kind];
 		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
+		tintedIcon.fillAmount = 1 - (float)roundsLeft / Constants.BuildRounds[kind];
 		foreach (var productionEntry in Data.Replay.ProductionLists[team])
-			productionEntry.targetPos++;
-		Data.Replay.Bases[team].targetMetal -= Constants.Costs[kind];
+			productionEntry.currentPos = ++productionEntry.targetPos;
 		Data.Replay.ProductionLists[team].Add(this);
+	}
+
+	public void Setup(int team, int kind)
+	{
+		Setup(team, kind, Constants.BuildRounds[kind]);
+		currentPos = -1;
+		Data.Replay.Bases[team].targetMetal -= Constants.Costs[kind];
 	}
 
 	private void Start()
@@ -95,9 +98,9 @@ public class ProductionEntry : MonoBehaviour
 	{
 		if (Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
 			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.smoothDeltaTime);
-		var t = currentPos % Settings.MaxProductionEntryNumPerRow;
-		entry.anchoredPosition = t < Settings.MaxProductionEntryNumPerRow - 1 ? Data.Replay.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.MaxProductionEntryNumPerRow)) : Data.Replay.ProductionEntrySize * new Vector2((Settings.MaxProductionEntryNumPerRow - 1) * (Settings.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.MaxProductionEntryNumPerRow) + t + 1 - Settings.MaxProductionEntryNumPerRow));
+		var t = currentPos % Settings.GUI.MaxProductionEntryNumPerRow;
+		entry.anchoredPosition = t < Settings.GUI.MaxProductionEntryNumPerRow - 1 ? Data.GUI.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow)) : Data.GUI.ProductionEntrySize * new Vector2((Settings.GUI.MaxProductionEntryNumPerRow - 1) * (Settings.GUI.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow) + t + 1 - Settings.GUI.MaxProductionEntryNumPerRow));
 		if (team == 1)
-			entry.anchoredPosition -= Vector2.up * Data.Replay.ProductionEntrySize * Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.MaxProductionEntryNumPerRow);
+			entry.anchoredPosition -= Vector2.up * Data.GUI.ProductionEntrySize * Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.GUI.MaxProductionEntryNumPerRow);
 	}
 }

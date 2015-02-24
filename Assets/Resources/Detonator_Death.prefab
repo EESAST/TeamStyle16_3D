@@ -15,10 +15,9 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400014}
-  - 114: {fileID: 11400016}
   m_Layer: 0
   m_Name: Detonator_Death
-  m_TagString: Untagged
+  m_TagString: Doodad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -312,63 +311,6 @@ MonoBehaviour:
 --- !u!1002 &11400015
 EditorExtensionImpl:
   serializedVersion: 6
---- !u!114 &11400016
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2b0ca7171ed55c4eaaf9aba39d05e87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: {r: 1, g: 1, b: 1, a: 1}
-  detail: 1
-  detailThreshold: 0
-  detonatorControlled: 1
-  duration: 2
-  explodeDelayMax: 0
-  explodeDelayMin: 0
-  force: {x: 0, y: 0, z: 0}
-  localPosition: {x: 0, y: 0, z: 0}
-  on: 1
-  size: 1
-  startColor: {r: 1, g: 1, b: 1, a: 1}
-  startDetail: 1
-  startDuration: 2
-  startForce: {x: 0, y: 0, z: 0}
-  startLocalPosition: {x: 0, y: 0, z: 0}
-  startSize: 1
-  startVelocity: {x: 0, y: 0, z: 0}
-  timeScale: 1
-  velocity: {x: 0, y: 0, z: 0}
-  distanceThreshold: 50
-  farSounds:
-  - {fileID: 8300000, guid: 3b7ffd9189fc07141ac209aba4a5231c, type: 3}
-  - {fileID: 8300000, guid: 9b92929ec9bfd2a4dbc8eb1d7317a08c, type: 3}
-  - {fileID: 8300000, guid: 212fd111cd4e73b45944338ba3209a76, type: 3}
-  - {fileID: 8300000, guid: d8a451e65fcc1f74291eac9108e6883b, type: 3}
-  - {fileID: 8300000, guid: 083b38b495cbfa4458953af457a01b2d, type: 3}
-  - {fileID: 8300000, guid: 55b11b2d1fa315447ac49ca2f0efb296, type: 3}
-  - {fileID: 8300000, guid: a5ae2c1b2932d9345ae53db287e53881, type: 3}
-  - {fileID: 8300000, guid: 5ec6f62a6c0a9104981b11234b049375, type: 3}
-  - {fileID: 8300000, guid: 4a3493123f59acb4487b3761aa015503, type: 3}
-  - {fileID: 8300000, guid: 9d0925ecd5dddfa43819a1114923d240, type: 3}
-  maxVolume: 1
-  minVolume: .400000006
-  nearSounds:
-  - {fileID: 8300000, guid: f5da557f993e18044be67559724a387a, type: 3}
-  - {fileID: 8300000, guid: 18a51ecb1d2399348959f3656b74c618, type: 3}
-  - {fileID: 8300000, guid: f39417f1df85e2943aeea10df3b784f6, type: 3}
-  - {fileID: 8300000, guid: 9aa2f098f96c5444997aac0baeff911a, type: 3}
-  - {fileID: 8300000, guid: 4c6e2ea7060de914fa26b0c1a2155105, type: 3}
-  - {fileID: 8300000, guid: 00ef2c2220d195a4485384748ce52cab, type: 3}
-  - {fileID: 8300000, guid: b88951e33040c404e93da80150271ce6, type: 3}
-  - {fileID: 8300000, guid: 9532efbde94f95e43a298fbec6b74671, type: 3}
-  - {fileID: 8300000, guid: 2092d8f00af95f345b453732ef4113a7, type: 3}
-  - {fileID: 8300000, guid: 61887a313bb8afd4288710393fd9e167, type: 3}
-  rolloffFactor: .5
 --- !u!1002 &11400017
 EditorExtensionImpl:
   serializedVersion: 6

@@ -27,7 +27,7 @@ public abstract class Resource : Element
 		}
 	}
 
-	protected abstract float CurrentStorage();
+	protected abstract int CurrentStorage();
 
 	protected override IEnumerator FadeOut()
 	{
@@ -47,9 +47,9 @@ public abstract class Resource : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.16f, Screen.height * 0.08f), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.08f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.16f, Screen.height * 0.08f).FitScreen(), GUI.skin.box);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(StorageDescription() + '：' + Mathf.RoundToInt(CurrentStorage()), Data.GUI.Label.SmallLeft);
+		GUILayout.Label(StorageDescription() + '：' + (CurrentStorage() > 0 ? CurrentStorage().ToString() : "枯竭"), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
 		GUILayout.EndArea();
 	}
@@ -65,7 +65,7 @@ public abstract class Resource : Element
 			particleEmitters[i].maxEmission = initialMaxEmission[i] * ratio;
 			particleEmitters[i].minEmission = initialMinEmission[i] * ratio;
 		}
-		if (Mathf.RoundToInt(CurrentStorage()) <= 0 && !isDead)
+		if (CurrentStorage() <= 0 && tag != "Doodad")
 			Destruct();
 	}
 }

@@ -8,7 +8,18 @@ using UnityEngine;
 public class Submarine : Unit
 {
 	private static readonly Material[][] materials = new Material[1][];
-	private Transform[] torpedo;
+	private AutoRotation[] autoRotations;
+	private Transform[] torpedos;
+	private ParticleSystem[] trails;
+
+	protected override void Activate()
+	{
+		base.Activate();
+		foreach (var trail in trails)
+			trail.Play();
+		foreach (var autoRotation in autoRotations)
+			autoRotation.enabled = true;
+	}
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(targetPosition - transform.position)); }
 
@@ -17,10 +28,21 @@ public class Submarine : Unit
 	protected override void Awake()
 	{
 		base.Awake();
-		torpedo = new[] { transform.Find("Hull/LSP"), transform.Find("Hull/RSP") };
+		torpedos = new[] { transform.Find("Hull/LSP"), transform.Find("Hull/RSP") };
+		trails = GetComponentsInChildren<ParticleSystem>();
+		autoRotations = GetComponentsInChildren<AutoRotation>();
 	}
 
 	public override Vector3 Center() { return new Vector3(-0.00f, 0.19f, 0.04f); }
+
+	protected override void Deactivate()
+	{
+		base.Deactivate();
+		foreach (var trail in trails)
+			trail.Stop();
+		foreach (var autoRotation in autoRotations)
+			autoRotation.enabled = false;
+	}
 
 	public override void Deselect()
 	{
@@ -34,7 +56,7 @@ public class Submarine : Unit
 	{
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
-			(Instantiate(Resources.Load("Bomb"), torpedo[i].position, torpedo[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
 		while (explosionsLeft > 0)
 			yield return null;
 		StartCoroutine(RevertRotation());
@@ -44,7 +66,7 @@ public class Submarine : Unit
 	{
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
-			(Instantiate(Resources.Load("Bomb"), torpedo[i].position, torpedo[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
+			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
 		while (explosionsLeft > 0)
 			yield return null;
 		StartCoroutine(RevertRotation());

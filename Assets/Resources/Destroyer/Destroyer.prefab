@@ -356,13 +356,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595b013e485b5a0428c5508a8c212ffe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: 0
   MouseOver: 0
   targetFuel: 0
   targetMetal: 0
   team: 0
   explosionsLeft: 0
-  targetAmmo: 0
   targetHP: 0
 --- !u!114 &11430832
 MonoBehaviour:
@@ -426,8 +424,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaEnabled: 1
-  alphaMax: 45
-  alphaMin: -15
+  alphaMax: 15
+  alphaMin: -45
   angularSpeed: 20
   betaEnabled: 0
   betaMax: 0

@@ -9,8 +9,29 @@ public abstract class Plane : Unit
 {
 	public bool isFalling;
 	public bool isHovering = true;
+	private ParticleSystem[] trails;
+
+	protected override void Activate()
+	{
+		base.Activate();
+		foreach (var trail in trails)
+			trail.Play();
+	}
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
+
+	protected override void Awake()
+	{
+		base.Awake();
+		trails = GetComponentsInChildren<ParticleSystem>();
+	}
+
+	protected override void Deactivate()
+	{
+		base.Deactivate();
+		foreach (var trail in trails)
+			trail.Stop();
+	}
 
 	private IEnumerator Fall()
 	{

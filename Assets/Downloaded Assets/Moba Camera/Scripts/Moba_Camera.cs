@@ -1,7 +1,6 @@
 ﻿#region
 
 using System;
-using System.Collections;
 using UnityEngine;
 
 #endregion
@@ -239,22 +238,18 @@ public class Moba_Camera : MonoBehaviour
 			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.smoothDeltaTime);
 	}
 
-	private IEnumerator CameraUpdate()
-	{
-		while (true)
-		{
-			CalculateCameraZoom();
-			CalculateCameraRotation();
-			CalculateCameraMovement();
-			CalculateCameraUpdates();
-			CalculateCameraBoundaries();
-			yield return null;
-		}
-	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Get Variables from outside script
 	public Camera GetCamera() { return requirements.camera; }
+
+	private void LateUpdate()
+	{
+		CalculateCameraZoom();
+		CalculateCameraRotation();
+		CalculateCameraMovement();
+		CalculateCameraUpdates();
+		CalculateCameraBoundaries();
+	}
 
 	public void SetCameraRotation(Vector2 rotation) { currentCameraRotation = new Vector2(rotation.x, rotation.y); }
 
@@ -314,7 +309,5 @@ public class Moba_Camera : MonoBehaviour
 			tmp.y = settings.movement.defaultHeight;
 			requirements.pivot.transform.position = tmp;
 		}
-
-		StartCoroutine(CameraUpdate());
 	}
 }

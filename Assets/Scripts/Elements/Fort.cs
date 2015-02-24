@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using JSON;
 using UnityEngine;
 
@@ -8,20 +9,20 @@ using UnityEngine;
 
 public class Fort : Building
 {
-	private static readonly float cannonSteeringRate = 100;
 	private static readonly Material[][] materials = new Material[3][];
 	private Transform bomb;
 	private Transform cannon;
 	private Component[] idleFXs;
 	private bool isReborn;
 	public int targetTeam;
+	protected override Transform Beamer { get { return cannon; } }
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - cannon.position);
-		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, cannonSteeringRate * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -34,6 +35,7 @@ public class Fort : Building
 		bomb = cannon.Find("SP");
 		idleFXs = cannon.GetComponents(typeof(IIdleFX));
 		targetTeam = -1;
+		audio.volume = Settings.Audio.Volume.FortScore;
 	}
 
 	public override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }
@@ -43,10 +45,10 @@ public class Fort : Building
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetPosition);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		--Data.Replay.AttacksLeft;
 	}
@@ -57,7 +59,7 @@ public class Fort : Building
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
 		while (explosionsLeft > 0)
 			yield return null;
-		foreach (IIdleFX idleFX in idleFXs)
+		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		--Data.Replay.AttacksLeft;
 	}
@@ -89,10 +91,10 @@ public class Fort : Building
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		if (targetTeam == -1)
-			return;
 		if (team < 2)
 			Data.Replay.Forts[team].Remove(this);
+		if (targetTeam == -1)
+			return;
 		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
 		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeam, targetFuel, targetAmmo, targetMetal));
 	}

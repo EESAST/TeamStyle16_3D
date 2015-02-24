@@ -11,7 +11,7 @@ public class Mine : Resource
 
 	public override Vector3 Center() { return new Vector3(0.05f, 0.21f, -0.04f); }
 
-	protected override float CurrentStorage() { return currentMetal; }
+	protected override int CurrentStorage() { return Mathf.RoundToInt(currentMetal); }
 
 	protected override Vector3 Dimensions() { return new Vector3(3.44f, 3.11f, 2.71f); }
 

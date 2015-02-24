@@ -11,7 +11,7 @@ public class Oilfield : Resource
 
 	public override Vector3 Center() { return new Vector3(0.10f, 0.29f, 0.21f); }
 
-	protected override float CurrentStorage() { return currentFuel; }
+	protected override int CurrentStorage() { return Mathf.RoundToInt(currentFuel); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.24f, 2.71f); }
 

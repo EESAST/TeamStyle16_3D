@@ -79,6 +79,13 @@ public class Carrier : Ship
 		--Data.Replay.AttacksLeft;
 	}
 
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+		foreach (var interceptor in interceptors)
+			Destroy(interceptor.gameObject);
+	}
+
 	protected override int Population() { return 4; }
 
 	public static void RefreshMaterialColor()
