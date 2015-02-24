@@ -20,35 +20,18 @@ Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Mana
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.125 seconds
+- Completed reload, in  0.197 seconds
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.dll (this message is harmless)
 WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
-UnloadTime: 1.528398 ms
+UnloadTime: 1.734565 ms
 Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
-Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 672.
-Total: 27.977509 ms (FindLiveObjects: 0.072292 ms CreateObjectMapping: 0.026328 ms MarkObjects: 26.983715 ms  DeleteObjects: 0.093265 ms)
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 673.
+Total: 28.227409 ms (FindLiveObjects: 0.068722 ms CreateObjectMapping: 0.028559 ms MarkObjects: 27.287165 ms  DeleteObjects: 0.102637 ms)
 
 WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Xml.dll (this message is harmless)
-Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Boo.Lang.dll (this message is harmless)
-<RI.Hid> Failed to get preparsed data.
- 
-(Filename:  Line: 73)
-
-<RI.Hid> Failed to get preparsed data.
- 
-(Filename:  Line: 73)
-
-<RI.Hid> Failed to get preparsed data.
- 
-(Filename:  Line: 73)
-
-<RI.Hid> Failed to get preparsed data.
- 
-(Filename:  Line: 73)
-

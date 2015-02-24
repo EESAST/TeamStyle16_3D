@@ -468,7 +468,7 @@ public static class Methods
 			if (!Data.GUI.Initialized)
 				return;
 			var screenArea = Screen.width * Screen.height;
-			var baseFontSize = Mathf.RoundToInt(screenArea * 0.0006f / Screen.dpi);
+			var baseFontSize = Mathf.RoundToInt(screenArea * 0.0006f / (Screen.dpi > 0 ? Screen.dpi : 120));
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.TeamColored[i].fontSize = baseFontSize * 4;
 			Data.GUI.Button.Large.fontSize = baseFontSize * 5;
