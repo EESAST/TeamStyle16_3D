@@ -12,7 +12,7 @@ public class ForceMoveCamera : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetMouseButtonDown(0) && Data.MiniMap.Rect.Contains(Input.mousePosition))
+		if (Input.GetMouseButtonDown(0) && Data.MiniMap.MapRect.Contains(Input.mousePosition) && !Methods.GUI.MouseOver())
 			mobaCamera.isForcedMoving = true;
 		if (Input.GetMouseButtonUp(0))
 			mobaCamera.isForcedMoving = false;

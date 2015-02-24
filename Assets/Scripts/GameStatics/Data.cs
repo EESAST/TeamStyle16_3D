@@ -55,9 +55,10 @@ public static class Data
 
 	public static class MiniMap
 	{
+		public static Rect FrameRect;
+		public static Rect MapRect;
 		public static int MarkPatternIndex;
 		public static float MarkScaleFactor = 1;
-		public static Rect Rect;
 		public static float ScaleFactor;
 	}
 

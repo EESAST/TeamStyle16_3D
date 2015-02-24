@@ -70,8 +70,6 @@ public class Monitor : MonoBehaviour
 
 		#endregion
 
-		#region GUI Only
-
 		if (!Data.GUI.Initialized)
 			return;
 
@@ -83,20 +81,6 @@ public class Monitor : MonoBehaviour
 			for (var i = 0; i < 4; i++)
 				teamColor[i] = Data.TeamColor.Target[i];
 		}
-
-		#endregion
-
-		#region Physical Screen Height
-
-		var newPhysicalScreenHeight = Screen.height / Methods.ValidScreenDPI();
-		if (Math.Abs(physicalScreenHeight - newPhysicalScreenHeight) > Mathf.Epsilon)
-		{
-			Methods.GUI.ResizeFonts(physicalScreenHeight = newPhysicalScreenHeight);
-			if (Delegates.PhysicalScreenHeightChanged != null)
-				Delegates.PhysicalScreenHeightChanged();
-		}
-
-		#endregion
 
 		#endregion
 	}

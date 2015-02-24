@@ -20,33 +20,35 @@ Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Mana
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.092 seconds
+- Completed reload, in  0.125 seconds
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.dll (this message is harmless)
 WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
-UnloadTime: 1.007627 ms
+UnloadTime: 1.528398 ms
 Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
-Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 673.
-Total: 3.476270 ms (FindLiveObjects: 0.036146 ms CreateObjectMapping: 0.013387 ms MarkObjects: 2.833227 ms  DeleteObjects: 0.064259 ms)
+Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 672.
+Total: 27.977509 ms (FindLiveObjects: 0.072292 ms CreateObjectMapping: 0.026328 ms MarkObjects: 26.983715 ms  DeleteObjects: 0.093265 ms)
 
 WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Xml.dll (this message is harmless)
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Boo.Lang.dll (this message is harmless)
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.Component:InternalGetGameObject ()
-  at UnityEngine.Component.get_gameObject () [0x00000] in <filename unknown>:0 
-  at Carrier.OnDestroy () [0x00000] in <filename unknown>:0 
+<RI.Hid> Failed to get preparsed data.
  
-(Filename:  Line: -1)
+(Filename:  Line: 73)
 
-NullReferenceException
-  at (wrapper managed-to-native) UnityEngine.Component:InternalGetGameObject ()
-  at UnityEngine.Component.get_gameObject () [0x00000] in <filename unknown>:0 
-  at Carrier.OnDestroy () [0x00000] in <filename unknown>:0 
+<RI.Hid> Failed to get preparsed data.
  
-(Filename:  Line: -1)
+(Filename:  Line: 73)
+
+<RI.Hid> Failed to get preparsed data.
+ 
+(Filename:  Line: 73)
+
+<RI.Hid> Failed to get preparsed data.
+ 
+(Filename:  Line: 73)
 

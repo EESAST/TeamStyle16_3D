@@ -77,8 +77,7 @@ public class Replayer : MonoBehaviour
 
 	private void Awake()
 	{
-		Delegates.PhysicalScreenHeightChanged += ResizeFonts;
-		Delegates.ScreenSizeChanged += ResizeGUIRects;
+		Delegates.ScreenSizeChanged += ResizeGUI;
 		Data.Replay.Instance = this;
 	}
 
@@ -148,7 +147,7 @@ public class Replayer : MonoBehaviour
 
 	private Rect GetInfoContentRect(ref int id)
 	{
-		var rects = new[] { new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.24f, Screen.height * 0.12f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.24f, Screen.height * 0.24f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.6f, Screen.height * 0.8f) };
+		var rects = new[] { new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.28f, Screen.height * 0.16f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.28f, Screen.height * 0.28f), new Rect(panelStyle.border.left, panelStyle.border.top, Screen.width * 0.6f, Screen.height * 0.8f) };
 		return rects[id = id < 0 ? stagedShowDetail ? (currentFrame == Data.Replay.FrameCount ? 2 : 1) : 0 : id];
 	}
 
@@ -157,7 +156,7 @@ public class Replayer : MonoBehaviour
 		Methods.GUI.InitializeStyles();
 		panelStyle = new GUIStyle { normal = { background = panelBackground }, border = new RectOffset(20, 15, 30, 15) };
 		guiInitialized = true;
-		ResizeGUIRects();
+		ResizeGUI();
 	}
 
 	private void LoadFrame(int frame)
@@ -214,11 +213,7 @@ public class Replayer : MonoBehaviour
 		IsMoving = false;
 	}
 
-	private void OnDestroy()
-	{
-		Delegates.PhysicalScreenHeightChanged -= ResizeFonts;
-		Delegates.ScreenSizeChanged -= ResizeGUIRects;
-	}
+	private void OnDestroy() { Delegates.ScreenSizeChanged -= ResizeGUI; }
 
 	private void OnGUI()
 	{
@@ -286,7 +281,7 @@ public class Replayer : MonoBehaviour
 		populationChart = new LineChart(Screen.width / 2, Screen.height / 3, "population");
 	}
 
-	private void RefreshInfoAreaRect(float t) { infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2 * (2 - t), Mathf.Lerp(Data.MiniMap.Rect.height + Settings.MiniMap.Border.vertical, (Screen.height - infoContentRect.height - panelStyle.border.vertical) / 2, t), infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical); }
+	private void RefreshInfoAreaRect(float t) { infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2 * (2 - t), Mathf.Lerp(Data.MiniMap.MapRect.height + Settings.MiniMap.Border.vertical, (Screen.height - infoContentRect.height - panelStyle.border.vertical) / 2, t), infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical); }
 
 	private IEnumerator Replay()
 	{
@@ -316,16 +311,12 @@ public class Replayer : MonoBehaviour
 		StartCoroutine(ShowSummary());
 	}
 
-	private void ResizeFonts()
-	{
-		for (var i = 0; i < 2; ++i)
-			scoreFontSize[i] = Data.GUI.Label.TeamColored[i].fontSize;
-	}
-
-	private void ResizeGUIRects()
+	private void ResizeGUI()
 	{
 		if (!guiInitialized)
 			return;
+		for (var i = 0; i < 2; ++i)
+			scoreFontSize[i] = Data.GUI.Label.TeamColored[i].fontSize;
 		resizingInfoRect = false;
 		infoContentRect = GetInfoContentRect();
 		RefreshInfoAreaRect(currentRectId == 2 ? 1 : 0);

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections.Generic;
+using System.Linq;
 using JSON;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -433,7 +434,10 @@ public static class Methods
 			Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
 			Data.GUI.MediumToggle = new GUIStyle("toggle");
 			Data.GUI.Initialized = true;
+			ResizeFonts();
 		}
+
+		public static bool MouseOver() { return Data.GUI.OccupiedRects.Any(rect => rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y))); }
 
 		public static void OnScreenSizeChanged()
 		{
@@ -441,12 +445,13 @@ public static class Methods
 			Data.MiniMap.ScaleFactor = Mathf.Sqrt(screenArea / Data.MapSize.x / Data.MapSize.y) / 4;
 			var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
 			var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
-			Data.MiniMap.Rect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
+			Data.MiniMap.MapRect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
 			Data.GUI.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
 			Data.GUI.LineThickness = Settings.GUI.LineThickness * Mathf.Sqrt(screenArea) / 1000;
 			Data.GUI.Dice = Object.Instantiate(Resources.Load("Dice")) as Texture2D;
 			TextureScale.Bilinear(Data.GUI.Dice, Screen.height / 8, Screen.height / 8);
 			Data.GUI.Random.image = Data.GUI.Dice;
+			ResizeFonts();
 		}
 
 		public static void RefreshTeamColoredStyles()
@@ -458,19 +463,23 @@ public static class Methods
 			}
 		}
 
-		public static void ResizeFonts(float physicalScreenHeight)
+		private static void ResizeFonts()
 		{
+			if (!Data.GUI.Initialized)
+				return;
+			var screenArea = Screen.width * Screen.height;
+			var baseFontSize = Mathf.RoundToInt(screenArea * 0.0006f / Screen.dpi);
 			for (var i = 0; i < 3; i++)
-				Data.GUI.Label.TeamColored[i].fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
-			Data.GUI.Button.Large.fontSize = Mathf.RoundToInt(physicalScreenHeight * 5);
-			Data.GUI.Button.Medium.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
-			Data.GUI.Button.Small.fontSize = Mathf.RoundToInt(physicalScreenHeight * 3);
-			Data.GUI.Label.Huge.fontSize = Mathf.RoundToInt(physicalScreenHeight * 8);
-			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = Mathf.RoundToInt(physicalScreenHeight * 5);
-			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
+				Data.GUI.Label.TeamColored[i].fontSize = baseFontSize * 4;
+			Data.GUI.Button.Large.fontSize = baseFontSize * 5;
+			Data.GUI.Button.Medium.fontSize = baseFontSize * 4;
+			Data.GUI.Button.Small.fontSize = baseFontSize * 3;
+			Data.GUI.Label.Huge.fontSize = baseFontSize * 8;
+			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = baseFontSize * 5;
+			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = baseFontSize * 4;
 			for (var i = 0; i < 3; i++)
-				Data.GUI.Label.RGB[i].fontSize = Mathf.RoundToInt(physicalScreenHeight * 3);
-			Data.GUI.MediumToggle.fontSize = Mathf.RoundToInt(physicalScreenHeight * 4);
+				Data.GUI.Label.RGB[i].fontSize = baseFontSize * 3;
+			Data.GUI.MediumToggle.fontSize = baseFontSize * 4;
 		}
 
 		public static void StageCurrentOptions()

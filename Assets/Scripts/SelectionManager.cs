@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Linq;
 using UnityEngine;
 
 #endregion
@@ -20,7 +19,7 @@ public class SelectionManager : MonoBehaviour
 			lastSelectedElement = null;
 			Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Deselect"));
 		}
-		if (Data.GUI.OccupiedRects.Any(rect => rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y))) || Screen.lockCursor)
+		if (Methods.GUI.MouseOver() || Data.MiniMap.FrameRect.Contains(Input.mousePosition) || Screen.lockCursor)
 			lastOverElement = null;
 		else
 		{
