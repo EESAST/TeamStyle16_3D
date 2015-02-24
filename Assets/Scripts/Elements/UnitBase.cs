@@ -105,7 +105,6 @@ public abstract class UnitBase : Element
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
-		dummy.audio.dopplerLevel = 0;
 		dummy.audio.maxDistance = Settings.Audio.MaxAudioDistance;
 		dummy.audio.volume = RelativeSize == 3 ? Settings.Audio.Volume.Death3 : Settings.Audio.Volume.Death1;
 		dummy.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Death_" + RelativeSize));
@@ -250,11 +249,11 @@ public abstract class UnitBase : Element
 		string message;
 		if (metal == 0)
 			if (ammo == 0)
-				message = fuel > 0 ? "F: +" + fuel + "!" : "0";
+				message = fuel > 0 ? "F: +" + fuel : "0";
 			else
-				message = (fuel > 0 ? "F: +" + fuel + "! " : "") + "A: +" + ammo + "!";
+				message = (fuel > 0 ? "F: +" + fuel + "  " : "") + "A: +" + ammo;
 		else
-			message = (fuel > 0 ? "F: +" + fuel + "! " : "") + (ammo > 0 ? "A: +" + ammo + "! " : "") + "M: +" + metal + "!";
+			message = (fuel > 0 ? "F: +" + fuel + "  " : "") + (ammo > 0 ? "A: +" + ammo + "  " : "") + "M: +" + metal;
 		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, message));
 		--Data.Replay.SuppliesLeft;
 	}

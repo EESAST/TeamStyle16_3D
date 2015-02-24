@@ -50,9 +50,9 @@ public class Cargo : Ship
 		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel - effectedFuel + metal - effectedMetal);
 		string message;
 		if (metal == 0)
-			message = fuel > 0 ? "F: +" + fuel + "!" : "0";
+			message = fuel > 0 ? "F: +" + fuel : "0";
 		else
-			message = (fuel > 0 ? "F: +" + fuel + "! " : "") + "M: +" + metal + "!";
+			message = (fuel > 0 ? "F: +" + fuel + "  " : "") + "M: +" + metal;
 		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(this, message));
 		--Data.Replay.CollectsLeft;
 	}

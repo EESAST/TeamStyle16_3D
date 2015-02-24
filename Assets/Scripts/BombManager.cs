@@ -24,7 +24,6 @@ public class BombManager : MonoBehaviour
 	{
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Bomb");
-		audio.dopplerLevel /= Settings.DimensionScaleFactor;
 		audio.maxDistance = Settings.Audio.MaxAudioDistance;
 		audio.volume = Settings.Audio.Volume.Bomb;
 	}
@@ -34,7 +33,6 @@ public class BombManager : MonoBehaviour
 	private void Explode()
 	{
 		audio.clip = Resources.Load<AudioClip>("Sounds/Impact_" + level);
-		audio.dopplerLevel = 0;
 		audio.Play();
 		(Instantiate(Resources.Load("Detonator_" + level), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
 		--attacker.explosionsLeft;

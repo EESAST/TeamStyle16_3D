@@ -64,7 +64,6 @@ public abstract class Element : MonoBehaviour
 		beamFX.startSpeed = Settings.Replay.BeamSpeed;
 		var beamAudio = beamFX.audio;
 		beamAudio.clip = Resources.Load<AudioClip>("Sounds/Beam_" + beamType);
-		beamAudio.dopplerLevel = 0;
 		beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
 		beamAudio.volume = Settings.Audio.Volume.Beam;
 		beamAudio.Play();

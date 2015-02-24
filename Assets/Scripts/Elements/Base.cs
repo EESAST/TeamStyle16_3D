@@ -107,7 +107,7 @@ public class Base : Building
 		}
 		target.targetHP += healthIncrease - effectedHP;
 		targetMetal -= metal - effectedMetal;
-		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, healthIncrease > 0 ? "HP: +" + healthIncrease + "!" : "0"));
+		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, healthIncrease > 0 ? "HP: +" + healthIncrease : "0"));
 		--Data.Replay.FixesLeft;
 	}
 

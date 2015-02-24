@@ -131,7 +131,7 @@ public class Replayer : MonoBehaviour
 			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound * Data.Replay.Forts[i].Count;
 			foreach (var fort in Data.Replay.Forts[i])
 			{
-				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "PTS: +" + Constants.Score.PerFortPerRound + "!"));
+				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "PTS: +" + Constants.Score.PerFortPerRound));
 				fort.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Fort_Score"));
 			}
 		}
