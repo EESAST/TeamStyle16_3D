@@ -10,7 +10,6 @@ public abstract class Resource : Element
 {
 	private float[] initialMaxEmission;
 	private float[] initialMinEmission;
-	protected int initialStorage;
 	private ParticleEmitter[] particleEmitters;
 
 	protected override void Awake()
@@ -27,7 +26,7 @@ public abstract class Resource : Element
 		}
 	}
 
-	protected abstract int CurrentStorage();
+	public abstract int CurrentStorage();
 
 	protected override IEnumerator FadeOut()
 	{
@@ -59,7 +58,7 @@ public abstract class Resource : Element
 	protected override void Update()
 	{
 		base.Update();
-		var ratio = CurrentStorage() / initialStorage;
+		var ratio = (float)CurrentStorage() / Data.Replay.InitialStorage[index];
 		for (var i = 0; i < particleEmitters.Length; i++)
 		{
 			particleEmitters[i].maxEmission = initialMaxEmission[i] * ratio;

@@ -72,11 +72,13 @@ public static class Data
 		public static int FixesLeft;
 		public static List<Fort>[] Forts;
 		public static int FrameCount;
+		public static Dictionary<int, int> InitialStorage;
 		public static Replayer Instance;
 		public static int MovesLeft;
 		public static int[] Populations;
 		public static List<ProductionEntry>[] ProductionLists;
 		public static float ProductionTimeScale;
+		public static bool ShowSummary;
 		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static string[] TeamNames;

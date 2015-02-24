@@ -42,7 +42,7 @@ public static class Settings
 
 	public static class Bomb
 	{
-		private const float _speed = 4;
+		private const float _speed = 3;
 		public const float AngularCorrectionRate = 360;
 		public const float Noise = 1;
 		public static float Speed { get { return _speed * DimensionScaleFactor; } }

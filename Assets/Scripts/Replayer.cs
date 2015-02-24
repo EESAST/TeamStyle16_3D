@@ -42,7 +42,7 @@ public class Replayer : MonoBehaviour
 	private void AddProductionEntries()
 	{
 		foreach (var productionEntryAddition in events.list.Where(productionEntryAddition => productionEntryAddition["__class__"].str == "AddProductionEntry"))
-			(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Setup(productionEntryAddition["team"].i, productionEntryAddition["kind"].i);
+			(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Initialize(productionEntryAddition["team"].i, productionEntryAddition["kind"].i);
 	}
 
 	private IEnumerator Attacks()
@@ -162,7 +162,7 @@ public class Replayer : MonoBehaviour
 
 	private void LoadFrame(int frame)
 	{
-		Methods.Replay.ClearReplayData();
+		Methods.Replay.ClearData();
 		var keyFrame = Data.Battle["key_frames"][frame]; //a key frame is the snapshot of the end state of a round, ranging from 0 to frameCount-1
 		for (var i = 0; i < Data.Replay.Elements.Count; ++i)
 		{
@@ -191,7 +191,7 @@ public class Replayer : MonoBehaviour
 		}
 		for (var i = 0; i < 2; ++i)
 			foreach (var productionEntry in keyFrame[1][i].list)
-				(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Setup(i, productionEntry[0].i, productionEntry[1].i);
+				(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Initialize(i, productionEntry[0].i, productionEntry[1].i);
 	}
 
 	private IEnumerator Moves()
@@ -339,6 +339,7 @@ public class Replayer : MonoBehaviour
 		var targetContentRect = GetInfoContentRect(ref targetRectId);
 		var from = currentRectId == 2 ? 1 : 0;
 		var to = targetRectId == 2 ? 1 : 0;
+		Data.Replay.ShowSummary = targetRectId == 2;
 		currentRectId = targetRectId;
 		Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/InfoBox_" + (targetRectId == 0 ? "Out" : "In") + "Come"));
 		for (float t = 0, startTime = Time.unscaledTime; 1 - (t = Mathf.Lerp(t, 1, (Time.unscaledTime - startTime) / time)) > Settings.Tolerance;)

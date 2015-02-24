@@ -209,8 +209,7 @@ public class Moba_Camera : MonoBehaviour
 			shallRevertZoom = true;
 		// Camera Zoom In/Out
 		var inverted = 1;
-
-		var mouseScrollWheel = Input.GetAxis(inputs.axis.DeltaScrollWheel);
+		var mouseScrollWheel = Data.Replay.ShowSummary ? 0 : Input.GetAxis(inputs.axis.DeltaScrollWheel);
 		if (Mathf.Abs(mouseScrollWheel) > settings.tolerance)
 		{
 			// Set the hbPos cameraPivot value has changed

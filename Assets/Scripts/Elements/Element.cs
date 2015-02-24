@@ -15,7 +15,7 @@ public abstract class Element : MonoBehaviour
 	protected float currentMetal;
 	private bool guiInitialized;
 	protected Highlighter highlighter;
-	protected int index;
+	public int index;
 	protected RectTransform markRect;
 	private Texture markTexture;
 	public bool MouseOver;

@@ -11,14 +11,14 @@ public class Mine : Resource
 
 	public override Vector3 Center() { return new Vector3(0.05f, 0.21f, -0.04f); }
 
-	protected override int CurrentStorage() { return Mathf.RoundToInt(currentMetal); }
+	public override int CurrentStorage() { return Mathf.RoundToInt(currentMetal); }
 
 	protected override Vector3 Dimensions() { return new Vector3(3.44f, 3.11f, 2.71f); }
 
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		currentMetal = targetMetal = initialStorage = Mathf.RoundToInt(info["metal"].n);
+		currentMetal = targetMetal = Mathf.RoundToInt(info["metal"].n);
 	}
 
 	protected override int Kind() { return 2; }

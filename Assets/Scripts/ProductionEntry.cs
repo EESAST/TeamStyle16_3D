@@ -46,6 +46,30 @@ public class ProductionEntry : MonoBehaviour
 		}
 	}
 
+	public void Initialize(int team, int kind, int roundsLeft, bool shallAnimate = false)
+	{
+		this.team = team;
+		this.kind = kind;
+		lifeSpan = Settings.MaxTimePerFrame * Constants.BuildRounds[kind];
+		description.text = Constants.ChineseNames[kind];
+		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
+		tintedIcon.fillAmount = 1 - (float)roundsLeft / Constants.BuildRounds[kind];
+		foreach (var productionEntry in Data.Replay.ProductionLists[team])
+		{
+			++productionEntry.targetPos;
+			if (!shallAnimate)
+				productionEntry.currentPos = productionEntry.targetPos;
+		}
+		Data.Replay.ProductionLists[team].Add(this);
+	}
+
+	public void Initialize(int team, int kind)
+	{
+		Initialize(team, kind, Constants.BuildRounds[kind], true);
+		currentPos = -1;
+		Data.Replay.Bases[team].targetMetal -= Constants.Costs[kind];
+	}
+
 	private void OnDestroy()
 	{
 		Delegates.CurrentTeamColorChanged -= RefreshColor;
@@ -65,26 +89,6 @@ public class ProductionEntry : MonoBehaviour
 	{
 		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Data.GUI.ProductionEntrySize);
 		entry.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Data.GUI.ProductionEntrySize);
-	}
-
-	public void Setup(int team, int kind, int roundsLeft)
-	{
-		this.team = team;
-		this.kind = kind;
-		lifeSpan = Settings.MaxTimePerFrame * Constants.BuildRounds[kind];
-		description.text = Constants.ChineseNames[kind];
-		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
-		tintedIcon.fillAmount = 1 - (float)roundsLeft / Constants.BuildRounds[kind];
-		foreach (var productionEntry in Data.Replay.ProductionLists[team])
-			productionEntry.currentPos = ++productionEntry.targetPos;
-		Data.Replay.ProductionLists[team].Add(this);
-	}
-
-	public void Setup(int team, int kind)
-	{
-		Setup(team, kind, Constants.BuildRounds[kind]);
-		currentPos = -1;
-		Data.Replay.Bases[team].targetMetal -= Constants.Costs[kind];
 	}
 
 	private void Start()

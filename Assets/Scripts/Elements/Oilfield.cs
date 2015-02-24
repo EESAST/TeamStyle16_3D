@@ -11,14 +11,14 @@ public class Oilfield : Resource
 
 	public override Vector3 Center() { return new Vector3(0.10f, 0.29f, 0.21f); }
 
-	protected override int CurrentStorage() { return Mathf.RoundToInt(currentFuel); }
+	public override int CurrentStorage() { return Mathf.RoundToInt(currentFuel); }
 
 	protected override Vector3 Dimensions() { return new Vector3(2.67f, 2.24f, 2.71f); }
 
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		currentFuel = targetFuel = initialStorage = Mathf.RoundToInt(info["fuel"].n);
+		currentFuel = targetFuel = Mathf.RoundToInt(info["fuel"].n);
 	}
 
 	protected override int Kind() { return 3; }

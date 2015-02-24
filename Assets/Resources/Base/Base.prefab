@@ -663,8 +663,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   alphaEnabled: 1
-  alphaMax: 15
-  alphaMin: -15
+  alphaMax: 20
+  alphaMin: -10
   angularSpeed: 10
   betaEnabled: 0
   betaMax: 0

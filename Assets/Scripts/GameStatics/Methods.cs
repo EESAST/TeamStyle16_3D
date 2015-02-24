@@ -485,7 +485,7 @@ public static class Methods
 
 	public static class Replay
 	{
-		public static void ClearReplayData()
+		public static void ClearData()
 		{
 			Data.Replay.ProductionTimeScale = 1;
 			Data.Replay.AttacksLeft = 0;
@@ -496,18 +496,18 @@ public static class Methods
 			Data.Replay.SuppliesLeft = 0;
 		}
 
-		public static void InitializeReplayData()
+		public static void InitializeData()
 		{
 			Data.Replay.Bases = new Base[2];
 			Data.Replay.CurrentScores = new float[2];
 			Data.Replay.Elements = new Dictionary<int, Element>();
 			Data.Replay.Forts = new[] { new List<Fort>(), new List<Fort>() };
+			Data.Replay.InitialStorage = new Dictionary<int, int>();
 			Data.Replay.Populations = new int[2];
 			Data.Replay.ProductionLists = new[] { new List<ProductionEntry>(), new List<ProductionEntry>() };
 			Data.Replay.TargetScores = new int[2];
-			Data.Replay.TeamNames = new[] { "队伍1", "队伍2", "中立" };
 			Data.Replay.UnitNums = new int[2];
-			ClearReplayData();
+			ClearData();
 		}
 	}
 }

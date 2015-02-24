@@ -170,7 +170,11 @@ public class LoadMap : MonoBehaviour
 		foreach (var entry in Data.Battle["key_frames"][0][0].list)
 		{
 			var typeName = entry["__class__"].str;
-			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);
+			var element = (Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element;
+			element.Initialize(entry);
+			var resource = element as Resource;
+			if (resource)
+				Data.Replay.InitialStorage.Add(resource.index, resource.CurrentStorage());
 		}
 	}
 

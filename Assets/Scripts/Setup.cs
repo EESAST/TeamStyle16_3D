@@ -10,7 +10,7 @@ public class Setup : MonoBehaviour
 
 	private void Awake()
 	{
-		Methods.Replay.InitializeReplayData();
+		Methods.Replay.InitializeData();
 		QualitySettings.shadowDistance = Settings.ShadowDistance;
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
 		RenderSettings.fogEndDistance = Settings.Camera.FarClipPlane;

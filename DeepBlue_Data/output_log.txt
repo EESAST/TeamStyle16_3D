@@ -20,18 +20,18 @@ Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Mana
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.201 seconds
-desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+- Completed reload, in  0.092 seconds
 <RI> Initializing input.
 <RI> Input initialized.
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.dll (this message is harmless)
 WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
-UnloadTime: 2.173227 ms
+UnloadTime: 1.007627 ms
 Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
 Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 673.
-Total: 3.770348 ms (FindLiveObjects: 0.042839 ms CreateObjectMapping: 0.017403 ms MarkObjects: 3.119718 ms  DeleteObjects: 0.064259 ms)
+Total: 3.476270 ms (FindLiveObjects: 0.036146 ms CreateObjectMapping: 0.013387 ms MarkObjects: 2.833227 ms  DeleteObjects: 0.064259 ms)
 
 WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Xml.dll (this message is harmless)
