@@ -22,6 +22,7 @@ public class InterfaceManager : MonoBehaviour
 	public Texture logo;
 	public Material logoMaterial;
 	private Rect optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
+	private bool shallFocusWindow;
 	public Texture ship;
 	private MenuState stagedState = MenuState.Default;
 	private MenuState state;
@@ -31,6 +32,10 @@ public class InterfaceManager : MonoBehaviour
 		GUILayout.Label("深蓝", Data.GUI.Label.LargeMiddle);
 		Methods.GUI.DrawAbout(ref stagedState);
 		GUI.DragWindow();
+		if (!shallFocusWindow)
+			return;
+		GUI.FocusWindow(windowID);
+		shallFocusWindow = false;
 	}
 
 	private void Awake()
@@ -88,7 +93,7 @@ public class InterfaceManager : MonoBehaviour
 		if (GUILayout.Button("关  于", Data.GUI.Button.Medium))
 		{
 			stagedState = MenuState.About;
-			GUI.FocusWindow(0);
+			shallFocusWindow = true;
 		}
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("退  出", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
