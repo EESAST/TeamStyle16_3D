@@ -66,7 +66,7 @@ public class Submarine : Unit
 	{
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
-			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
+			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
 		while (explosionsLeft > 0)
 			yield return null;
 		StartCoroutine(RevertRotation());

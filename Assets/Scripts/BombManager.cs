@@ -57,6 +57,14 @@ public class BombManager : MonoBehaviour
 		level = bombLevel;
 	}
 
+	public void Initialize(UnitBase attacker, UnitBase targetUnitBase, Level bombLevel)
+	{
+		this.attacker = attacker;
+		this.targetUnitBase = targetUnitBase;
+		targetPosition = targetUnitBase.transform.WorldCenterOfElement();
+		level = bombLevel;
+	}
+
 	private void OnTriggerEnter(Component other)
 	{
 		if (exploded)
@@ -65,14 +73,6 @@ public class BombManager : MonoBehaviour
 		if (!unitBase || unitBase != targetUnitBase)
 			return;
 		Explode();
-	}
-
-	public void Setup(UnitBase attacker, UnitBase targetUnitBase, Level bombLevel = Level.Medium)
-	{
-		this.attacker = attacker;
-		this.targetUnitBase = targetUnitBase;
-		targetPosition = targetUnitBase.transform.WorldCenterOfElement();
-		level = bombLevel;
 	}
 
 	private IEnumerator Start()

@@ -63,7 +63,7 @@ public class Interceptor : MonoBehaviour
 	public void FireAtUnitBase(UnitBase targetUnitBase)
 	{
 		for (var i = 0; i < 2; ++i)
-			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Setup(owner, targetUnitBase, BombManager.Level.Small);
+			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(owner, targetUnitBase, BombManager.Level.Small);
 	}
 
 	public IEnumerator Return()

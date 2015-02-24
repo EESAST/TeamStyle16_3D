@@ -56,7 +56,7 @@ public class Fort : Building
 	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())

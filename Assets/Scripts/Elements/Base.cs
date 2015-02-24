@@ -72,8 +72,8 @@ public class Base : Building
 		explosionsLeft += 4;
 		for (var i = 0; i < 2; ++i)
 		{
-			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.Level.Large);
-			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Setup(this, targetUnitBase, BombManager.Level.Small);
+			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Large);
+			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Small);
 		}
 		while (explosionsLeft > 0)
 			yield return null;

@@ -20,25 +20,9 @@ Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Mana
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Assembly-UnityScript.dll into Unity Child Domain
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.106 seconds
+- Completed reload, in  0.091 seconds
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.dll (this message is harmless)
-WARNING: Shader Unsupported: 'Hidden/Nature/Tree Creator Leaves Optimized' - Pass '' shader state not supported
-UnloadTime: 1.436471 ms
-Unloading 5 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 15 unused Assets to reduce memory usage. Loaded Objects now: 673.
-Total: 6.003372 ms (FindLiveObjects: 0.054888 ms CreateObjectMapping: 0.020081 ms MarkObjects: 5.115339 ms  DeleteObjects: 0.088803 ms)
-
-WARNING: Shader Unsupported: 'Hidden/TerrainEngine/Details/BillboardWavingDoublePass' - Pass '' shader state not supported
-Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\System.Xml.dll (this message is harmless)
-Platform assembly: C:\Users\Shengjie\Documents\TeamStyle16_3D\DeepBlue_Data\Managed\Boo.Lang.dll (this message is harmless)
-UnloadTime: 10.337333 ms
-Unloading 4 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 688 unused Assets to reduce memory usage. Loaded Objects now: 657.
-Total: 12.608733 ms (FindLiveObjects: 0.036146 ms CreateObjectMapping: 0.024543 ms MarkObjects: 3.673066 ms  DeleteObjects: 8.356437 ms)
-
