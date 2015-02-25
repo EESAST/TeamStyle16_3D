@@ -15,7 +15,7 @@ public class Interceptor : MonoBehaviour
 	private IEnumerator AdjustOrientation(Vector3 targetOrientation)
 	{
 		var targetRotation = Quaternion.LookRotation(targetOrientation);
-		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Settings.Interceptor.AngularCorrectionRate * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -26,14 +26,14 @@ public class Interceptor : MonoBehaviour
 		foreach (var trail in trails)
 			trail.Play();
 		audio.Play();
-		while (Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, localTarget, Settings.Interceptor.Speed * Time.smoothDeltaTime), localTarget) > Settings.DimensionalTolerance)
+		while (Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, localTarget, Settings.Interceptor.Speed * Time.deltaTime), localTarget) > Settings.DimensionalTolerance)
 			yield return null;
 		transform.parent.DetachChildren();
 		var target = targetPosition + ((transform.position + Vector3.up * (Settings.Map.HeightOfLevel[3] - Settings.Map.HeightOfLevel[1]) * 0.8f - targetPosition).normalized * 2.5f + Random.insideUnitSphere) * Settings.DimensionScaleFactor;
 		while ((target - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(target - transform.position), Time.smoothDeltaTime * Settings.Interceptor.AngularCorrectionRate);
-			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.smoothDeltaTime);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(target - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
+			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
 			yield return null;
 		}
 		yield return StartCoroutine(AdjustOrientation(targetPosition - transform.position));
@@ -72,14 +72,14 @@ public class Interceptor : MonoBehaviour
 		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Interceptor_Returning"));
 		while ((seat.position - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(seat.position - transform.position), Time.smoothDeltaTime * Settings.Interceptor.AngularCorrectionRate);
-			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.smoothDeltaTime);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(seat.position - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
+			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
 			yield return null;
 		}
 		transform.parent = seat;
 		foreach (var trail in trails)
 			trail.Stop();
-		while (Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.smoothDeltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.smoothDeltaTime), Vector3.zero) > Settings.DimensionalTolerance)
+		while (Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.deltaTime), Vector3.zero) > Settings.DimensionalTolerance)
 			yield return null;
 		--owner.movingInterceptorsLeft;
 	}

@@ -15,17 +15,10 @@ using UnityEditor;
 [Serializable]
 public class ActionVertexColorProgression : ActionVariableProgression
 {
-	[SerializeField]
-	private VertexColour m_from = new VertexColour();
-
-	[SerializeField]
-	private VertexColour m_to = new VertexColour();
-
-	[SerializeField]
-	private VertexColour m_to_to = new VertexColour();
-
-	[SerializeField]
-	private VertexColour[] m_values;
+	[SerializeField] private VertexColour m_from = new VertexColour();
+	[SerializeField] private VertexColour m_to = new VertexColour();
+	[SerializeField] private VertexColour m_to_to = new VertexColour();
+	[SerializeField] private VertexColour[] m_values;
 
 	public ActionVertexColorProgression(VertexColour start_colour)
 	{

@@ -22,7 +22,7 @@ public class Fort : Building
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - cannon.position);
-		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -112,7 +112,7 @@ public class Fort : Building
 		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.DimensionScaleFactor;
 		while ((internalPosition - transform.position).y > Settings.DimensionalTolerance)
 		{
-			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.smoothDeltaTime);
+			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.deltaTime);
 			yield return null;
 		}
 		--Data.Replay.AttacksLeft;
@@ -130,7 +130,7 @@ public class Fort : Building
 		for (var team = 0; team < 3; team++)
 		{
 			var offset = materials[2][team].mainTextureOffset;
-			offset.y = (offset.y + Time.smoothDeltaTime) % 1;
+			offset.y = (offset.y + Time.deltaTime) % 1;
 			materials[2][team].mainTextureOffset = offset;
 		}
 	}

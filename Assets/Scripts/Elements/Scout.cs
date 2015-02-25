@@ -62,7 +62,7 @@ public class Scout : Plane
 		for (var team = 0; team < 3; team++)
 		{
 			var offset = materials[1][team].mainTextureOffset;
-			offset.y = (offset.y + Time.smoothDeltaTime) % 1;
+			offset.y = (offset.y + Time.deltaTime) % 1;
 			materials[1][team].mainTextureOffset = offset;
 		}
 	}

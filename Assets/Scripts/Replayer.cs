@@ -234,7 +234,7 @@ public class Replayer : MonoBehaviour
 		}
 		GUILayout.Space(infoContentRect.width * 0.05f);
 		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal(GUILayout.Height(Data.GUI.Label.Huge.CalcHeight(GUIContent.none, 0)));
+		GUILayout.BeginHorizontal(GUILayout.Height(Data.GUI.Label.HugeMiddle.CalcHeight(GUIContent.none, 0)));
 		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[0]).ToString(), new GUIStyle(Data.GUI.Label.TeamColored[0]) { fontSize = Mathf.RoundToInt(scoreFontSize[0]) }, GUILayout.Width(infoContentRect.width * 0.35f), GUILayout.ExpandHeight(true));
 		GUILayout.Label("积分", Data.GUI.Label.SmallMiddle, GUILayout.ExpandHeight(true));
 		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[1]).ToString(), new GUIStyle(Data.GUI.Label.TeamColored[1]) { fontSize = Mathf.RoundToInt(scoreFontSize[1]) }, GUILayout.Width(infoContentRect.width * 0.35f), GUILayout.ExpandHeight(true));
@@ -422,11 +422,11 @@ public class Replayer : MonoBehaviour
 		{
 			if (lastScores[i] != Mathf.RoundToInt(Data.Replay.CurrentScores[i]))
 			{
-				scoreFontSize[i] = Data.GUI.Label.Huge.fontSize;
+				scoreFontSize[i] = Data.GUI.Label.HugeMiddle.fontSize;
 				lastScores[i] = Mathf.RoundToInt(Data.Replay.CurrentScores[i]);
 			}
 			if (Mathf.Abs(Data.GUI.Label.TeamColored[i].fontSize - scoreFontSize[i]) > Settings.Tolerance)
-				scoreFontSize[i] = Mathf.Lerp(scoreFontSize[i], Data.GUI.Label.TeamColored[i].fontSize, Settings.TransitionRate * Time.smoothDeltaTime);
+				scoreFontSize[i] = Mathf.Lerp(scoreFontSize[i], Data.GUI.Label.TeamColored[i].fontSize, Settings.TransitionRate * Time.deltaTime);
 		}
 		Data.GUI.OccupiedRects.Add(infoAreaRect);
 		if (!hideFrameSlide)

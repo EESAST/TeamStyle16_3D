@@ -15,26 +15,13 @@ using UnityEditor;
 [Serializable]
 public class ActionVector3Progression : ActionVariableProgression
 {
-	[SerializeField]
-	protected AnimationCurve m_custom_ease_curve_y = new AnimationCurve();
-
-	[SerializeField]
-	protected AnimationCurve m_custom_ease_curve_z = new AnimationCurve();
-
-	[SerializeField]
-	protected bool m_ease_curve_per_axis;
-
-	[SerializeField]
-	protected Vector3 m_from = Vector3.zero;
-
-	[SerializeField]
-	protected Vector3 m_to = Vector3.zero;
-
-	[SerializeField]
-	protected Vector3 m_to_to = Vector3.zero;
-
-	[SerializeField]
-	protected Vector3[] m_values;
+	[SerializeField] protected AnimationCurve m_custom_ease_curve_y = new AnimationCurve();
+	[SerializeField] protected AnimationCurve m_custom_ease_curve_z = new AnimationCurve();
+	[SerializeField] protected bool m_ease_curve_per_axis;
+	[SerializeField] protected Vector3 m_from = Vector3.zero;
+	[SerializeField] protected Vector3 m_to = Vector3.zero;
+	[SerializeField] protected Vector3 m_to_to = Vector3.zero;
+	[SerializeField] protected Vector3[] m_values;
 
 	public ActionVector3Progression() { }
 

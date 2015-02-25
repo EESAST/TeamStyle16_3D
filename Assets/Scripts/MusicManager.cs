@@ -12,17 +12,7 @@ public class MusicManager : MonoBehaviour
 	private int lastIndex;
 	public List<AudioClip> musics;
 
-	private void Awake()
-	{
-		if (Data.MusicManager)
-		{
-			Destroy(gameObject);
-			return;
-		}
-		Data.MusicManager = this;
-		DontDestroyOnLoad(gameObject);
-		audio.volume = Settings.Audio.Volume.Background;
-	}
+	private void Awake() { audio.volume = Settings.Audio.Volume.Background; }
 
 	private IEnumerator PlayMusic(int index)
 	{

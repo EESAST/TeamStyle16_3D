@@ -198,8 +198,8 @@ public abstract class Element : MonoBehaviour
 			highlighter.On(Data.TeamColor.Current[team]);
 		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
 		if (Mathf.Abs(targetFuel - currentFuel) > Settings.Tolerance)
-			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.smoothDeltaTime);
+			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.deltaTime);
 		if (Mathf.Abs(targetMetal - currentMetal) > Settings.Tolerance)
-			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.smoothDeltaTime);
+			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.deltaTime);
 	}
 }

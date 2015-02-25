@@ -12,17 +12,11 @@ public class LetterAnimation
 {
 	private const char DELIMITER_CHAR = '|';
 	private LETTER_ANIMATION_STATE m_animation_state = LETTER_ANIMATION_STATE.PLAYING;
-
-	[SerializeField]
-	private List<LetterAction> m_letter_actions = new List<LetterAction>();
-
+	[SerializeField] private List<LetterAction> m_letter_actions = new List<LetterAction>();
 	public List<int> m_letters_to_animate;
 	public int m_letters_to_animate_custom_idx = 1;
 	public LETTERS_TO_ANIMATE m_letters_to_animate_option = LETTERS_TO_ANIMATE.ALL_LETTERS;
-
-	[SerializeField]
-	private List<ActionLoopCycle> m_loop_cycles = new List<ActionLoopCycle>();
-
+	[SerializeField] private List<ActionLoopCycle> m_loop_cycles = new List<ActionLoopCycle>();
 	public List<ActionLoopCycle> ActionLoopCycles { get { return m_loop_cycles; } }
 	public LETTER_ANIMATION_STATE CurrentAnimationState { get { return m_animation_state; } set { m_animation_state = value; } }
 	public List<LetterAction> LetterActions { get { return m_letter_actions; } }

@@ -10,9 +10,9 @@ public static class Data
 {
 	public static JSONObject Battle;
 	public static bool GamePaused;
+	public static GameObject GlobalMonitor;
 	public static bool[,] IsOccupied;
 	public static Vector2 MapSize;
-	public static MusicManager MusicManager;
 
 	public static class GUI
 	{
@@ -21,12 +21,10 @@ public static class Data
 		public static bool Initialized;
 		public static Vector2 LegendScroll;
 		public static float LineThickness;
-		public static GUIStyle MediumToggle;
 		public static readonly List<Rect> OccupiedRects = new List<Rect>();
 		public static int OptionSelected;
 		public static float ProductionEntrySize;
 		public static readonly GUIContent Random = new GUIContent();
-		public static bool StagedFullScreen;
 		public static int StagedMarkPatternIndex;
 		public static float StagedMarkScaleFactor;
 		public static readonly Color[] StagedTeamColor = new Color[4];
@@ -43,7 +41,7 @@ public static class Data
 
 		public static class Label
 		{
-			public static GUIStyle Huge;
+			public static GUIStyle HugeMiddle;
 			public static GUIStyle LargeLeft;
 			public static GUIStyle LargeMiddle;
 			public static readonly GUIStyle[] RGB = new GUIStyle[3];

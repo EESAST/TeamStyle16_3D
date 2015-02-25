@@ -31,65 +31,34 @@ public class EffectManager : MonoBehaviour
 	private OnAnimationFinish m_animation_callback; // Callback called after animation has finished
 	public float m_animation_speed_factor = 1;
 	private float m_animation_timer;
-
-	[SerializeField]
-	private List<AudioSource> m_audio_sources; // List of AudioSources used for sound effects
-
+	[SerializeField] private List<AudioSource> m_audio_sources; // List of AudioSources used for sound effects
 	public float m_begin_delay;
 	public bool m_begin_on_start;
 	public float m_character_size = 1;
-
-	[SerializeField]
-	private string m_current_font_data_file_name = "";
-
-	[SerializeField]
-	private string m_current_font_name = "";
-
-	[SerializeField]
-	private CustomFontCharacterData m_custom_font_data;
-
+	[SerializeField] private string m_current_font_data_file_name = "";
+	[SerializeField] private string m_current_font_name = "";
+	[SerializeField] private CustomFontCharacterData m_custom_font_data;
 	public TextDisplayAxis m_display_axis = TextDisplayAxis.HORIZONTAL;
-
-	[SerializeField]
-	private List<ParticleEffectInstanceManager> m_effect_managers;
-
-	[SerializeField]
-	private float m_font_baseline;
-
+	[SerializeField] private List<ParticleEffectInstanceManager> m_effect_managers;
+	[SerializeField] private float m_font_baseline;
 	public float m_font_baseline_override;
 	public TextAsset m_font_data_file;
 	public Material m_font_material;
 	private float m_last_time;
-
-	[SerializeField]
-	private LetterSetup[] m_letters;
-
+	[SerializeField] private LetterSetup[] m_letters;
 	public float m_line_height_factor = 1;
 	private int m_lowest_action_progress;
-
-	[SerializeField]
-	private List<LetterAnimation> m_master_animations;
-
+	[SerializeField] private List<LetterAnimation> m_master_animations;
 	public float m_max_width;
 	private Mesh m_mesh;
 	private CombineInstance[] m_mesh_combine_instance;
 	private MeshFilter m_mesh_filter;
-
-	[SerializeField]
-	private int m_number_of_lines = -1;
-
-	[SerializeField]
-	private int m_number_of_words = -1;
-
+	[SerializeField] private int m_number_of_lines = -1;
+	[SerializeField] private int m_number_of_words = -1;
 	public ON_FINISH_ACTION m_on_finish_action = ON_FINISH_ACTION.NONE;
 	public bool m_override_font_baseline = false;
-
-	[SerializeField]
-	private List<ParticleEmitter> m_particle_emitters;
-
-	[SerializeField]
-	private List<ParticleSystem> m_particle_systems;
-
+	[SerializeField] private List<ParticleEmitter> m_particle_emitters;
+	[SerializeField] private List<ParticleSystem> m_particle_systems;
 	private bool m_paused;
 	public Vector2 m_px_offset = new Vector2(0, 0);
 	private Renderer m_renderer;
@@ -97,10 +66,7 @@ public class EffectManager : MonoBehaviour
 	public string m_text = "";
 	public TextAlignment m_text_alignment = TextAlignment.Left;
 	public TextAnchor m_text_anchor = TextAnchor.MiddleCenter;
-
-	[SerializeField]
-	private List<TextSizeData> m_text_datas;
-
+	[SerializeField] private List<TextSizeData> m_text_datas;
 	public AnimationTime m_time_type = AnimationTime.GAME_TIME;
 	private float m_total_text_width, m_total_text_height;
 	public float FontBaseLine { get { return m_override_font_baseline ? m_font_baseline_override : m_font_baseline / FontScale; } }

@@ -84,7 +84,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 299704550}
   - 114: {fileID: 299704549}
-  - 114: {fileID: 299704551}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -127,17 +126,6 @@ Transform:
   - {fileID: 2021809642}
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &299704551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 299704548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6f931fde0f21244eac5e6d64a1ba3b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &963817948
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,10 +134,11 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 963817951}
+  - 114: {fileID: 963817952}
   - 114: {fileID: 963817950}
   - 82: {fileID: 963817949}
   m_Layer: 0
-  m_Name: BackgroundMusic
+  m_Name: GlobalMonitor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -243,6 +232,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
+--- !u!114 &963817952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 963817948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6f931fde0f21244eac5e6d64a1ba3b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2021809637
 GameObject:
   m_ObjectHideFlags: 0

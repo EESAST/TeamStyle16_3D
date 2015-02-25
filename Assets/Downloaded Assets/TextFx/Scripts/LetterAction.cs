@@ -13,16 +13,9 @@ using UnityEngine;
 public class LetterAction
 {
 	public ACTION_TYPE m_action_type = ACTION_TYPE.ANIM_SEQUENCE;
-
-	[SerializeField]
-	private Vector3 m_anchor_offset;
-
-	[SerializeField]
-	private Vector3 m_anchor_offset_end;
-
-	[SerializeField]
-	private List<AudioEffectSetup> m_audio_effects = new List<AudioEffectSetup>();
-
+	[SerializeField] private Vector3 m_anchor_offset;
+	[SerializeField] private Vector3 m_anchor_offset_end;
+	[SerializeField] private List<AudioEffectSetup> m_audio_effects = new List<AudioEffectSetup>();
 	public ActionFloatProgression m_delay_progression = new ActionFloatProgression(0);
 	public ActionFloatProgression m_duration_progression = new ActionFloatProgression(1);
 	public EasingEquation m_ease_type = EasingEquation.Linear;
@@ -37,10 +30,7 @@ public class LetterAction
 	public int m_letter_anchor_end = (int)TextfxTextAnchor.MiddleCenter;
 	public int m_letter_anchor_start = -1;
 	public bool m_offset_from_last;
-
-	[SerializeField]
-	private List<ParticleEffectSetup> m_particle_effects = new List<ParticleEffectSetup>();
-
+	[SerializeField] private List<ParticleEffectSetup> m_particle_effects = new List<ParticleEffectSetup>();
 	public AxisEasingOverrideData m_position_axis_ease_data = new AxisEasingOverrideData();
 	public AxisEasingOverrideData m_rotation_axis_ease_data = new AxisEasingOverrideData();
 	public AxisEasingOverrideData m_scale_axis_ease_data = new AxisEasingOverrideData();
@@ -575,73 +565,50 @@ public class LetterAction
 
 #if BACKWARDS_COMPATIBLE_MODE
 
-	[SerializeField]
-	private readonly TextAnchor m_letter_anchor = TextAnchor.MiddleCenter;
+	[SerializeField] private readonly TextAnchor m_letter_anchor = TextAnchor.MiddleCenter;
 
-	[SerializeField]
-	private AudioClip m_audio_on_start;
+	[SerializeField] private AudioClip m_audio_on_start;
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_start_delay = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_start_delay = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_start_offset = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_start_offset = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_start_volume = new ActionFloatProgression(1);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_start_volume = new ActionFloatProgression(1);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_start_pitch = new ActionFloatProgression(1);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_start_pitch = new ActionFloatProgression(1);
 
-	[SerializeField]
-	private AudioClip m_audio_on_finish;
+	[SerializeField] private AudioClip m_audio_on_finish;
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_finish_delay = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_finish_delay = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_finish_offset = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_finish_offset = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_finish_volume = new ActionFloatProgression(1);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_finish_volume = new ActionFloatProgression(1);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_audio_on_finish_pitch = new ActionFloatProgression(1);
+	[SerializeField] private readonly ActionFloatProgression m_audio_on_finish_pitch = new ActionFloatProgression(1);
 
-	[SerializeField]
-	private ParticleEmitter m_emitter_on_start;
+	[SerializeField] private ParticleEmitter m_emitter_on_start;
 
-	[SerializeField]
-	private readonly bool m_emitter_on_start_per_letter = true;
+	[SerializeField] private readonly bool m_emitter_on_start_per_letter = true;
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_emitter_on_start_delay = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_emitter_on_start_delay = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_emitter_on_start_duration = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_emitter_on_start_duration = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly bool m_emitter_on_start_follow_mesh = false;
+	[SerializeField] private readonly bool m_emitter_on_start_follow_mesh = false;
 
-	[SerializeField]
-	private readonly ActionVector3Progression m_emitter_on_start_offset = new ActionVector3Progression(Vector3.zero);
+	[SerializeField] private readonly ActionVector3Progression m_emitter_on_start_offset = new ActionVector3Progression(Vector3.zero);
 
-	[SerializeField]
-	private ParticleEmitter m_emitter_on_finish;
+	[SerializeField] private ParticleEmitter m_emitter_on_finish;
 
-	[SerializeField]
-	private readonly bool m_emitter_on_finish_per_letter = true;
+	[SerializeField] private readonly bool m_emitter_on_finish_per_letter = true;
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_emitter_on_finish_delay = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_emitter_on_finish_delay = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly ActionFloatProgression m_emitter_on_finish_duration = new ActionFloatProgression(0);
+	[SerializeField] private readonly ActionFloatProgression m_emitter_on_finish_duration = new ActionFloatProgression(0);
 
-	[SerializeField]
-	private readonly bool m_emitter_on_finish_follow_mesh = false;
+	[SerializeField] private readonly bool m_emitter_on_finish_follow_mesh = false;
 
-	[SerializeField]
-	private readonly ActionVector3Progression m_emitter_on_finish_offset = new ActionVector3Progression(Vector3.zero);
+	[SerializeField] private readonly ActionVector3Progression m_emitter_on_finish_offset = new ActionVector3Progression(Vector3.zero);
 #endif
 }

@@ -15,17 +15,10 @@ using UnityEditor;
 [Serializable]
 public class ActionColorProgression : ActionVariableProgression
 {
-	[SerializeField]
-	private Color m_from = Color.white;
-
-	[SerializeField]
-	private Color m_to = Color.white;
-
-	[SerializeField]
-	private Color m_to_to = Color.white;
-
-	[SerializeField]
-	private Color[] m_values;
+	[SerializeField] private Color m_from = Color.white;
+	[SerializeField] private Color m_to = Color.white;
+	[SerializeField] private Color m_to_to = Color.white;
+	[SerializeField] private Color[] m_values;
 
 	public ActionColorProgression(Color start_colour)
 	{

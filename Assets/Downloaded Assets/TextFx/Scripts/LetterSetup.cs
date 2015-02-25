@@ -14,10 +14,7 @@ public class LetterSetup
 	private float m_action_duration;
 	private float m_action_timer;
 	private Vector3 m_anchor_offset;
-
-	[SerializeField]
-	private AnimationStateVariables m_anim_state_vars;
-
+	[SerializeField] private AnimationStateVariables m_anim_state_vars;
 	public Vector3 m_base_offset;
 	public bool m_base_offsets_setup;
 	public Vector3[] m_base_vertices;

@@ -1,6 +1,7 @@
 ﻿#region
 
 using System;
+using System.Linq;
 using UnityEngine;
 
 #endregion
@@ -9,9 +10,26 @@ public class Monitor : MonoBehaviour
 {
 	private static int markPatternIndex;
 	private static float markScaleFactor;
-	private static float physicalScreenHeight;
 	public static Vector2 ScreenSize;
 	private static readonly Color[] teamColor = new Color[4];
+
+	private void Awake()
+	{
+		if (Data.GlobalMonitor)
+		{
+			Destroy(gameObject);
+			return;
+		}
+		DontDestroyOnLoad(Data.GlobalMonitor = gameObject);
+	}
+
+	private void OnApplicationFocus(bool focus)
+	{
+		if (!focus)
+			return;
+		var resolution = Screen.resolutions.Last();
+		Screen.SetResolution(resolution.width, resolution.height, true);
+	}
 
 	private void Update()
 	{
@@ -19,7 +37,7 @@ public class Monitor : MonoBehaviour
 
 		if (!Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))
 			for (var i = 0; i < 2; i++)
-				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.smoothDeltaTime);
+				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.deltaTime);
 
 		#endregion
 
@@ -70,17 +88,13 @@ public class Monitor : MonoBehaviour
 
 		#endregion
 
-		if (!Data.GUI.Initialized)
-			return;
-
 		#region Target Team Color
 
-		if (!Methods.Array.Equals(teamColor, Data.TeamColor.Target))
-		{
-			Methods.GUI.RefreshTeamColoredStyles();
-			for (var i = 0; i < 4; i++)
-				teamColor[i] = Data.TeamColor.Target[i];
-		}
+		if (!Data.GUI.Initialized || Methods.Array.Equals(teamColor, Data.TeamColor.Target))
+			return;
+		Methods.GUI.RefreshTeamColoredStyles();
+		for (var i = 0; i < 4; i++)
+			teamColor[i] = Data.TeamColor.Target[i];
 
 		#endregion
 	}

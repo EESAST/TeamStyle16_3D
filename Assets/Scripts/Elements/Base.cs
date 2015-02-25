@@ -26,11 +26,11 @@ public class Base : Building
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - head.position);
-		while (Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, Settings.SteeringRate.Base_Head * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, Settings.SteeringRate.Base_Head * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 		var targetRotation_BG = Quaternion.LookRotation(targetPosition - bigGuns.position);
 		var targetRotation_SG = Quaternion.LookRotation(targetPosition - smallGuns.position);
-		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, Settings.SteeringRate.Base_BigGuns * Time.smoothDeltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, Settings.SteeringRate.Base_SmallGuns * Time.smoothDeltaTime), targetRotation_SG) > Settings.AngularTolerance)
+		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, Settings.SteeringRate.Base_BigGuns * Time.deltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, Settings.SteeringRate.Base_SmallGuns * Time.deltaTime), targetRotation_SG) > Settings.AngularTolerance)
 			yield return null;
 	}
 

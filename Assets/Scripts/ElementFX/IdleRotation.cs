@@ -22,8 +22,6 @@ public class IdleRotation : MonoBehaviour, IIdleFX
 	private float nextAlpha;
 	private float nextBeta;
 	private float nextTime;
-	private float targetX;
-	private float targetY;
 	private float transitionTime;
 
 	public void Disable() { enabled = false; }
@@ -55,8 +53,8 @@ public class IdleRotation : MonoBehaviour, IIdleFX
 		{
 			if (Time.time < lastTime + transitionTime)
 			{
-				transform.Rotate(Vector3.right, alphaSpeed * Time.smoothDeltaTime);
-				transform.Rotate(transform.parent.up, betaSpeed * Time.smoothDeltaTime, Space.World);
+				transform.Rotate(Vector3.right, alphaSpeed * Time.deltaTime);
+				transform.Rotate(transform.parent.up, betaSpeed * Time.deltaTime, Space.World);
 			}
 			if (Time.time < nextTime)
 				return;

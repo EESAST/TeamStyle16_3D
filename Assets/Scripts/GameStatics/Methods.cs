@@ -312,12 +312,14 @@ public static class Methods
 		{
 			GUILayout.BeginVertical("box");
 			Data.GUI.AboutScroll = GUILayout.BeginScrollView(Data.GUI.AboutScroll);
-			GUILayout.Label("第十六届电子系队式程序设计大赛专用3D回放引擎", Data.GUI.Label.SmallMiddle);
-			GUILayout.Label("电子系科协软件部队式3D组出品", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("第十六届电子系队式程序设计大赛3D回放引擎", Data.GUI.Label.SmallMiddle);
+			GUILayout.FlexibleSpace();
+			GUILayout.Label("电子系科协软件部队式开发3D组出品", Data.GUI.Label.SmallMiddle);
 			GUILayout.FlexibleSpace();
 			GUILayout.Label("开发者：", Data.GUI.Label.LargeLeft);
 			GUILayout.Label("林圣杰", Data.GUI.Label.SmallMiddle);
 			GUILayout.Label("钟元熠", Data.GUI.Label.SmallMiddle);
+			GUILayout.FlexibleSpace();
 			GUILayout.Label("鸣谢：", Data.GUI.Label.LargeLeft);
 			GUILayout.Label("队式开发组全体成员", Data.GUI.Label.SmallMiddle);
 			GUILayout.EndScrollView();
@@ -329,7 +331,7 @@ public static class Methods
 
 		public static void DrawOptions(ref MenuState stagedState)
 		{
-			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例", "窗口模式" }, Data.GUI.Button.Large);
+			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例" }, Data.GUI.Button.Large);
 			GUILayout.BeginVertical("box");
 			GUILayout.FlexibleSpace();
 			switch (Data.GUI.OptionSelected)
@@ -383,13 +385,6 @@ public static class Methods
 					GUILayout.EndVertical();
 					GUILayout.EndScrollView();
 					break;
-				case 2:
-					GUILayout.BeginHorizontal("box");
-					GUILayout.FlexibleSpace();
-					Screen.fullScreen = GUILayout.Toggle(Screen.fullScreen, "全屏显示", Data.GUI.MediumToggle);
-					GUILayout.FlexibleSpace();
-					GUILayout.EndHorizontal();
-					break;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndVertical();
@@ -405,7 +400,6 @@ public static class Methods
 					Data.TeamColor.Target[i] = Data.GUI.StagedTeamColor[i];
 				Data.MiniMap.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
 				Data.MiniMap.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
-				Screen.fullScreen = Data.GUI.StagedFullScreen;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -424,7 +418,7 @@ public static class Methods
 			Data.GUI.Button.Large = new GUIStyle("button");
 			Data.GUI.Button.Medium = new GUIStyle("button");
 			Data.GUI.Button.Small = new GUIStyle("button");
-			Data.GUI.Label.Huge = new GUIStyle("label");
+			Data.GUI.Label.HugeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.LargeLeft = new GUIStyle("label");
 			Data.GUI.Label.LargeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.SmallLeft = new GUIStyle("label");
@@ -432,7 +426,6 @@ public static class Methods
 			Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
 			Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
 			Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
-			Data.GUI.MediumToggle = new GUIStyle("toggle");
 			Data.GUI.Initialized = true;
 			ResizeFonts();
 		}
@@ -474,12 +467,11 @@ public static class Methods
 			Data.GUI.Button.Large.fontSize = baseFontSize * 5;
 			Data.GUI.Button.Medium.fontSize = baseFontSize * 4;
 			Data.GUI.Button.Small.fontSize = baseFontSize * 3;
-			Data.GUI.Label.Huge.fontSize = baseFontSize * 8;
+			Data.GUI.Label.HugeMiddle.fontSize = baseFontSize * 8;
 			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = baseFontSize * 5;
 			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = baseFontSize * 4;
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.RGB[i].fontSize = baseFontSize * 3;
-			Data.GUI.MediumToggle.fontSize = baseFontSize * 4;
 		}
 
 		public static void StageCurrentOptions()
@@ -488,7 +480,6 @@ public static class Methods
 				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Target[i];
 			Data.GUI.StagedMarkScaleFactor = Data.MiniMap.MarkScaleFactor;
 			Data.GUI.StagedMarkPatternIndex = Data.MiniMap.MarkPatternIndex;
-			Data.GUI.StagedFullScreen = Screen.fullScreen;
 		}
 	}
 

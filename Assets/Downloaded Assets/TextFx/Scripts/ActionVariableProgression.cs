@@ -14,33 +14,15 @@ using UnityEditor;
 [Serializable]
 public abstract class ActionVariableProgression
 {
-	[SerializeField]
-	protected AnimatePerOptions m_animate_per;
-
-	[SerializeField]
-	protected AnimationCurve m_custom_ease_curve = new AnimationCurve();
-
-	[SerializeField]
-	protected EasingEquation m_ease_type = EasingEquation.Linear;
-
-	[SerializeField]
-	protected bool m_is_offset_from_last;
-
-	[SerializeField]
-	protected bool m_override_animate_per_option;
-
-	[SerializeField]
-	protected ValueProgression m_progression = ValueProgression.Constant; // Legacy field
-
-	[SerializeField]
-	protected int m_progression_idx = -1;
-
-	[SerializeField]
-	protected bool m_to_to_bool;
-
-	[SerializeField]
-	protected bool m_unique_randoms;
-
+	[SerializeField] protected AnimatePerOptions m_animate_per;
+	[SerializeField] protected AnimationCurve m_custom_ease_curve = new AnimationCurve();
+	[SerializeField] protected EasingEquation m_ease_type = EasingEquation.Linear;
+	[SerializeField] protected bool m_is_offset_from_last;
+	[SerializeField] protected bool m_override_animate_per_option;
+	[SerializeField] protected ValueProgression m_progression = ValueProgression.Constant; // Legacy field
+	[SerializeField] protected int m_progression_idx = -1;
+	[SerializeField] protected bool m_to_to_bool;
+	[SerializeField] protected bool m_unique_randoms;
 	public AnimatePerOptions AnimatePer { get { return m_animate_per; } set { m_animate_per = value; } }
 	public AnimationCurve CustomEaseCurve { get { return m_custom_ease_curve; } }
 	public EasingEquation EaseType { get { return m_ease_type; } }

@@ -16,12 +16,8 @@ public class ActionPositionVector3Progression : ActionVector3Progression
 {
 	public const int CURVE_OPTION_INDEX = 4;
 	public const string CURVE_OPTION_STRING = "Curve";
-
-	[SerializeField]
-	private TextFxBezierCurve m_bezier_curve = new TextFxBezierCurve();
-
-	[SerializeField]
-	private bool m_force_position_override;
+	[SerializeField] private TextFxBezierCurve m_bezier_curve = new TextFxBezierCurve();
+	[SerializeField] private bool m_force_position_override;
 
 	public ActionPositionVector3Progression(Vector3 start_vec)
 	{

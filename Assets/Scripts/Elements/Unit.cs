@@ -29,7 +29,7 @@ public abstract class Unit : UnitBase
 		if (!ship)
 			++movementNum;
 		var targetRotation = Quaternion.LookRotation(targetOrientation);
-		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, AngularSpeed * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, AngularSpeed * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 		if (!ship)
 			--movementNum;
@@ -95,7 +95,7 @@ public abstract class Unit : UnitBase
 				var q = Quaternion.LookRotation(b);
 				var o = u + b;
 				++movementNum;
-				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time / 2) < 1 - Time.smoothDeltaTime / time / 4;)
+				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time / 2) < 1 - Time.deltaTime / time / 4;)
 				{
 					targetPosition = o + Vector3.Slerp(-b, a, t);
 					transform.rotation = Quaternion.Slerp(p, q, t);
@@ -110,7 +110,7 @@ public abstract class Unit : UnitBase
 			else
 			{
 				++movementNum;
-				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
+				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time) < 1 - Time.deltaTime / time / 2;)
 				{
 					targetPosition = Vector3.Lerp(u, v, t);
 					yield return null;
@@ -129,7 +129,7 @@ public abstract class Unit : UnitBase
 			while (isOrienting)
 				yield return null;
 			++movementNum;
-			for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.smoothDeltaTime) / time) < 1 - Time.smoothDeltaTime / time / 2;)
+			for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time) < 1 - Time.deltaTime / time / 2;)
 			{
 				targetPosition = Vector3.Lerp(u, v, t);
 				yield return null;
@@ -182,7 +182,7 @@ public abstract class Unit : UnitBase
 		if (plane && plane.isFalling)
 			return;
 		if ((targetPosition - transform.position).magnitude > Settings.DimensionalTolerance)
-			transform.position = Vector3.Lerp(transform.position, targetPosition, Settings.TransitionRate * Time.smoothDeltaTime);
+			transform.position = Vector3.Lerp(transform.position, targetPosition, Settings.TransitionRate * Time.deltaTime);
 		if (movementNum > 0 && !isActive)
 			Activate();
 		if (movementNum == 0 && isActive)

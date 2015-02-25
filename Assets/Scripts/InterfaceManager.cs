@@ -29,7 +29,7 @@ public class InterfaceManager : MonoBehaviour
 
 	private void AboutWindow(int windowID)
 	{
-		GUILayout.Label("深蓝", Data.GUI.Label.LargeMiddle);
+		GUILayout.Label("深蓝", Data.GUI.Label.HugeMiddle);
 		Methods.GUI.DrawAbout(ref stagedState);
 		GUI.DragWindow();
 		if (!shallFocusWindow)

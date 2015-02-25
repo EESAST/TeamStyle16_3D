@@ -78,7 +78,7 @@ public class ProductionEntry : MonoBehaviour
 
 	private IEnumerator Progress()
 	{
-		while ((tintedIcon.fillAmount += Time.smoothDeltaTime * Data.Replay.ProductionTimeScale / lifeSpan) < 1)
+		while ((tintedIcon.fillAmount += Time.deltaTime * Data.Replay.ProductionTimeScale / lifeSpan) < 1)
 			yield return null;
 		ready = true;
 	}
@@ -101,7 +101,7 @@ public class ProductionEntry : MonoBehaviour
 	private void Update()
 	{
 		if (Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
-			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.smoothDeltaTime);
+			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.deltaTime);
 		var t = currentPos % Settings.GUI.MaxProductionEntryNumPerRow;
 		entry.anchoredPosition = t < Settings.GUI.MaxProductionEntryNumPerRow - 1 ? Data.GUI.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow)) : Data.GUI.ProductionEntrySize * new Vector2((Settings.GUI.MaxProductionEntryNumPerRow - 1) * (Settings.GUI.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow) + t + 1 - Settings.GUI.MaxProductionEntryNumPerRow));
 		if (team == 1)

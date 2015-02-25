@@ -15,17 +15,10 @@ using UnityEditor;
 [Serializable]
 public class ActionFloatProgression : ActionVariableProgression
 {
-	[SerializeField]
-	private float m_from;
-
-	[SerializeField]
-	private float m_to;
-
-	[SerializeField]
-	private float m_to_to;
-
-	[SerializeField]
-	private float[] m_values;
+	[SerializeField] private float m_from;
+	[SerializeField] private float m_to;
+	[SerializeField] private float m_to_to;
+	[SerializeField] private float[] m_values;
 
 	public ActionFloatProgression(float start_val)
 	{

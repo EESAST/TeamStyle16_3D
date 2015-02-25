@@ -37,8 +37,8 @@ public class Oilfield : Resource
 		for (var i = 1; i < 4; i++)
 		{
 			var offset = materials[i].mainTextureOffset;
-			offset.x = (offset.x + Time.smoothDeltaTime * Random.Range(-0.5f, 2)) % 1;
-			offset.y = (offset.y + Time.smoothDeltaTime * Random.Range(-0.5f, 2)) % 1;
+			offset.x = (offset.x + Time.deltaTime * Random.Range(-0.5f, 2)) % 1;
+			offset.y = (offset.y + Time.deltaTime * Random.Range(-0.5f, 2)) % 1;
 			materials[i].mainTextureOffset = offset;
 		}
 	}

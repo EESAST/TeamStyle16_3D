@@ -23,11 +23,11 @@ public class Destroyer : Ship
 		{
 			yield return null;
 			targetRotation = Quaternion.LookRotation(swivel.TransformDirection(Vector3.Scale(swivel.InverseTransformPoint(targetPosition), new Vector3(1, 0, 1))), swivel.up);
-			swivel.rotation = Quaternion.RotateTowards(swivel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Swivel * Time.smoothDeltaTime);
+			swivel.rotation = Quaternion.RotateTowards(swivel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Swivel * Time.deltaTime);
 		}
 		while (Quaternion.Angle(swivel.rotation, targetRotation) > Settings.AngularTolerance);
 		targetRotation = Quaternion.LookRotation(targetPosition - barrel.position, barrel.up);
-		while (Quaternion.Angle(barrel.rotation = Quaternion.RotateTowards(barrel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Barrel * Time.smoothDeltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Quaternion.Angle(barrel.rotation = Quaternion.RotateTowards(barrel.rotation, targetRotation, Settings.SteeringRate.Destroyer_Barrel * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 

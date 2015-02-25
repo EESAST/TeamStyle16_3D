@@ -262,9 +262,9 @@ public abstract class UnitBase : Element
 	{
 		base.Update();
 		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
-			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.smoothDeltaTime);
+			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
-			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.smoothDeltaTime);
+			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
 		if (currentHP < 0)
 			currentHP = targetHP = 0;
 		if (Mathf.RoundToInt(currentHP) <= 0 && tag != "Doodad")

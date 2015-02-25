@@ -81,8 +81,8 @@ public class BombManager : MonoBehaviour
 		transform.localScale = Vector3.one * ((int)level + 1) * 0.1f * Settings.DimensionScaleFactor / ((Dimensions().x + Dimensions().z));
 		while (!exploded && (targetPosition - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Bomb.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position), Time.smoothDeltaTime * Settings.Bomb.AngularCorrectionRate);
-			transform.Translate((Vector3.forward + Random.insideUnitSphere * Settings.Bomb.Noise / ((float)level + 2)) * Settings.Bomb.Speed * Time.smoothDeltaTime);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position), Time.deltaTime * Settings.Bomb.AngularCorrectionRate);
+			transform.Translate((Vector3.forward + Random.insideUnitSphere * Settings.Bomb.Noise / ((float)level + 2)) * Settings.Bomb.Speed * Time.deltaTime);
 			yield return null;
 		}
 		if (!exploded)
