@@ -162,7 +162,7 @@ public abstract class UnitBase : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * 0.12f, Screen.width * 0.12f, Screen.height * 0.24f).FitScreen(), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.075f, Screen.height - Input.mousePosition.y - Screen.height * 0.1f, Screen.width * 0.15f, Screen.height * 0.2f).FitScreen(), GUI.skin.box);
 		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
 		if (float.IsInfinity(currentAmmo))

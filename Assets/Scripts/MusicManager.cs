@@ -16,10 +16,10 @@ public class MusicManager : MonoBehaviour
 
 	private IEnumerator PlayMusic(int index)
 	{
-		audio.clip = musicList[index];
+		audio.clip = musicList[index % musicList.Count];
 		audio.Play();
 		while (audio.isPlaying)
-			yield return null;
+			yield return new WaitForSeconds(Settings.DeltaTime);
 	}
 
 	private IEnumerator Start()
@@ -33,8 +33,7 @@ public class MusicManager : MonoBehaviour
 			musicList.Add(clip);
 			musics.Remove(clip);
 		}
-		yield return StartCoroutine(PlayMusic(0));
 		while (true)
-			yield return StartCoroutine(PlayMusic(lastIndex = (lastIndex + 1) % musicList.Count));
+			yield return StartCoroutine(PlayMusic(lastIndex++));
 	}
 }

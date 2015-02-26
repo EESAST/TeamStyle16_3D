@@ -19,7 +19,7 @@ public class FragmentManager : MonoBehaviour
 			yield return null;
 		var attenuation = transform.position.y < Settings.Map.HeightOfLevel[1] ? Settings.FastAttenuation : Settings.SlowAttenuation;
 		while ((smokeTrail.maxEmission = smokeTrail.minEmission *= attenuation) > 3)
-			yield return new WaitForSeconds(Settings.DeltaTime);
+			yield return null;
 		GetComponent<MeshCollider>().enabled = false;
 		Destroy(gameObject, 3);
 	}

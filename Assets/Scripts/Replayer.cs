@@ -295,7 +295,7 @@ public class Replayer : MonoBehaviour
 			StartCoroutine(Supplies());
 			StartCoroutine(Fixes());
 			while (IsSupplying || IsFixing)
-				yield return new WaitForSeconds(Settings.DeltaTime);
+				yield return null;
 			yield return StartCoroutine(Moves());
 			yield return StartCoroutine(Collects());
 			if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
@@ -308,6 +308,7 @@ public class Replayer : MonoBehaviour
 			yield return StartCoroutine(FortCaptureScores());
 			Data.Replay.ProductionTimeScale = 1;
 		}
+		yield return new WaitForSeconds(Settings.DeltaTime);
 		StartCoroutine(ShowSummary());
 	}
 

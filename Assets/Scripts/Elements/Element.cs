@@ -131,8 +131,8 @@ public abstract class Element : MonoBehaviour
 		if (Level() != 2)
 			return;
 		var delta = Mathf.CeilToInt((RelativeSize - 1) / 2f);
-		for (var x = Mathf.FloorToInt(posX - delta); x <= Mathf.CeilToInt(posX + delta); x++)
-			for (var y = Mathf.FloorToInt(posY - delta); y <= Mathf.CeilToInt(posY + delta); y++)
+		for (var x = Mathf.Max(Mathf.FloorToInt(posX - delta), 0); x <= Mathf.Min(Mathf.CeilToInt(posX + delta), Data.MapSize.x - 1); ++x)
+			for (var y = Mathf.Max(Mathf.FloorToInt(posY - delta), 0); y <= Mathf.Min(Mathf.CeilToInt(posY + delta), Data.MapSize.y - 1); ++y)
 				Data.IsOccupied[x, y] = true;
 	}
 
