@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 #endregion
@@ -82,7 +83,7 @@ public class Carrier : Ship
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
-		foreach (var interceptor in interceptors)
+		foreach (var interceptor in interceptors.Where(interceptor => interceptor))
 			Destroy(interceptor.gameObject);
 	}
 
