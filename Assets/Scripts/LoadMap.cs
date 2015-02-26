@@ -41,8 +41,8 @@ public class LoadMap : MonoBehaviour
 					heights[muX + x, muY + y] += h * Mathf.Exp(-Mathf.Pow(x / sigmaX, 2) - Mathf.Pow(y / sigmaY, 2));
 		}
 		var threshold = Settings.Map.HeightOfLevel[0] / Settings.Map.HeightOfLevel[2] * 0.8f;
-		for (var x = 0; x < terrainData.heightmapHeight; x++)
-			for (var y = 0; y < terrainData.heightmapWidth; y++)
+		for (var x = 0; x < terrainData.heightmapHeight; ++x)
+			for (var y = 0; y < terrainData.heightmapWidth; ++y)
 			{
 				if ((heights[x, y] += threshold / 2) > threshold)
 					heights[x, y] = threshold;
@@ -174,7 +174,7 @@ public class LoadMap : MonoBehaviour
 			element.Initialize(entry);
 			var resource = element as Resource;
 			if (resource)
-				Data.Replay.InitialStorage.Add(resource.index, resource.CurrentStorage());
+				Data.Replay.InitialStorage.Add(resource.index, Mathf.Max(resource.CurrentStorage(), 1));
 		}
 	}
 
