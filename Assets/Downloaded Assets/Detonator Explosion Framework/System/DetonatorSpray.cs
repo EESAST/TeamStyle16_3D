@@ -10,8 +10,7 @@ using UnityEngine;
 	inherit velocity
 */
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Object Spray")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Object Spray")]
 public class DetonatorSpray : DetonatorComponent
 {
 	private bool _delayedExplosionStarted;

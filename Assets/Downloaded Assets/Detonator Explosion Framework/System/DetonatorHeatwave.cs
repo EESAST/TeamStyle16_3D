@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Heatwave (Pro Only)")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Heatwave (Pro Only)")]
 public class DetonatorHeatwave : DetonatorComponent
 {
 	private readonly float _baseDuration = .25f;

@@ -18,6 +18,8 @@ public static class Data
 	{
 		public static Vector2 AboutScroll;
 		public static Texture2D Dice;
+		public static Vector2 FontScroll;
+		public static float FontSizeScaleFactor = 1;
 		public static bool Initialized;
 		public static Vector2 LegendScroll;
 		public static float LineThickness;
@@ -25,12 +27,12 @@ public static class Data
 		public static int OptionSelected;
 		public static float ProductionEntrySize;
 		public static readonly GUIContent Random = new GUIContent();
-		public static int StagedMarkPatternIndex;
-		public static float StagedMarkScaleFactor;
+		public static float StagedFontSizeScaleFactor;
 		public static readonly Color[] StagedTeamColor = new Color[4];
 		public static readonly GUIStyle[] TeamColoredBoxes = new GUIStyle[3];
 		public static readonly Texture2D[] TeamColoredTextures = new Texture2D[3];
 		public static Vector2 TeamColorScroll;
+		public static GUIStyle TextField;
 
 		public static class Button
 		{
@@ -58,6 +60,8 @@ public static class Data
 		public static int MarkPatternIndex;
 		public static float MarkScaleFactor = 1;
 		public static float ScaleFactor;
+		public static int StagedMarkPatternIndex;
+		public static float StagedMarkScaleFactor;
 	}
 
 	public static class Replay

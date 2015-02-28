@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Smoke")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Smoke")]
 public class DetonatorSmoke : DetonatorComponent
 {
 	private const float _baseDamping = 0.1300004f;

@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
+[ExecuteInEditMode, RequireComponent(typeof(Camera))]
 public class BlitHelper : MonoBehaviour
 {
 	// Dummy to force rendering of the referenced camera to the RenderTexture. 

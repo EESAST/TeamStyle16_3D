@@ -6,7 +6,7 @@ using UnityEngine;
 
 #endregion
 
-internal class WaterEditorUtility
+class WaterEditorUtility
 {
 	public static void CurveGui(String name, SerializedObject serObj, Color color)
 	{

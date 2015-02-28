@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(WaterBase))]
-[ExecuteInEditMode]
+[RequireComponent(typeof(WaterBase)), ExecuteInEditMode]
 public class SpecularLighting : MonoBehaviour
 {
 	public Transform specularLight;

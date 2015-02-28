@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Shockwave")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Shockwave")]
 public class DetonatorShockwave : DetonatorComponent
 {
 	private readonly Color _baseColor = Color.white;

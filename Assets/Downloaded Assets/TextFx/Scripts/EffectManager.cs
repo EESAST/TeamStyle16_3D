@@ -15,10 +15,7 @@ using System.Xml;
 
 #endregion
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
-[ExecuteInEditMode]
-[AddComponentMenu("TextFx/EffectManager")]
+[RequireComponent(typeof(MeshFilter)), RequireComponent(typeof(MeshRenderer)), ExecuteInEditMode, AddComponentMenu("TextFx/EffectManager")]
 public class EffectManager : MonoBehaviour
 {
 	public delegate void OnAnimationFinish();

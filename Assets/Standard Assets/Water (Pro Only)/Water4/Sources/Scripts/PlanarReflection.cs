@@ -6,8 +6,7 @@ using UnityEngine;
 
 #endregion
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(WaterBase))]
+[ExecuteInEditMode, RequireComponent(typeof(WaterBase))]
 public class PlanarReflection : MonoBehaviour
 {
 	public Color clearColor = Color.grey;

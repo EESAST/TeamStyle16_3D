@@ -8,7 +8,7 @@ using UnityEngine;
 /* 	Class to listen for reimported Font files (caused by font size change, font type change and other setting changes).
 	Calls to all EffectManager instances in scene to let them know the font that's changed. */
 
-internal class TextfxFontChangeListener : AssetPostprocessor
+class TextfxFontChangeListener : AssetPostprocessor
 {
 #if !UNITY_3_5
 	private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)

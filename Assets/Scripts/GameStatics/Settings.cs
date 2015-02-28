@@ -83,7 +83,7 @@ public static class Settings
 	public static class Fragment
 	{
 		private const float _thicknessPerUnitSize = 0.03f;
-		public const float MaxLifeSpan = 16;
+		public const float MaxLifeSpan = 24;
 		public const float MinLifeSpan = 8;
 		public static float ThicknessPerUnitSize { get { return _thicknessPerUnitSize * DimensionScaleFactor; } }
 	}

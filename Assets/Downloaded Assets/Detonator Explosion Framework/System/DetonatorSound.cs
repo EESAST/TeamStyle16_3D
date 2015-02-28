@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Sound")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Sound")]
 public class DetonatorSound : DetonatorComponent
 {
 	private bool _delayedExplosionStarted;

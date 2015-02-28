@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Force")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Force")]
 public class DetonatorForce : DetonatorComponent
 {
 	private readonly float _basePower = 4000.0f;

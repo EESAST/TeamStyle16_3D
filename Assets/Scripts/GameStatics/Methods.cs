@@ -132,8 +132,6 @@ public static class Methods
 		return results;
 	}
 
-	public static float ValidScreenDPI() { return Screen.dpi > 0 ? Screen.dpi : 120; }
-
 	public static Vector3 WorldCenterOfElement(this Transform transform) { return transform.TransformPoint(transform.GetComponent<Element>().Center()); }
 
 	public static class Array
@@ -331,7 +329,7 @@ public static class Methods
 
 		public static void DrawOptions(ref MenuState stagedState)
 		{
-			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例" }, Data.GUI.Button.Large);
+			Data.GUI.OptionSelected = GUILayout.Toolbar(Data.GUI.OptionSelected, new[] { "队伍颜色", "图例", "字体" }, Data.GUI.Button.Large);
 			GUILayout.BeginVertical("box");
 			GUILayout.FlexibleSpace();
 			switch (Data.GUI.OptionSelected)
@@ -385,6 +383,18 @@ public static class Methods
 					GUILayout.EndVertical();
 					GUILayout.EndScrollView();
 					break;
+				case 2:
+					Data.GUI.FontScroll = GUILayout.BeginScrollView(Data.GUI.FontScroll);
+					GUILayout.BeginVertical("box");
+					GUILayout.Label("尺寸", Data.GUI.Label.LargeLeft);
+					GUILayout.FlexibleSpace();
+					GUILayout.BeginHorizontal();
+					GUILayout.Label(Data.GUI.FontSizeScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
+					Data.GUI.FontSizeScaleFactor = GUILayout.HorizontalSlider(Data.GUI.FontSizeScaleFactor, 0.75f, 1.5f);
+					GUILayout.EndHorizontal();
+					GUILayout.EndVertical();
+					GUILayout.EndScrollView();
+					break;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndVertical();
@@ -398,8 +408,9 @@ public static class Methods
 				stagedState = MenuState.Default;
 				for (var i = 0; i < 4; i++)
 					Data.TeamColor.Target[i] = Data.GUI.StagedTeamColor[i];
-				Data.MiniMap.MarkScaleFactor = Data.GUI.StagedMarkScaleFactor;
-				Data.MiniMap.MarkPatternIndex = Data.GUI.StagedMarkPatternIndex;
+				Data.MiniMap.MarkScaleFactor = Data.MiniMap.StagedMarkScaleFactor;
+				Data.MiniMap.MarkPatternIndex = Data.MiniMap.StagedMarkPatternIndex;
+				Data.GUI.FontSizeScaleFactor = Data.GUI.StagedFontSizeScaleFactor;
 			}
 			GUILayout.FlexibleSpace();
 			GUILayout.EndHorizontal();
@@ -426,6 +437,7 @@ public static class Methods
 			Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
 			Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
 			Data.GUI.Label.RGB[2] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.blue } };
+			Data.GUI.TextField = new GUIStyle("textField");
 			Data.GUI.Initialized = true;
 			ResizeFonts();
 		}
@@ -456,12 +468,11 @@ public static class Methods
 			}
 		}
 
-		private static void ResizeFonts()
+		public static void ResizeFonts()
 		{
 			if (!Data.GUI.Initialized)
 				return;
-			var screenArea = Screen.width * Screen.height;
-			var baseFontSize = Mathf.RoundToInt(screenArea * 0.0006f / (Screen.dpi > 0 ? Screen.dpi : 120));
+			var baseFontSize = Mathf.RoundToInt(Screen.height / (Screen.dpi > 0 ? Screen.dpi : 120) * Data.GUI.FontSizeScaleFactor);
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.TeamColored[i].fontSize = baseFontSize * 4;
 			Data.GUI.Button.Large.fontSize = baseFontSize * 5;
@@ -472,14 +483,16 @@ public static class Methods
 			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = baseFontSize * 4;
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.RGB[i].fontSize = baseFontSize * 3;
+			Data.GUI.TextField.fontSize = baseFontSize * 3;
 		}
 
 		public static void StageCurrentOptions()
 		{
 			for (var i = 0; i < 4; i++)
 				Data.GUI.StagedTeamColor[i] = Data.TeamColor.Target[i];
-			Data.GUI.StagedMarkScaleFactor = Data.MiniMap.MarkScaleFactor;
-			Data.GUI.StagedMarkPatternIndex = Data.MiniMap.MarkPatternIndex;
+			Data.MiniMap.StagedMarkScaleFactor = Data.MiniMap.MarkScaleFactor;
+			Data.MiniMap.StagedMarkPatternIndex = Data.MiniMap.MarkPatternIndex;
+			Data.GUI.StagedFontSizeScaleFactor = Data.GUI.FontSizeScaleFactor;
 		}
 	}
 

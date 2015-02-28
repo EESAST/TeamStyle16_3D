@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Glow")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Glow")]
 public class DetonatorGlow : DetonatorComponent
 {
 	private readonly Color _baseColor = Color.black;

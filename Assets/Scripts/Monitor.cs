@@ -8,10 +8,11 @@ using UnityEngine;
 
 public class Monitor : MonoBehaviour
 {
-	private static int markPatternIndex;
-	private static float markScaleFactor;
 	public static Vector2 ScreenSize;
-	private static readonly Color[] teamColor = new Color[4];
+	private readonly Color[] teamColor = new Color[4];
+	private float fontSizeScaleFactor = 1;
+	private int markPatternIndex;
+	private float markScaleFactor = 1;
 
 	private void Awake()
 	{
@@ -71,6 +72,16 @@ public class Monitor : MonoBehaviour
 			if (Delegates.MarkSizeChanged != null)
 				Delegates.MarkSizeChanged();
 			markScaleFactor = Data.MiniMap.MarkScaleFactor;
+		}
+
+		#endregion
+
+		#region Font Size Scale Factor
+
+		if (Math.Abs(fontSizeScaleFactor - Data.GUI.FontSizeScaleFactor) > Mathf.Epsilon)
+		{
+			Methods.GUI.ResizeFonts();
+			fontSizeScaleFactor = Data.GUI.FontSizeScaleFactor;
 		}
 
 		#endregion

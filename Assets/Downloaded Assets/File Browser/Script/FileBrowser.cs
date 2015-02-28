@@ -58,7 +58,7 @@ public class FileBrowser
 		GUILayout.BeginArea(new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f), GUI.skin.box);
 		GUILayout.BeginHorizontal("box");
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(currentDirectory.FullName);
+		GUILayout.Label(currentDirectory.FullName, Data.GUI.Label.SmallMiddle, GUILayout.Width(Screen.width * 0.4f), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(Data.GUI.Label.SmallMiddle.CalcHeight(GUIContent.none, 0) * 2));
 		GUILayout.FlexibleSpace();
 		if (showSearchBar)
 			DrawSearchBar();
@@ -145,15 +145,21 @@ public class FileBrowser
 		else
 		{
 			GUI.SetNextControlName("SearchBar");
-			searchString = GUILayout.TextField(searchString, GUILayout.MinWidth(Screen.width * 0.2f));
-			if (GUILayout.Button("搜索") || GUI.GetNameOfFocusedControl() == "SearchBar" && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+			GUILayout.BeginVertical(GUILayout.MaxHeight(Data.GUI.Label.SmallMiddle.CalcHeight(GUIContent.none, 0) * 2));
+			GUILayout.FlexibleSpace();
+			GUILayout.BeginHorizontal();
+			searchString = GUILayout.TextField(searchString, Data.GUI.TextField, GUILayout.MinWidth(Screen.width * 0.2f));
+			GUILayout.Space(Screen.width * 0.01f);
+			if (GUILayout.Button("搜索", Data.GUI.Button.Small) || GUI.GetNameOfFocusedControl() == "SearchBar" && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
 			{
-				isSearching = true;
 				searchStartTime = Time.time;
 				(searchThread = new Thread(SearchFile)).Start();
 			}
+			GUILayout.Space(Screen.width * 0.01f);
+			GUILayout.EndHorizontal();
+			GUILayout.FlexibleSpace();
+			GUILayout.EndVertical();
 		}
-		GUILayout.Space(Screen.width * 0.01f);
 	}
 
 	private void DrawSearchMessage()
@@ -205,6 +211,7 @@ public class FileBrowser
 
 	private void SearchFile()
 	{
+		isSearching = true;
 		var fileInfos = searchString == "" ? currentDirectory.GetFiles() : currentDirectory.GetFiles(searchString, recursiveSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 		files = new FileInformation[fileInfos.Length];
 		if (fileInfos.Length == 0)

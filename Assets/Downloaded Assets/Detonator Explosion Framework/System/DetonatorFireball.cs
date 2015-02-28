@@ -4,8 +4,7 @@ using UnityEngine;
 
 #endregion
 
-[RequireComponent(typeof(Detonator))]
-[AddComponentMenu("Detonator/Fireball")]
+[RequireComponent(typeof(Detonator)), AddComponentMenu("Detonator/Fireball")]
 public class DetonatorFireball : DetonatorComponent
 {
 	private readonly Color _baseColor = new Color(1f, .423f, 0f, .5f);
