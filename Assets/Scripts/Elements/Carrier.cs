@@ -40,6 +40,7 @@ public class Carrier : Ship
 			interceptor.FireAtPosition(targetPosition);
 			StartCoroutine(interceptor.Return());
 		}
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		StartCoroutine(MonitorInterceptorReturns());
@@ -53,6 +54,7 @@ public class Carrier : Ship
 			interceptor.FireAtUnitBase(targetUnitBase);
 			StartCoroutine(interceptor.Return());
 		}
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		StartCoroutine(MonitorInterceptorReturns());

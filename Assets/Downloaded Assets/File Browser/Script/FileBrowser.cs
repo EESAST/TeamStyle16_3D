@@ -36,7 +36,7 @@ public class FileBrowser
 	private bool showDrives;
 	public bool showSearchBar = true;
 
-	public FileBrowser(string directory) { GetFileList(currentDirectory = new DirectoryInfo(directory)); }
+	private FileBrowser(string directory) { GetFileList(currentDirectory = new DirectoryInfo(directory)); }
 
 	public FileBrowser() : this(Directory.GetCurrentDirectory()) { }
 
@@ -132,9 +132,9 @@ public class FileBrowser
 		if (Event.current.type != EventType.KeyDown)
 			return value;
 		if (Event.current.keyCode == KeyCode.UpArrow)
-			SelectLast();
+			SelectFile(selectedIndex = (selectedIndex + files.Length - 1) % files.Length);
 		if (Event.current.keyCode == KeyCode.DownArrow)
-			SelectNext();
+			SelectFile(selectedIndex = (selectedIndex + 1) % files.Length);
 		return value;
 	}
 
@@ -230,8 +230,4 @@ public class FileBrowser
 		outputFile = (selectedIndex = index) < 0 ? null : files[index].fileInfo;
 		GUI.FocusControl(index.ToString());
 	}
-
-	public void SelectLast() { SelectFile(selectedIndex = (selectedIndex + files.Length - 1) % files.Length); }
-
-	public void SelectNext() { SelectFile(selectedIndex = (selectedIndex + 1) % files.Length); }
 }

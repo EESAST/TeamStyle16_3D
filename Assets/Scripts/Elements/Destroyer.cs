@@ -50,6 +50,7 @@ public class Destroyer : Ship
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
@@ -61,6 +62,7 @@ public class Destroyer : Ship
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())

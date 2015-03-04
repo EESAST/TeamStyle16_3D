@@ -20,6 +20,7 @@ public abstract class UnitBase : Element
 	private RectTransform hbRect;
 	private Text hbText;
 	private Texture2D hbTexture;
+	protected bool isAiming;
 	private int lastHPIndex;
 	protected int targetAmmo;
 	public int targetHP;
@@ -30,6 +31,7 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackPosition(Vector3 targetPosition)
 	{
+		isAiming = true;
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
 		yield return StartCoroutine(FireAtPosition(targetPosition));
@@ -38,11 +40,18 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
 	{
-		yield return StartCoroutine(AimAtPosition(targetUnitBase.transform.WorldCenterOfElement()));
+		isAiming = true;
+		Vector3 targetPosition;
+		yield return StartCoroutine(AimAtPosition(targetPosition = targetUnitBase.transform.WorldCenterOfElement()));
 		targetAmmo -= AmmoOnce();
-		yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
-		targetUnitBase.targetHP -= damage;
-		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
+		if (targetUnitBase)
+		{
+			yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
+			targetUnitBase.targetHP -= damage;
+		}
+		else
+			yield return StartCoroutine(FireAtPosition(targetPosition));
+		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage; //TODO: or show "MISS" message?
 	}
 
 	protected override void Awake()
@@ -111,8 +120,12 @@ public abstract class UnitBase : Element
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
+		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
+			meshRenderer.collider.enabled = meshRenderer.enabled = false;
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
-		Destroy(gameObject);
+		while (explosionsLeft > 0)
+			yield return null;
+		Destroy(gameObject, Settings.DeltaTime);
 	}
 
 	protected override IEnumerator FadeOut()
@@ -267,7 +280,7 @@ public abstract class UnitBase : Element
 			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
 		if (currentHP < 0)
 			currentHP = targetHP = 0;
-		if (Mathf.RoundToInt(currentHP) <= 0 && tag != "Doodad")
+		if (Mathf.RoundToInt(currentHP) <= 0 && tag != "Doodad" && !isAiming)
 			Destruct();
 
 		#region Update Health Bar

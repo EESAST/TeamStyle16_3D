@@ -8,7 +8,7 @@ using UnityEngine;
 public class DirectoryInformation
 {
 	private readonly GUIContent guiContent;
-	public DirectoryInfo directoryInfo;
+	public readonly DirectoryInfo directoryInfo;
 
 	public DirectoryInformation(DirectoryInfo directoryInfo, Texture directoryTexture)
 	{

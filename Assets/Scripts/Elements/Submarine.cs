@@ -21,7 +21,7 @@ public class Submarine : Unit
 			autoRotation.enabled = true;
 	}
 
-	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(targetPosition - transform.position)); }
+	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
 
 	protected override int AmmoOnce() { return 2; }
 
@@ -57,9 +57,10 @@ public class Submarine : Unit
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
 			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
-		StartCoroutine(RevertRotation());
+		--Data.Replay.AttacksLeft;
 	}
 
 	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
@@ -67,9 +68,10 @@ public class Submarine : Unit
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
 			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
+		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
-		StartCoroutine(RevertRotation());
+		--Data.Replay.AttacksLeft;
 	}
 
 	protected override int Kind() { return 4; }
@@ -104,12 +106,6 @@ public class Submarine : Unit
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
-	}
-
-	private IEnumerator RevertRotation()
-	{
-		yield return StartCoroutine(AdjustOrientation(Vector3.Scale(transform.forward, new Vector3(1, 0, 1))));
-		--Data.Replay.AttacksLeft;
 	}
 
 	public override void Select()
