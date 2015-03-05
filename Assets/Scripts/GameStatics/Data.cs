@@ -85,6 +85,7 @@ public static class Data
 		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static string[] TeamNames;
+		public static int MaxPopulation;
 		public static int[] UnitNums;
 	}
 

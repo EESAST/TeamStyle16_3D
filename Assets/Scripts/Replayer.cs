@@ -254,9 +254,9 @@ public class Replayer : MonoBehaviour
 			else
 			{
 				GUILayout.BeginHorizontal();
-				GUILayout.Label(Data.Replay.Populations[0].ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
+				GUILayout.Label(Data.Replay.Populations[0] + " / " + Data.Replay.MaxPopulation, Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
 				GUILayout.Label("人口", Data.GUI.Label.SmallMiddle);
-				GUILayout.Label(Data.Replay.Populations[1].ToString(), Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
+				GUILayout.Label(Data.Replay.Populations[1] + " / " + Data.Replay.MaxPopulation, Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
 				GUILayout.Label(Data.Replay.UnitNums[0].ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));

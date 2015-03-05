@@ -20,6 +20,7 @@ public class Setup : MonoBehaviour
 		Data.MapSize = new Vector2(xMax, yMax);
 		Data.IsOccupied = new bool[xMax, yMax];
 		Data.Replay.FrameCount = Data.Battle["key_frames"].Count;
+		Data.Replay.MaxPopulation = Data.Battle["gamebody"]["map_info"]["max_population"].i;
 		Methods.GUI.OnScreenSizeChanged();
 		var cameraBoundary = GameObject.Find("CameraBoundary").GetComponent<BoxCollider>();
 		cameraBoundary.size = new Vector3(Data.MapSize.y - 1, 0, Data.MapSize.x - 1) * Settings.DimensionScaleFactor + Vector3.up * (Settings.Map.HeightOfLevel[3] - Settings.Map.HeightOfLevel[0]);

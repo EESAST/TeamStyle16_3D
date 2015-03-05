@@ -51,7 +51,7 @@ public abstract class UnitBase : Element
 		}
 		else
 			yield return StartCoroutine(FireAtPosition(targetPosition));
-		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage; //TODO: or show "MISS" message?
+		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
 	}
 
 	protected override void Awake()
