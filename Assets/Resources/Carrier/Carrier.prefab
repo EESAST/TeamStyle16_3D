@@ -374,7 +374,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114828}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.4505806e-09, y: .0381922126, z: 4.54595606e-09}
+  m_LocalPosition: {x: 0, y: .114535198, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 414834}
@@ -390,7 +390,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 114830}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.4505806e-09, y: .0381922089, z: 4.54481697e-09}
+  m_LocalPosition: {x: 0, y: .114578798, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 414838}
@@ -592,7 +592,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 196572}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.85894e-09, y: -.0999999717, z: 1.80668085e-08}
+  m_LocalPosition: {x: 0, y: -.100000001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 414826}
@@ -864,7 +864,6 @@ MonoBehaviour:
   team: 0
   explosionsLeft: 0
   targetHP: 0
-  movementNum: 0
   movingInterceptorsLeft: 0
 --- !u!198 &19823946
 ParticleSystem:

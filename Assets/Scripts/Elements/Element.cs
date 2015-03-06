@@ -45,7 +45,6 @@ public abstract class Element : MonoBehaviour
 			break;
 		}
 		highlighter = gameObject.AddComponent<Highlighter>();
-		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Element");
 		gameObject.AddComponent<AudioSource>();
@@ -88,7 +87,7 @@ public abstract class Element : MonoBehaviour
 		beamAudio.loop = false;
 		while (beamAudio && beamAudio.isPlaying)
 			yield return null;
-		if (!beamAudio)
+		if (!beamAudio || !beamAudio.isActiveAndEnabled)
 			yield break;
 		var loopsLeft = Mathf.FloorToInt((beamFX.startLifetime - Time.time + time) / beamAudio.clip.length);
 		if (loopsLeft <= 0)

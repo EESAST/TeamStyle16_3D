@@ -76,11 +76,13 @@ public class Interceptor : MonoBehaviour
 			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
 			yield return null;
 		}
-		transform.parent = seat;
+		Seat();
 		foreach (var trail in trails)
 			trail.Stop();
 		while (Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.deltaTime), Vector3.zero) > Settings.DimensionalTolerance)
 			yield return null;
 		--owner.movingInterceptorsLeft;
 	}
+
+	public void Seat() { transform.parent = seat; }
 }

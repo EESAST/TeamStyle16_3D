@@ -23,6 +23,7 @@ public abstract class Plane : Unit
 	protected override void Awake()
 	{
 		base.Awake();
+		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 		trails = GetComponentsInChildren<ParticleSystem>();
 	}
 

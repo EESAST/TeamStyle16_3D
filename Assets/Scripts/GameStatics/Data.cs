@@ -77,6 +77,7 @@ public static class Data
 		public static int FrameCount;
 		public static Dictionary<int, int> InitialStorage;
 		public static Replayer Instance;
+		public static int MaxPopulation;
 		public static int MovesLeft;
 		public static int[] Populations;
 		public static List<ProductionEntry>[] ProductionLists;
@@ -85,7 +86,6 @@ public static class Data
 		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static string[] TeamNames;
-		public static int MaxPopulation;
 		public static int[] UnitNums;
 	}
 

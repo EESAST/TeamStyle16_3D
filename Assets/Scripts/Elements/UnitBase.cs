@@ -72,7 +72,9 @@ public abstract class UnitBase : Element
 
 	private IEnumerator Explode()
 	{
-		rigidbody.isKinematic = true;
+		var carrier = this as Carrier;
+		if (carrier)
+			carrier.ForceSeatInterceptors();
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
@@ -125,6 +127,8 @@ public abstract class UnitBase : Element
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
 		while (explosionsLeft > 0)
 			yield return null;
+		if (carrier && carrier.movingInterceptorsLeft > 0)
+			carrier.ForceDestructInterceptors();
 		Destroy(gameObject, Settings.DeltaTime);
 	}
 

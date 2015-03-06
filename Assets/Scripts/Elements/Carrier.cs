@@ -60,6 +60,22 @@ public class Carrier : Ship
 		StartCoroutine(MonitorInterceptorReturns());
 	}
 
+	public void ForceDestructInterceptors()
+	{
+		foreach (var detonator in interceptors.Select(interceptor => Instantiate(Resources.Load("Detonator_Death"), interceptor.transform.position, Quaternion.identity) as GameObject))
+		{
+			detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor / interceptors.Length;
+			detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
+		}
+		--Data.Replay.AttacksLeft;
+	}
+
+	public void ForceSeatInterceptors()
+	{
+		foreach (var interceptor in interceptors)
+			interceptor.Seat();
+	}
+
 	protected override int Kind() { return 6; }
 
 	public static void LoadMaterial()
