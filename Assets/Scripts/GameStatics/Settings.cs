@@ -111,8 +111,8 @@ public static class Settings
 
 	public static class Interceptor
 	{
-		private const float _speed = 1;
-		public const float AngularCorrectionRate = 180;
+		private const float _speed = 1.5f;
+		public const float AngularCorrectionRate = 360;
 		public static float Speed { get { return _speed * DimensionScaleFactor; } }
 	}
 
