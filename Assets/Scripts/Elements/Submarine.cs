@@ -44,12 +44,6 @@ public class Submarine : Unit
 			autoRotation.enabled = false;
 	}
 
-	public override void Deselect()
-	{
-		base.Deselect();
-		highlighter.FlashingOn();
-	}
-
 	protected override Vector3 Dimensions() { return new Vector3(0.55f, 0.88f, 2.13f); }
 
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
@@ -95,23 +89,11 @@ public class Submarine : Unit
 
 	protected override int Population() { return 2; }
 
-	protected override void RefreshColor()
-	{
-		base.RefreshColor();
-		highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, 0.6f);
-	}
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
-	}
-
-	public override void Select()
-	{
-		base.Select();
-		highlighter.FlashingOff();
 	}
 
 	protected override int Speed() { return 6; }
@@ -121,6 +103,6 @@ public class Submarine : Unit
 		base.Start();
 		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
 			meshRenderer.material = materials[0][team];
-		highlighter.FlashingOn(Data.TeamColor.Current[team], Color.clear, 0.6f);
+		highlighter.FlashingOn();
 	}
 }

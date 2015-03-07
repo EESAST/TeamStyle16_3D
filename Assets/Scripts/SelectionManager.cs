@@ -6,17 +6,17 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
+	public static Element LastSelectedElement;
 	private Element lastDownElement;
 	private Element lastOverElement;
-	private Element lastSelectedElement;
 
 	private void LateUpdate()
 	{
 		Revert();
-		if (Input.GetMouseButtonUp(1) && lastSelectedElement)
+		if (Input.GetMouseButtonUp(1) && LastSelectedElement)
 		{
-			lastSelectedElement.Deselect();
-			lastSelectedElement = null;
+			LastSelectedElement.Deselect();
+			LastSelectedElement = null;
 			Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Deselect"));
 		}
 		if (Methods.GUI.MouseOver() || Data.MiniMap.FrameRect.Contains(Input.mousePosition) || Screen.lockCursor)
@@ -38,9 +38,9 @@ public class SelectionManager : MonoBehaviour
 				lastDownElement = target;
 			if (Input.GetMouseButtonUp(0) && target && target == lastDownElement)
 			{
-				if (lastSelectedElement)
-					lastSelectedElement.Deselect();
-				(lastSelectedElement = target).Select();
+				if (LastSelectedElement)
+					LastSelectedElement.Deselect();
+				(LastSelectedElement = target).Select();
 				Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Element_Select"));
 			}
 		}

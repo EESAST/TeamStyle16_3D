@@ -11,10 +11,11 @@ using UnityEngine.UI;
 
 public abstract class Element : MonoBehaviour
 {
+	public int beamsLeft;
 	protected float currentFuel;
 	protected float currentMetal;
 	private bool guiInitialized;
-	protected Highlighter highlighter;
+	public Highlighter highlighter;
 	public int index;
 	protected RectTransform markRect;
 	private Texture markTexture;
@@ -105,6 +106,8 @@ public abstract class Element : MonoBehaviour
 	{
 		Camera.main.GetComponentInParent<Moba_Camera>().settings.lockTargetTransform = null;
 		highlighter.ConstantOff();
+		if (beamsLeft > 0 || this is Submarine)
+			highlighter.FlashingOn();
 	}
 
 	protected virtual void Destruct()
@@ -120,6 +123,26 @@ public abstract class Element : MonoBehaviour
 	protected abstract Vector3 Dimensions();
 
 	protected abstract IEnumerator FadeOut();
+
+	public void FlashingOff()
+	{
+		--beamsLeft;
+		if (beamsLeft > 0)
+			return;
+		if (this is Submarine)
+			highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, Settings.Highlighter.SubmarineFlashingRate);
+		else
+			highlighter.FlashingOff();
+	}
+
+	public void FlashingOn()
+	{
+		++beamsLeft;
+		if (this is Submarine)
+			highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, Settings.Highlighter.BeamFlashingRate);
+		else if (SelectionManager.LastSelectedElement != this)
+			highlighter.FlashingOn();
+	}
 
 	public virtual void Initialize(JSONObject info)
 	{
@@ -164,7 +187,13 @@ public abstract class Element : MonoBehaviour
 			InitializeGUI();
 	}
 
-	protected virtual void RefreshColor() { highlighter.ConstantParams(markRect.GetComponent<RawImage>().color = Data.TeamColor.Current[team]); }
+	protected virtual void RefreshColor()
+	{
+		var color = Data.TeamColor.Current[team];
+		markRect.GetComponent<RawImage>().color = color;
+		highlighter.ConstantParams(color);
+		highlighter.FlashingParams(color, Color.clear, this is Submarine && beamsLeft == 0 ? Settings.Highlighter.SubmarineFlashingRate : Settings.Highlighter.BeamFlashingRate);
+	}
 
 	private void RefreshMarkPattern() { markRect.GetComponent<RawImage>().texture = Data.MiniMap.MarkPatternIndex == 0 ? markTexture : null; }
 
@@ -179,7 +208,8 @@ public abstract class Element : MonoBehaviour
 		var cameraSettings = Camera.main.GetComponentInParent<Moba_Camera>().settings;
 		cameraSettings.lockTargetTransform = transform;
 		cameraSettings.cameraLocked = true;
-		highlighter.ConstantOnImmediate(Data.TeamColor.Current[team]);
+		highlighter.FlashingOff();
+		highlighter.ConstantOnImmediate();
 	}
 
 	protected virtual void Start()

@@ -15,7 +15,7 @@ public class Carrier : Ship
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
 		foreach (var interceptor in interceptors)
-			StartCoroutine(interceptor.AimAtPosition(targetPosition));
+			interceptor.StartCoroutine(interceptor.AimAtPosition(targetPosition));
 		while (movingInterceptorsLeft > 0)
 			yield return null;
 	}
@@ -38,7 +38,7 @@ public class Carrier : Ship
 		foreach (var interceptor in interceptors)
 		{
 			interceptor.FireAtPosition(targetPosition);
-			StartCoroutine(interceptor.Return());
+			interceptor.StartCoroutine(interceptor.Return());
 		}
 		isAiming = false;
 		while (explosionsLeft > 0)
@@ -52,7 +52,7 @@ public class Carrier : Ship
 		foreach (var interceptor in interceptors)
 		{
 			interceptor.FireAtUnitBase(targetUnitBase);
-			StartCoroutine(interceptor.Return());
+			interceptor.StartCoroutine(interceptor.Return());
 		}
 		isAiming = false;
 		while (explosionsLeft > 0)
@@ -60,13 +60,12 @@ public class Carrier : Ship
 		StartCoroutine(MonitorInterceptorReturns());
 	}
 
-	public void ForceDestructInterceptors()
+	public IEnumerator ForceDestructInterceptors()
 	{
-		foreach (var detonator in interceptors.Select(interceptor => Instantiate(Resources.Load("Detonator_Death"), interceptor.transform.position, Quaternion.identity) as GameObject))
-		{
-			detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor / interceptors.Length;
-			detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
-		}
+		foreach (var interceptor in interceptors)
+			interceptor.StartCoroutine(interceptor.Explode());
+		while (interceptors.Count(interceptor => interceptor) > 0)
+			yield return null;
 		--Data.Replay.AttacksLeft;
 	}
 

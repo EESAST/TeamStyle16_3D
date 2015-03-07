@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 #endregion
@@ -52,6 +53,64 @@ public class Interceptor : MonoBehaviour
 		audio.maxDistance = Settings.Audio.MaxAudioDistance;
 		audio.rolloffMode = AudioRolloffMode.Linear;
 		audio.volume = Settings.Audio.Volume.Unit;
+	}
+
+	private static Vector3 Center() { return new Vector3(0.00f, 0.12f, 0.04f); }
+
+	public IEnumerator Explode()
+	{
+		const float relativeSize = 0.3f;
+		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
+		var meshFilters = GetComponentsInChildren<MeshFilter>();
+		var threshold = 5 * relativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
+		var count = 0;
+		var thickness = Settings.Fragment.ThicknessPerUnitSize * relativeSize;
+		var desiredAverageMass = Mathf.Pow(relativeSize * Settings.DimensionScaleFactor * 0.12f, 3);
+		var totalMass = 0f;
+		foreach (var meshFilter in meshFilters)
+		{
+			var mesh = meshFilter.mesh;
+			for (var i = 0; i < mesh.subMeshCount; i++)
+			{
+				var subMeshTriangles = mesh.GetTriangles(i);
+				var material = meshFilter.GetComponent<MeshRenderer>().sharedMaterials[i];
+				for (var j = 0; j < subMeshTriangles.Length; j += 3)
+				{
+					if (Random.Range(0, 1f) > threshold)
+						continue;
+					Vector3 center;
+					var fragmentedMesh = new Mesh { vertices = Methods.Array.Add(meshFilter.transform.TransformPoints(new[] { mesh.vertices[subMeshTriangles[j + 0]], mesh.vertices[subMeshTriangles[j + 1]], mesh.vertices[subMeshTriangles[j + 2]], mesh.vertices[subMeshTriangles[j + 0]] - mesh.normals[subMeshTriangles[j + 0]] * thickness, mesh.vertices[subMeshTriangles[j + 1]] - mesh.normals[subMeshTriangles[j + 1]] * thickness, mesh.vertices[subMeshTriangles[j + 2]] - mesh.normals[subMeshTriangles[j + 2]] * thickness }, out center), -center), uv = new[] { mesh.uv[subMeshTriangles[j + 0]], mesh.uv[subMeshTriangles[j + 1]], mesh.uv[subMeshTriangles[j + 2]], mesh.uv[subMeshTriangles[j + 0]], mesh.uv[subMeshTriangles[j + 1]], mesh.uv[subMeshTriangles[j + 2]] }, triangles = new[] { 0, 2, 3, 2, 5, 3, 0, 3, 1, 1, 3, 4, 1, 4, 2, 2, 4, 5, 2, 0, 1, 5, 4, 3 } };
+					fragmentedMesh.RecalculateNormals();
+					fragmentedMesh.CalculateTangents();
+					var fragment = Instantiate(Resources.Load("Fragment"), center, Quaternion.identity) as GameObject;
+					fragment.GetComponent<MeshCollider>().sharedMesh = fragment.GetComponent<MeshFilter>().sharedMesh = fragmentedMesh;
+					fragment.GetComponent<MeshRenderer>().material = material;
+					fragment.rigidbody.SetDensity(1000);
+					totalMass += fragment.rigidbody.mass;
+					fragment.transform.parent = dummy.transform;
+					var smokeTrail = fragment.GetComponentInChildren<ParticleEmitter>();
+					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
+					if (++count % 10 == 0)
+						yield return null;
+				}
+			}
+		}
+		var ratio = desiredAverageMass * count / totalMass;
+		foreach (var fragmentManager in dummy.GetComponentsInChildren<FragmentManager>())
+		{
+			fragmentManager.rigidbody.mass *= ratio;
+			fragmentManager.enabled = true;
+		}
+		dummy.audio.maxDistance = Settings.Audio.MaxAudioDistance;
+		dummy.audio.volume = Settings.Audio.Volume.Death1;
+		dummy.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Death_1"));
+		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
+		detonator.GetComponent<Detonator>().size = relativeSize * Settings.DimensionScaleFactor;
+		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(relativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
+		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
+			meshRenderer.collider.enabled = meshRenderer.enabled = false;
+		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
+		Destroy(gameObject);
 	}
 
 	public void FireAtPosition(Vector3 targetPosition)

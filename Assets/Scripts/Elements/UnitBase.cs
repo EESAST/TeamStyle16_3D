@@ -72,12 +72,9 @@ public abstract class UnitBase : Element
 
 	private IEnumerator Explode()
 	{
-		var carrier = this as Carrier;
-		if (carrier)
-			carrier.ForceSeatInterceptors();
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
-		var threshold = 3 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
+		var threshold = 5 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
 		var thickness = Settings.Fragment.ThicknessPerUnitSize * RelativeSize;
 		var desiredAverageMass = Mathf.Pow(RelativeSize * Settings.DimensionScaleFactor * 0.12f, 3);
@@ -127,8 +124,9 @@ public abstract class UnitBase : Element
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
 		while (explosionsLeft > 0)
 			yield return null;
+		var carrier = this as Carrier;
 		if (carrier && carrier.movingInterceptorsLeft > 0)
-			carrier.ForceDestructInterceptors();
+			yield return StartCoroutine(carrier.ForceDestructInterceptors());
 		Destroy(gameObject, Settings.DeltaTime);
 	}
 
@@ -229,6 +227,7 @@ public abstract class UnitBase : Element
 		var elapsedTime = Mathf.Max((fuel + ammo + metal) / Settings.Replay.SupplyRate, 0.1f);
 		StartCoroutine(Beam(target, elapsedTime, BeamType.Supply));
 		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.Replay.BeamSpeed);
+		target.FlashingOn();
 		var effectedFuel = 0;
 		var effectedAmmo = 0;
 		var effectedMetal = 0;
@@ -263,6 +262,7 @@ public abstract class UnitBase : Element
 		target.targetAmmo += ammo - effectedAmmo;
 		targetMetal -= metal - effectedMetal;
 		target.targetMetal += metal - effectedMetal;
+		target.FlashingOff();
 		string message;
 		if (metal == 0)
 			if (ammo == 0)

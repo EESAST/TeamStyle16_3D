@@ -14,7 +14,7 @@ public class FragmentManager : MonoBehaviour
 	private IEnumerator Extinguish()
 	{
 		rigidbody.isKinematic = false;
-		rigidbody.WakeUp();
+		yield return null;
 		while (!rigidbody.IsSleeping() && transform.position.y > Settings.Map.HeightOfLevel[1] && Time.time < spawnTime + maxLifeSpan)
 			yield return null;
 		var attenuation = transform.position.y < Settings.Map.HeightOfLevel[1] ? Settings.FastAttenuation : Settings.SlowAttenuation;

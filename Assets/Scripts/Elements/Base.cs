@@ -89,6 +89,7 @@ public class Base : Building
 		var elapsedTime = Mathf.Max(healthIncrease / Settings.Replay.FixRate, 0.1f);
 		StartCoroutine(Beam(target, elapsedTime, BeamType.Fix));
 		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.Replay.BeamSpeed);
+		target.FlashingOn();
 		var effectedHP = 0;
 		var effectedMetal = 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
@@ -109,6 +110,7 @@ public class Base : Building
 		}
 		target.targetHP += healthIncrease - effectedHP;
 		targetMetal -= metal - effectedMetal;
+		target.FlashingOff();
 		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(target, healthIncrease > 0 ? "HP: +" + healthIncrease : "0"));
 		--Data.Replay.FixesLeft;
 	}

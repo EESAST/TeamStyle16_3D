@@ -161,6 +161,7 @@ public class Replayer : MonoBehaviour
 
 	private void LoadFrame(int frame)
 	{
+		StopCoroutine(replay);
 		Methods.Replay.ClearData();
 		var keyFrame = Data.Battle["key_frames"][frame]; //a key frame is the snapshot of the end state of a round, ranging from 0 to frameCount-1
 		for (var i = 0; i < Data.Replay.Elements.Count; ++i)
@@ -191,6 +192,7 @@ public class Replayer : MonoBehaviour
 		for (var i = 0; i < 2; ++i)
 			foreach (var productionEntry in keyFrame[1][i].list)
 				(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Initialize(i, productionEntry[0].i, productionEntry[1].i);
+		StartCoroutine(replay = Replay());
 	}
 
 	private IEnumerator Moves()
@@ -285,6 +287,7 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Replay()
 	{
+		yield return new WaitForSeconds(1);
 		while ((frameSlide = ++currentFrame) < Data.Replay.FrameCount)
 		{
 			var startTime = Time.time;
@@ -406,9 +409,7 @@ public class Replayer : MonoBehaviour
 			return;
 		if (currentFrame != frameSlide && !Input.GetMouseButton(0))
 		{
-			StopCoroutine(replay);
 			LoadFrame(currentFrame = frameSlide); //Loads the end state of the designated frame
-			StartCoroutine(replay = Replay());
 			return;
 		}
 		if (showDetail && currentFrame == Data.Replay.FrameCount && Input.GetKeyUp(KeyCode.Escape))

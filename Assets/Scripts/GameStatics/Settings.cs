@@ -103,6 +103,12 @@ public static class Settings
 		public static Vector3 PositionOffset { get { return _positionOffset * DimensionScaleFactor; } }
 	}
 
+	public static class Highlighter
+	{
+		public const float BeamFlashingRate = 1.5f;
+		public const float SubmarineFlashingRate = 0.6f;
+	}
+
 	public static class IdleRotation
 	{
 		public const float MaxRestTime = 4;

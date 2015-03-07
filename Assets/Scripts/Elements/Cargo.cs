@@ -22,6 +22,7 @@ public class Cargo : Ship
 		var elapsedTime = Mathf.Max((fuel + metal) / Settings.Replay.CollectRate, 0.1f);
 		target.StartCoroutine(target.Beam(this, elapsedTime, BeamType.Collect));
 		yield return new WaitForSeconds((transform.TransformPoint(Center()) - target.transform.WorldCenterOfElement()).magnitude / Settings.Replay.BeamSpeed);
+		target.FlashingOn();
 		var effectedFuel = 0;
 		var effectedMetal = 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
@@ -47,6 +48,7 @@ public class Cargo : Ship
 		target.targetFuel -= fuel - effectedFuel;
 		targetMetal += metal - effectedMetal;
 		target.targetMetal -= metal - effectedMetal;
+		target.FlashingOff();
 		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel - effectedFuel + metal - effectedMetal);
 		string message;
 		if (metal == 0)
