@@ -10,6 +10,7 @@ public class Interceptor : MonoBehaviour
 {
 	private Transform[] missiles;
 	private Carrier owner;
+	public IEnumerator returnTrip;
 	private Transform seat;
 	private ParticleSystem[] trails;
 
@@ -125,6 +126,12 @@ public class Interceptor : MonoBehaviour
 			(Instantiate(Resources.Load("Bomb"), missiles[i].position, missiles[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(owner, targetUnitBase, BombManager.Level.Small);
 	}
 
+	public void ForceDestruct()
+	{
+		StopCoroutine(returnTrip);
+		StartCoroutine(Explode());
+	}
+
 	public IEnumerator Return()
 	{
 		++owner.movingInterceptorsLeft;
@@ -135,13 +142,11 @@ public class Interceptor : MonoBehaviour
 			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
 			yield return null;
 		}
-		Seat();
+		transform.parent = seat;
 		foreach (var trail in trails)
 			trail.Stop();
 		while (Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.deltaTime), Vector3.zero) > Settings.DimensionalTolerance)
 			yield return null;
 		--owner.movingInterceptorsLeft;
 	}
-
-	public void Seat() { transform.parent = seat; }
 }

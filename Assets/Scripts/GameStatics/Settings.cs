@@ -13,7 +13,7 @@ public static class Settings
 	public const float DimensionScaleFactor = 5;
 	public const float FastAttenuation = 0.6f;
 	public const int MainInterface_CloudNum = 50;
-	public const float MaxTimePerFrame = 15;
+	public const float MaxTimePerFrame = 24;
 	public const float SlowAttenuation = 0.9f;
 	public const float Tolerance = 0.01f;
 	public const float TransitionRate = 3;

@@ -126,7 +126,7 @@ public abstract class UnitBase : Element
 			yield return null;
 		var carrier = this as Carrier;
 		if (carrier && carrier.movingInterceptorsLeft > 0)
-			yield return StartCoroutine(carrier.ForceDestructInterceptors());
+			carrier.ForceDestructInterceptors();
 		Destroy(gameObject, Settings.DeltaTime);
 	}
 

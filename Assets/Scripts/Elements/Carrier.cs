@@ -10,6 +10,7 @@ public class Carrier : Ship
 {
 	private static readonly Material[][] materials = new Material[2][];
 	private Interceptor[] interceptors;
+	private bool interruptInterceptorReturns;
 	public int movingInterceptorsLeft;
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
@@ -38,7 +39,7 @@ public class Carrier : Ship
 		foreach (var interceptor in interceptors)
 		{
 			interceptor.FireAtPosition(targetPosition);
-			interceptor.StartCoroutine(interceptor.Return());
+			interceptor.StartCoroutine(interceptor.returnTrip = interceptor.Return());
 		}
 		isAiming = false;
 		while (explosionsLeft > 0)
@@ -52,7 +53,7 @@ public class Carrier : Ship
 		foreach (var interceptor in interceptors)
 		{
 			interceptor.FireAtUnitBase(targetUnitBase);
-			interceptor.StartCoroutine(interceptor.Return());
+			interceptor.StartCoroutine(interceptor.returnTrip = interceptor.Return());
 		}
 		isAiming = false;
 		while (explosionsLeft > 0)
@@ -60,19 +61,12 @@ public class Carrier : Ship
 		StartCoroutine(MonitorInterceptorReturns());
 	}
 
-	public IEnumerator ForceDestructInterceptors()
+	public void ForceDestructInterceptors()
 	{
+		interruptInterceptorReturns = true;
 		foreach (var interceptor in interceptors)
-			interceptor.StartCoroutine(interceptor.Explode());
-		while (interceptors.Count(interceptor => interceptor) > 0)
-			yield return null;
+			interceptor.ForceDestruct();
 		--Data.Replay.AttacksLeft;
-	}
-
-	public void ForceSeatInterceptors()
-	{
-		foreach (var interceptor in interceptors)
-			interceptor.Seat();
 	}
 
 	protected override int Kind() { return 6; }
@@ -93,7 +87,11 @@ public class Carrier : Ship
 	private IEnumerator MonitorInterceptorReturns()
 	{
 		while (movingInterceptorsLeft > 0)
+		{
+			if (interruptInterceptorReturns)
+				yield break;
 			yield return null;
+		}
 		--Data.Replay.AttacksLeft;
 	}
 
