@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class Interceptor : MonoBehaviour
 {
+	private const float relativeSize = 0.4f;
 	private Transform[] missiles;
 	private Carrier owner;
 	public IEnumerator returnTrip;
@@ -58,9 +59,8 @@ public class Interceptor : MonoBehaviour
 
 	private static Vector3 Center() { return new Vector3(0.00f, 0.12f, 0.04f); }
 
-	public IEnumerator Explode()
+	private IEnumerator Explode()
 	{
-		const float relativeSize = 0.3f;
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 5 * relativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);

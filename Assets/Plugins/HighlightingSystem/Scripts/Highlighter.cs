@@ -25,7 +25,7 @@ namespace HighlightingSystem
 		public const int highlightingLayer = 7;
 
 		// Only these types of Renderers will be highlighted
-		public static readonly List<Type> types = new List<Type> { typeof(MeshRenderer), typeof(SkinnedMeshRenderer), typeof(SpriteRenderer),
+		public static readonly List<Type> types = new List<Type> { typeof(MeshRenderer), typeof(SkinnedMeshRenderer), typeof(SpriteRenderer)
 			// Cloth is not supported in Flash
 #if !UNITY_5_0 && !UNITY_FLASH
 			typeof(ClothRenderer) 

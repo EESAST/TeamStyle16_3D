@@ -109,7 +109,7 @@ GameObject:
   - 23: {fileID: 2383470}
   - 64: {fileID: 6483470}
   m_Layer: 0
-  m_Name: LightPod
+  m_Name: LightPole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -495,7 +495,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 183470}
-  m_Mesh: {fileID: 4300016, guid: e1902db619f32884d956c04a82e6da7e, type: 3}
+  m_Mesh: {fileID: 4300018, guid: e1902db619f32884d956c04a82e6da7e, type: 3}
 --- !u!33 &3397228
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -549,7 +549,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300016, guid: e1902db619f32884d956c04a82e6da7e, type: 3}
+  m_Mesh: {fileID: 4300018, guid: e1902db619f32884d956c04a82e6da7e, type: 3}
 --- !u!64 &6497228
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -731,6 +731,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53336248ba069f548b442126425c9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  beamsLeft: 0
+  highlighter: {fileID: 0}
+  index: 0
   MouseOver: 0
   targetFuel: 0
   targetMetal: 0

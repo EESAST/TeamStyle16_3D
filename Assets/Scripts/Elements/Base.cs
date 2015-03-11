@@ -14,10 +14,10 @@ public class Base : Building
 	private Transform bigGuns;
 	private Transform head;
 	private Component[] idleFXs;
-	private Transform lightPod;
+	private Transform lightPole;
 	private Transform[] smallBombs;
 	private Transform smallGuns;
-	protected override Transform Beamer { get { return lightPod; } }
+	protected override Transform Beamer { get { return lightPole; } }
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
 	protected override int RelativeSize { get { return 3; } }
 
@@ -42,7 +42,7 @@ public class Base : Building
 		head = transform.Find("Head");
 		bigGuns = head.Find("BigGuns");
 		smallGuns = head.Find("SmallGuns");
-		lightPod = head.Find("LightPod");
+		lightPole = head.Find("LightPole");
 		bigBombs = new[] { bigGuns.Find("BG_LSP"), bigGuns.Find("BG_RSP") };
 		smallBombs = new[] { smallGuns.Find("SG_LSP"), smallGuns.Find("SG_RSP") };
 		idleFXs = head.GetComponentsInChildren(typeof(IIdleFX));

@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class FileInformation
 {
-	private readonly GUIContent guiContent;
 	public readonly FileInfo fileInfo;
+	private readonly GUIContent guiContent;
 
 	public FileInformation(FileInfo fileInfo, Texture fileTexture)
 	{

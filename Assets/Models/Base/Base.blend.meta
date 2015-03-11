@@ -22,6 +22,7 @@ ModelImporter:
     100032: BG_RSP
     100034: SG_LSP
     100036: SG_RSP
+    100038: LightPole
     400000: BigGuns
     400002: Body
     400004: Head
@@ -41,6 +42,7 @@ ModelImporter:
     400032: BG_RSP
     400034: SG_LSP
     400036: SG_RSP
+    400038: LightPole
     2300000: BigGuns
     2300002: Body
     2300004: Head
@@ -50,6 +52,7 @@ ModelImporter:
     2300012: Bearing
     2300014: Holder
     2300016: LightPod
+    2300018: LightPole
     3300000: BigGuns
     3300002: Body
     3300004: Head
@@ -59,6 +62,7 @@ ModelImporter:
     3300012: Bearing
     3300014: Holder
     3300016: LightPod
+    3300018: LightPole
     4300000: Body
     4300002: Head
     4300004: BigGuns
@@ -68,6 +72,7 @@ ModelImporter:
     4300012: Holder
     4300014: Bearing
     4300016: LightPod
+    4300018: LightPole
     6400000: BigGuns
     6400002: Body
     6400004: Head
@@ -77,6 +82,7 @@ ModelImporter:
     6400012: Bearing
     6400014: Holder
     6400016: LightPod
+    6400018: LightPole
     7400000: Default Take
     9500000: //RootNode
   materials:

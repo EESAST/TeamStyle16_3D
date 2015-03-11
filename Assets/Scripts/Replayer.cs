@@ -170,6 +170,9 @@ public class Replayer : MonoBehaviour
 			var fort = item.Value as Fort;
 			if (fort)
 				fort.targetTeam = -1;
+			var carrier = item.Value as Carrier;
+			if (carrier)
+				carrier.DestroyInterceptors();
 			Data.Replay.Elements.Remove(item.Key);
 			Destroy(item.Value.gameObject);
 			--i;

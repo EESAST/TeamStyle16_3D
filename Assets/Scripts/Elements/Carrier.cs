@@ -31,6 +31,12 @@ public class Carrier : Ship
 
 	public override Vector3 Center() { return new Vector3(-0.02f, 0.26f, 0.15f); }
 
+	public void DestroyInterceptors()
+	{
+		foreach (var interceptor in interceptors.Where(interceptor => interceptor))
+			Destroy(interceptor.gameObject);
+	}
+
 	protected override Vector3 Dimensions() { return new Vector3(1.14f, 1.82f, 3.01f); }
 
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
@@ -61,10 +67,10 @@ public class Carrier : Ship
 		StartCoroutine(MonitorInterceptorReturns());
 	}
 
-	public void ForceDestructInterceptors()
+	public void ForceDestructReturningInterceptors()
 	{
 		interruptInterceptorReturns = true;
-		foreach (var interceptor in interceptors)
+		foreach (var interceptor in interceptors.Where(interceptor => !interceptor.transform.parent))
 			interceptor.ForceDestruct();
 		--Data.Replay.AttacksLeft;
 	}
@@ -93,13 +99,6 @@ public class Carrier : Ship
 			yield return null;
 		}
 		--Data.Replay.AttacksLeft;
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-		foreach (var interceptor in interceptors.Where(interceptor => interceptor))
-			Destroy(interceptor.gameObject);
 	}
 
 	protected override int Population() { return 4; }
