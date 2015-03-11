@@ -1,11 +1,13 @@
 ﻿#region
 
+using System.Linq;
 using UnityEngine;
 
 #endregion
 
 public class MenuManager : MonoBehaviour
 {
+	private readonly Color[] lastTargetTeamColor = new Color[2];
 	private Rect aboutAreaRect;
 	private Rect aboutContentRect;
 	private Rect confirmAreaRect;
@@ -140,9 +142,17 @@ public class MenuManager : MonoBehaviour
 	{
 		stagedState = stagedState == MenuState.None ? MenuState.Default : MenuState.None;
 		if (stagedState == MenuState.None)
+		{
+			if (!Methods.Array.Equals(lastTargetTeamColor, Data.TeamColor.Target.Take(2).ToArray()))
+				Data.Replay.Instance.RefreshCharts();
 			Methods.Game.Resume();
+		}
 		else
+		{
+			for (var i = 0; i < 2; ++i)
+				lastTargetTeamColor[i] = Data.TeamColor.Target[i];
 			Methods.Game.Pause();
+		}
 		Camera.main.GetComponent<Blur>().enabled = Data.GamePaused;
 		GetComponent<SelectionManager>().enabled = !Data.GamePaused;
 	}

@@ -279,7 +279,7 @@ public class Replayer : MonoBehaviour
 		GUILayout.EndArea();
 	}
 
-	private void RefreshCharts()
+	public void RefreshCharts()
 	{
 		scoreChart = new LineChart(Screen.width / 2, Screen.height / 3, "score");
 		unitNumChart = new LineChart(Screen.width / 2, Screen.height / 3, "unit_num");
