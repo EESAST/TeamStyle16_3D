@@ -9,8 +9,6 @@ public class Scout : Plane
 {
 	private static readonly Material[][] materials = new Material[2][];
 
-	protected override int AmmoOnce() { return 1; }
-
 	public override Vector3 Center() { return new Vector3(-0.00f, 0.04f, -0.20f); }
 
 	protected override Vector3 Dimensions() { return new Vector3(1.59f, 0.82f, 2.51f); }
@@ -48,10 +46,6 @@ public class Scout : Plane
 		}
 	}
 
-	protected override int MaxHP() { return 50; }
-
-	protected override int Population() { return 1; }
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 2; id++)
@@ -68,8 +62,6 @@ public class Scout : Plane
 			materials[1][team].mainTextureOffset = offset;
 		}
 	}
-
-	protected override int Speed() { return 10; }
 
 	protected override void Start()
 	{

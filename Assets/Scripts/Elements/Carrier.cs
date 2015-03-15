@@ -21,8 +21,6 @@ public class Carrier : Ship
 			yield return null;
 	}
 
-	protected override int AmmoOnce() { return 2; }
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -88,8 +86,6 @@ public class Carrier : Ship
 		}
 	}
 
-	protected override int MaxHP() { return 120; }
-
 	private IEnumerator MonitorInterceptorReturns()
 	{
 		while (movingInterceptorsLeft > 0)
@@ -101,16 +97,12 @@ public class Carrier : Ship
 		--Data.Replay.AttacksLeft;
 	}
 
-	protected override int Population() { return 4; }
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 2; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override int Speed() { return 5; }
 
 	protected override void Start()
 	{

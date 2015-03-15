@@ -23,8 +23,6 @@ public class Submarine : Unit
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
 
-	protected override int AmmoOnce() { return 2; }
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -85,18 +83,12 @@ public class Submarine : Unit
 		}
 	}
 
-	protected override int MaxHP() { return 35; }
-
-	protected override int Population() { return 2; }
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override int Speed() { return 6; }
 
 	protected override void Start()
 	{

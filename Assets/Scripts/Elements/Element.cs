@@ -11,11 +11,11 @@ using UnityEngine.UI;
 
 public abstract class Element : MonoBehaviour
 {
-	public int beamsLeft;
+	private int beamsLeft;
 	protected float currentFuel;
 	protected float currentMetal;
 	private bool guiInitialized;
-	public Highlighter highlighter;
+	protected Highlighter highlighter;
 	public int index;
 	protected RectTransform markRect;
 	private Texture markTexture;

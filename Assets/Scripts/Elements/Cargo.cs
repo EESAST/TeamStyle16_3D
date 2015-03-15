@@ -12,8 +12,6 @@ public class Cargo : Ship
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition) { yield return StartCoroutine(AdjustOrientation(Vector3.Scale(targetPosition - transform.position, new Vector3(1, 0, 1)))); }
 
-	protected override int AmmoOnce() { throw new NotImplementedException(); }
-
 	public override Vector3 Center() { return new Vector3(0.00f, 0.03f, 0.09f); }
 
 	public IEnumerator Collect(Resource target, int fuel, int metal)
@@ -78,18 +76,12 @@ public class Cargo : Ship
 		}
 	}
 
-	protected override int MaxHP() { return 60; }
-
-	protected override int Population() { return 1; }
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override int Speed() { return 8; }
 
 	protected override void Start()
 	{

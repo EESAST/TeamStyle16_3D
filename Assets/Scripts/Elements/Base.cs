@@ -34,8 +34,6 @@ public class Base : Building
 			yield return null;
 	}
 
-	protected override int AmmoOnce() { return 6; }
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -135,8 +133,6 @@ public class Base : Building
 				materials[id][team] = Resources.Load<Material>("Base/Materials/" + name[id] + "_" + team);
 		}
 	}
-
-	protected override int MaxHP() { return 2000; }
 
 	protected override void RefreshColor()
 	{

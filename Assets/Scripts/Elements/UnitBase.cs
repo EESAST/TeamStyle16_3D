@@ -27,7 +27,7 @@ public abstract class UnitBase : Element
 
 	protected abstract IEnumerator AimAtPosition(Vector3 targetPosition);
 
-	protected abstract int AmmoOnce();
+	private int AmmoOnce() { return Constants.AmmoOnce[Kind()]; }
 
 	public IEnumerator AttackPosition(Vector3 targetPosition)
 	{
@@ -161,7 +161,7 @@ public abstract class UnitBase : Element
 		currentMetal = targetMetal = Mathf.RoundToInt(info["metal"].n);
 	}
 
-	protected abstract int MaxHP();
+	protected int MaxHP() { return Constants.MaxHP[Kind()]; }
 
 	protected override void OnDestroy()
 	{

@@ -24,6 +24,8 @@ public abstract class Unit : UnitBase
 
 	protected IEnumerator AdjustOrientation(Vector3 targetOrientation)
 	{
+		if (targetOrientation == Vector3.zero)
+			yield break;
 		isOrienting = true;
 		var ship = this as Ship;
 		if (!ship)
@@ -147,7 +149,7 @@ public abstract class Unit : UnitBase
 		Data.Replay.Populations[team] -= Population();
 	}
 
-	protected abstract int Population();
+	private int Population() { return Constants.Population[Kind()]; }
 
 	private IEnumerator ShowCreateFX()
 	{
@@ -167,7 +169,7 @@ public abstract class Unit : UnitBase
 		Destroy(createFX, maxEnergy);
 	}
 
-	protected abstract int Speed();
+	private int Speed() { return Constants.Speed[Kind()]; }
 
 	protected override void Start()
 	{

@@ -10,8 +10,6 @@ public class Fighter : Plane
 	private static readonly Material[][] materials = new Material[1][];
 	private Transform[] missiles;
 
-	protected override int AmmoOnce() { return 3; }
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -57,18 +55,12 @@ public class Fighter : Plane
 		}
 	}
 
-	protected override int MaxHP() { return 70; }
-
-	protected override int Population() { return 3; }
-
 	public static void RefreshMaterialColor()
 	{
 		for (var id = 0; id < 1; id++)
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
-
-	protected override int Speed() { return 9; }
 
 	protected override void Start()
 	{

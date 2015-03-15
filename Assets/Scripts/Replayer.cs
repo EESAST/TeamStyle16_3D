@@ -163,7 +163,6 @@ public class Replayer : MonoBehaviour
 	{
 		StopCoroutine(replay);
 		Methods.Replay.ClearData();
-		var keyFrame = Data.Battle["key_frames"][frame]; //a key frame is the snapshot of the end state of a round, ranging from 0 to frameCount-1
 		for (var i = 0; i < Data.Replay.Elements.Count; ++i)
 		{
 			var item = Data.Replay.Elements.ElementAt(i);
@@ -179,6 +178,7 @@ public class Replayer : MonoBehaviour
 		}
 		foreach (var doodad in GameObject.FindGameObjectsWithTag("Doodad"))
 			Destroy(doodad);
+		var keyFrame = Data.Battle["key_frames"][frame]; //a key frame is the snapshot of the end state of a round, ranging from 0 to frameCount-1
 		foreach (var entry in keyFrame[0].list)
 		{
 			var typeName = entry["__class__"].str;

@@ -26,8 +26,6 @@ public class Fort : Building
 			yield return null;
 	}
 
-	protected override int AmmoOnce() { return 4; }
-
 	protected override void Awake()
 	{
 		base.Awake();
@@ -50,7 +48,7 @@ public class Fort : Building
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
-			idleFX.Disable();
+			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}
 
@@ -62,7 +60,7 @@ public class Fort : Building
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
-			idleFX.Disable();
+			idleFX.Enable();
 		--Data.Replay.AttacksLeft;
 	}
 
@@ -88,8 +86,6 @@ public class Fort : Building
 		}
 	}
 
-	protected override int MaxHP() { return 800; }
-
 	protected override void OnDestroy()
 	{
 		base.OnDestroy();
@@ -104,9 +100,10 @@ public class Fort : Building
 	private IEnumerator Reborn(Vector3 internalPosition, int index, int targetTeam, int fuel, int ammo, int metal)
 	{
 		isReborn = true;
+		team = targetTeam;
 		Data.Replay.Elements.Add(this.index = index, this);
 		Data.Replay.Forts[team].Add(this);
-		++Data.Replay.UnitNums[team = targetTeam];
+		++Data.Replay.UnitNums[team];
 		targetHP = MaxHP();
 		targetFuel = fuel;
 		targetAmmo = ammo;
