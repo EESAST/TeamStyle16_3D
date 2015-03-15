@@ -18,7 +18,7 @@ public class Oilfield : Resource
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		currentFuel = targetFuel = Mathf.RoundToInt(info["fuel"].n);
+		currentFuel = targetFuel = info["fuel"].i;
 	}
 
 	protected override int Kind() { return 3; }

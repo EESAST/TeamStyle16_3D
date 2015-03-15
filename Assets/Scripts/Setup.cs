@@ -15,8 +15,8 @@ public class Setup : MonoBehaviour
 		RenderSettings.skybox = skyBoxes[Random.Range(0, skyBoxes.Length)];
 		RenderSettings.fogEndDistance = Settings.Camera.FarClipPlane;
 		Physics.gravity = Vector3.down * Settings.DimensionScaleFactor;
-		var xMax = Mathf.RoundToInt(Data.Battle["gamebody"]["map_info"]["x_max"].n);
-		var yMax = Mathf.RoundToInt(Data.Battle["gamebody"]["map_info"]["y_max"].n);
+		var xMax = Data.Battle["gamebody"]["map_info"]["x_max"].i;
+		var yMax = Data.Battle["gamebody"]["map_info"]["y_max"].i;
 		Data.MapSize = new Vector2(xMax, yMax);
 		Data.IsOccupied = new bool[xMax, yMax];
 		Data.Replay.FrameCount = Data.Battle["key_frames"].Count;

@@ -146,7 +146,7 @@ public abstract class Element : MonoBehaviour
 
 	public virtual void Initialize(JSONObject info)
 	{
-		index = Mathf.RoundToInt(info["index"].n);
+		index = info["index"].i;
 		Data.Replay.Elements.Add(index, this);
 		float posX, posY;
 		transform.position = Methods.Coordinates.ExternalToInternal(Methods.Coordinates.JSONToExternal(info["pos"], out posX, out posY));

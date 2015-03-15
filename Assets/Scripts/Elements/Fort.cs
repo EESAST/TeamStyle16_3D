@@ -13,7 +13,6 @@ public class Fort : Building
 	private Transform bomb;
 	private Transform cannon;
 	private Component[] idleFXs;
-	private bool isReborn;
 	public int targetTeam;
 	protected override Transform Beamer { get { return cannon; } }
 
@@ -99,7 +98,6 @@ public class Fort : Building
 
 	private IEnumerator Reborn(Vector3 internalPosition, int index, int targetTeam, int fuel, int ammo, int metal)
 	{
-		isReborn = true;
 		team = targetTeam;
 		Data.Replay.Elements.Add(this.index = index, this);
 		Data.Replay.Forts[team].Add(this);
@@ -140,7 +138,5 @@ public class Fort : Building
 		transform.Find("Accessory").GetComponent<MeshRenderer>().material = materials[1][team];
 		transform.Find("Base").GetComponent<MeshRenderer>().material = materials[0][team];
 		cannon.GetComponent<MeshRenderer>().materials = new[] { materials[1][team], materials[2][team] };
-		if (isReborn)
-			highlighter.ReinitMaterials();
 	}
 }

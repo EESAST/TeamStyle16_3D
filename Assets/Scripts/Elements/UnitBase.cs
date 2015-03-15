@@ -152,13 +152,13 @@ public abstract class UnitBase : Element
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		team = Mathf.RoundToInt(info["team"].n);
+		team = info["team"].i;
 		if (team < 2)
 			++Data.Replay.UnitNums[team];
-		currentHP = targetHP = Mathf.RoundToInt(info["health"].n);
-		currentFuel = targetFuel = Mathf.RoundToInt(info["fuel"].n);
-		currentAmmo = targetAmmo = float.IsPositiveInfinity(info["ammo"].n) ? -1 : Mathf.RoundToInt(info["ammo"].n);
-		currentMetal = targetMetal = Mathf.RoundToInt(info["metal"].n);
+		currentHP = targetHP = info["health"].i;
+		currentFuel = targetFuel = info["fuel"].i;
+		currentAmmo = targetAmmo = float.IsPositiveInfinity(info["ammo"].n) ? -1 : info["ammo"].i;
+		currentMetal = targetMetal = info["metal"].i;
 	}
 
 	protected int MaxHP() { return Constants.MaxHP[Kind()]; }

@@ -18,7 +18,7 @@ public class Mine : Resource
 	public override void Initialize(JSONObject info)
 	{
 		base.Initialize(info);
-		currentMetal = targetMetal = Mathf.RoundToInt(info["metal"].n);
+		currentMetal = targetMetal = info["metal"].i;
 	}
 
 	protected override int Kind() { return 2; }

@@ -32,7 +32,7 @@ public class MiniMap : MonoBehaviour
 		var pixels = miniMapTexture.GetPixels32();
 		for (var i = 0; i < width; i++)
 			for (var j = 0; j < height; j++)
-				pixels[i + width * j] = mapData[(height - 1 - j) / Settings.MiniMap.Granularity][i / Settings.MiniMap.Granularity].n < Mathf.Epsilon ? Settings.MiniMap.OceanColor : Settings.MiniMap.LandColor;
+				pixels[i + width * j] = mapData[(height - 1 - j) / Settings.MiniMap.Granularity][i / Settings.MiniMap.Granularity].i == 0 ? Settings.MiniMap.OceanColor : Settings.MiniMap.LandColor;
 		miniMapTexture.SetPixels32(pixels);
 		miniMapTexture.Apply();
 		RefreshMapRect();
