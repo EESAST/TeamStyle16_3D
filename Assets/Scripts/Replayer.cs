@@ -306,7 +306,7 @@ public class Replayer : MonoBehaviour
 			yield return StartCoroutine(Collects());
 			if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
 			{
-				Data.Replay.ProductionTimeScale = 10;
+				Data.Replay.ProductionTimeScale = 6;
 				yield return new WaitForSeconds((startTime + Settings.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
 			}
 			Data.Replay.ProductionTimeScale = 0;
