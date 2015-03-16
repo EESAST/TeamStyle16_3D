@@ -41,16 +41,10 @@ public abstract class UnitBase : Element
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
 	{
 		isAiming = true;
-		Vector3 targetPosition;
-		yield return StartCoroutine(AimAtPosition(targetPosition = targetUnitBase.transform.WorldCenterOfElement()));
+		yield return StartCoroutine(AimAtPosition(targetUnitBase.transform.WorldCenterOfElement()));
 		targetAmmo -= AmmoOnce();
-		if (targetUnitBase)
-		{
-			yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
-			targetUnitBase.targetHP -= damage;
-		}
-		else
-			yield return StartCoroutine(FireAtPosition(targetPosition));
+		yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
+		targetUnitBase.targetHP -= damage;
 		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
 	}
 
@@ -282,9 +276,7 @@ public abstract class UnitBase : Element
 			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
 			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
-		if (currentHP < 0)
-			currentHP = targetHP = 0;
-		if (Mathf.RoundToInt(currentHP) <= 0 && tag != "Doodad" && !isAiming)
+		if (Mathf.RoundToInt(currentHP) == 0 && tag != "Doodad" && !isAiming)
 			Destruct();
 
 		#region Update Health Bar

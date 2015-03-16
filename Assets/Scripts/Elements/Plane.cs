@@ -40,7 +40,7 @@ public abstract class Plane : Unit
 		rigidbody.isKinematic = false;
 		rigidbody.WakeUp();
 		while (--targetHP > 0)
-			yield return new WaitForSeconds(Settings.DeltaTime);
+			yield return null;
 	}
 
 	protected override int Level() { return 3; }
@@ -50,7 +50,7 @@ public abstract class Plane : Unit
 	private void OnCollisionEnter()
 	{
 		if (isFalling)
-			targetHP -= Mathf.RoundToInt(rigidbody.velocity.sqrMagnitude / Mathf.Pow(Settings.DimensionScaleFactor, 2)) * MaxHP() / 3;
+			targetHP -= Mathf.Min(Mathf.RoundToInt(rigidbody.velocity.sqrMagnitude / Mathf.Pow(Settings.DimensionScaleFactor, 2)) * MaxHP() / 3, targetHP);
 	}
 
 	protected override void Update()

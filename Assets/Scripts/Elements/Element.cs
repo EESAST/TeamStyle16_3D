@@ -102,7 +102,7 @@ public abstract class Element : MonoBehaviour
 
 	public abstract Vector3 Center();
 
-	public virtual void Deselect()
+	public void Deselect()
 	{
 		Camera.main.GetComponentInParent<Moba_Camera>().settings.lockTargetTransform = null;
 		highlighter.ConstantOff();
@@ -126,8 +126,7 @@ public abstract class Element : MonoBehaviour
 
 	public void FlashingOff()
 	{
-		--beamsLeft;
-		if (beamsLeft > 0)
+		if (--beamsLeft > 0)
 			return;
 		if (this is Submarine)
 			highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, Settings.Highlighter.SubmarineFlashingRate);
@@ -203,7 +202,7 @@ public abstract class Element : MonoBehaviour
 		markRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RelativeSize * Data.MiniMap.MarkScaleFactor * Data.MiniMap.ScaleFactor);
 	}
 
-	public virtual void Select()
+	public void Select()
 	{
 		var cameraSettings = Camera.main.GetComponentInParent<Moba_Camera>().settings;
 		cameraSettings.lockTargetTransform = transform;

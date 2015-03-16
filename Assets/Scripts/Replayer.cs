@@ -12,6 +12,7 @@ public class Replayer : MonoBehaviour
 	private readonly int[] lastScores = new int[2];
 	private readonly float[] scoreFontSize = new float[2];
 	private bool cancelDetail;
+	public bool chartsReady;
 	private int currentFrame;
 	private int currentRectId;
 	private JSONObject elements;
@@ -247,6 +248,8 @@ public class Replayer : MonoBehaviour
 		if (showDetail)
 			if (currentFrame == Data.Replay.FrameCount)
 			{
+				if (!chartsReady)
+					RefreshCharts();
 				summaryScroll = GUILayout.BeginScrollView(summaryScroll);
 				GUILayout.Label("积分", Data.GUI.Label.LargeLeft);
 				scoreChart.Plot();
@@ -279,11 +282,12 @@ public class Replayer : MonoBehaviour
 		GUILayout.EndArea();
 	}
 
-	public void RefreshCharts()
+	private void RefreshCharts()
 	{
 		scoreChart = new LineChart(Screen.width / 2, Screen.height / 3, "score");
 		unitNumChart = new LineChart(Screen.width / 2, Screen.height / 3, "unit_num");
 		populationChart = new LineChart(Screen.width / 2, Screen.height / 3, "population");
+		chartsReady = true;
 	}
 
 	private void RefreshInfoAreaRect(float t) { infoAreaRect = new Rect((Screen.width - infoContentRect.width - panelStyle.border.horizontal) / 2 * (2 - t), Mathf.Lerp(Data.MiniMap.MapRect.height + Settings.MiniMap.Border.vertical, (Screen.height - infoContentRect.height - panelStyle.border.vertical) / 2, t), infoContentRect.width + panelStyle.border.horizontal, infoContentRect.height + panelStyle.border.vertical); }
@@ -327,7 +331,7 @@ public class Replayer : MonoBehaviour
 		resizingInfoRect = false;
 		infoContentRect = GetInfoContentRect();
 		RefreshInfoAreaRect(currentRectId == 2 ? 1 : 0);
-		RefreshCharts();
+		chartsReady = false;
 	}
 
 	private IEnumerator ResizeInfoRect(int targetRectId = -1, float time = 1)

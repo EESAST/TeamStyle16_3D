@@ -144,7 +144,7 @@ public class MenuManager : MonoBehaviour
 		if (stagedState == MenuState.None)
 		{
 			if (!Methods.Array.Equals(lastTargetTeamColor, Data.TeamColor.Target.Take(2).ToArray()))
-				Data.Replay.Instance.RefreshCharts();
+				Data.Replay.Instance.chartsReady = false;
 			Methods.Game.Resume();
 		}
 		else
