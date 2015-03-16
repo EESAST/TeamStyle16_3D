@@ -248,8 +248,6 @@ public class Replayer : MonoBehaviour
 		if (showDetail)
 			if (currentFrame == Data.Replay.FrameCount)
 			{
-				if (!chartsReady)
-					RefreshCharts();
 				summaryScroll = GUILayout.BeginScrollView(summaryScroll);
 				GUILayout.Label("积分", Data.GUI.Label.LargeLeft);
 				scoreChart.Plot();
@@ -331,7 +329,7 @@ public class Replayer : MonoBehaviour
 		resizingInfoRect = false;
 		infoContentRect = GetInfoContentRect();
 		RefreshInfoAreaRect(currentRectId == 2 ? 1 : 0);
-		chartsReady = false;
+		RefreshCharts();
 	}
 
 	private IEnumerator ResizeInfoRect(int targetRectId = -1, float time = 1)
@@ -341,7 +339,11 @@ public class Replayer : MonoBehaviour
 		var targetContentRect = GetInfoContentRect(ref targetRectId);
 		var from = currentRectId == 2 ? 1 : 0;
 		var to = targetRectId == 2 ? 1 : 0;
-		Data.Replay.ShowSummary = targetRectId == 2;
+		if ((Data.Replay.ShowSummary = targetRectId == 2) && !chartsReady)
+		{
+			RefreshCharts();
+			yield return null;
+		}
 		currentRectId = targetRectId;
 		Camera.main.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/InfoBox_" + (targetRectId == 0 ? "Out" : "In") + "Come"));
 		for (float t = 0, startTime = Time.unscaledTime; 1 - (t = Mathf.Lerp(t, 1, (Time.unscaledTime - startTime) / time)) > Settings.Tolerance;)
