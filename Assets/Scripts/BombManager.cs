@@ -49,7 +49,7 @@ public class BombManager : MonoBehaviour
 		Destroy(gameObject);
 	}
 
-	public void Initialize(UnitBase attacker, Vector3 targetPosition, Level bombLevel = Level.Medium)
+	public void Initialize(UnitBase attacker, Vector3 targetPosition, Level bombLevel)
 	{
 		this.attacker = attacker;
 		targetUnitBase = null;

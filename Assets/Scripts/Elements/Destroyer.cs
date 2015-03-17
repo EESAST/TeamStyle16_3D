@@ -47,7 +47,7 @@ public class Destroyer : Ship
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Medium);
 		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;

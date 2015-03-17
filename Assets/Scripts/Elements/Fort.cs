@@ -42,7 +42,7 @@ public class Fort : Building
 	protected override IEnumerator FireAtPosition(Vector3 targetPosition)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Large);
 		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;
@@ -54,7 +54,7 @@ public class Fort : Building
 	protected override IEnumerator FireAtUnitBase(UnitBase targetUnitBase)
 	{
 		++explosionsLeft;
-		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
+		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Large);
 		isAiming = false;
 		while (explosionsLeft > 0)
 			yield return null;

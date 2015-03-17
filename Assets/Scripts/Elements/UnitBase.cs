@@ -40,12 +40,17 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
 	{
-		isAiming = true;
-		yield return StartCoroutine(AimAtPosition(targetUnitBase.transform.WorldCenterOfElement()));
+		var targetPosition = targetUnitBase.transform.WorldCenterOfElement();
+		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
-		yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
-		targetUnitBase.targetHP -= damage;
-		Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
+		if (targetUnitBase)
+		{
+			yield return StartCoroutine(FireAtUnitBase(targetUnitBase));
+			targetUnitBase.targetHP -= damage;
+			Data.Replay.TargetScores[team] += Constants.Score.PerDamage * damage;
+		}
+		else
+			yield return StartCoroutine(FireAtPosition(targetPosition));
 	}
 
 	protected override void Awake()
