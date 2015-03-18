@@ -64,7 +64,5 @@ public abstract class Resource : Element
 			particleEmitters[i].maxEmission = initialMaxEmission[i] * ratio;
 			particleEmitters[i].minEmission = initialMinEmission[i] * ratio;
 		}
-		if (CurrentStorage() <= 0 && tag != "Doodad")
-			Destruct();
 	}
 }

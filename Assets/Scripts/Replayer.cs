@@ -106,6 +106,9 @@ public class Replayer : MonoBehaviour
 			unit.StartCoroutine(unit.Create(elements[create["index"].i.ToString()]));
 			yield return null;
 		}
+		if (Data.Replay.CreatesLeft > 0)
+			for (var i = 0; i < 2; ++i)
+				Data.Replay.Bases[i].targetFuel = elements[Data.Replay.Bases[i].index.ToString()]["fuel"].i;
 		while (Data.Replay.CreatesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		IsCreating = false;
@@ -308,7 +311,7 @@ public class Replayer : MonoBehaviour
 			yield return StartCoroutine(Collects());
 			if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
 			{
-				Data.Replay.ProductionTimeScale = 6;
+				Data.Replay.ProductionTimeScale = Settings.Replay.FastProductionTimeScale;
 				yield return new WaitForSeconds((startTime + Settings.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
 			}
 			Data.Replay.ProductionTimeScale = 0;
@@ -403,9 +406,12 @@ public class Replayer : MonoBehaviour
 		IsSupplying = true;
 		foreach (var supply in events.list.Where(supply => supply["__class__"].str == "Supply"))
 		{
+			Element target;
+			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target))
+				continue;
 			++Data.Replay.SuppliesLeft;
 			var supplier = Data.Replay.Elements[supply["index"].i] as UnitBase;
-			supplier.StartCoroutine(supplier.Supply(Data.Replay.Elements[supply["target"].i] as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));
+			supplier.StartCoroutine(supplier.Supply(target as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));
 		}
 		while (Data.Replay.SuppliesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);

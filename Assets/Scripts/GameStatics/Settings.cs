@@ -152,6 +152,7 @@ public static class Settings
 		private const float _beamSpeed = 1.5f;
 		public const float CollectRate = 50;
 		public const float CreateTime = 3;
+		public const float FastProductionTimeScale = 8;
 		public const float FixRate = 30;
 		public const float MessageTime = 3; //corresponds to the TextFX prefab
 		public const float SupplyRate = 50;

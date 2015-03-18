@@ -23,6 +23,8 @@ public class Cargo : Ship
 		target.FlashingOn();
 		var effectedFuel = 0;
 		var effectedMetal = 0;
+		var effectedScore = 0;
+		var score = (fuel + metal) > 0 ? Constants.Score.PerValidCollection : 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
 		{
 			var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
@@ -39,7 +41,12 @@ public class Cargo : Ship
 				target.targetMetal -= deltaMetal;
 				effectedMetal += deltaMetal;
 			}
-			Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (deltaFuel + deltaMetal);
+			var deltaScore = Mathf.RoundToInt(score * t - effectedScore);
+			if (deltaScore > 0)
+			{
+				Data.Replay.TargetScores[team] += deltaScore;
+				effectedScore += deltaScore;
+			}
 			yield return null;
 		}
 		targetFuel += fuel - effectedFuel;
@@ -47,7 +54,7 @@ public class Cargo : Ship
 		targetMetal += metal - effectedMetal;
 		target.targetMetal -= metal - effectedMetal;
 		target.FlashingOff();
-		Data.Replay.TargetScores[team] += Constants.Score.PerCollectedResource * (fuel - effectedFuel + metal - effectedMetal);
+		Data.Replay.TargetScores[team] += score - effectedScore;
 		string message;
 		if (metal == 0)
 			message = fuel > 0 ? "F: +" + fuel : "0";

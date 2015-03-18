@@ -102,6 +102,7 @@ public class Fort : Building
 		Data.Replay.Elements.Add(this.index = index, this);
 		Data.Replay.Forts[team].Add(this);
 		++Data.Replay.UnitNums[team];
+		Data.Replay.TargetScores[team] += Constants.Score.PerFortCapture;
 		targetHP = MaxHP();
 		targetFuel = fuel;
 		targetAmmo = ammo;

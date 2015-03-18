@@ -110,16 +110,6 @@ public abstract class Element : MonoBehaviour
 			highlighter.FlashingOn();
 	}
 
-	protected virtual void Destruct()
-	{
-		Data.Replay.Elements.Remove(index);
-		tag = "Doodad";
-		foreach (var elementFX in GetComponentsInChildren(typeof(IElementFX)).Cast<IElementFX>())
-			elementFX.Disable();
-		highlighter.Die();
-		StartCoroutine(FadeOut());
-	}
-
 	protected abstract Vector3 Dimensions();
 
 	protected abstract IEnumerator FadeOut();

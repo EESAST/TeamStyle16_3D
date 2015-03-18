@@ -40,6 +40,7 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
 	{
+		isAiming = true;
 		var targetPosition = targetUnitBase.transform.WorldCenterOfElement();
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
@@ -63,9 +64,14 @@ public abstract class UnitBase : Element
 		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 10);
 	}
 
-	protected override void Destruct()
+	private void Destruct()
 	{
-		base.Destruct();
+		Data.Replay.Elements.Remove(index);
+		tag = "Doodad";
+		foreach (var elementFX in GetComponentsInChildren(typeof(IElementFX)).Cast<IElementFX>())
+			elementFX.Disable();
+		highlighter.Die();
+		StartCoroutine(FadeOut());
 		StartCoroutine(Explode());
 	}
 
