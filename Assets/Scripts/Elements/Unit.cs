@@ -169,6 +169,8 @@ public abstract class Unit : UnitBase
 		Destroy(createFX, maxEnergy);
 	}
 
+	protected override bool ShowMetalInfo() { return false; }
+
 	private int Speed() { return Constants.Speed[Kind()]; }
 
 	protected override void Start()

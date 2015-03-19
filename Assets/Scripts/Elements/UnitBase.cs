@@ -77,6 +77,8 @@ public abstract class UnitBase : Element
 
 	private IEnumerator Explode()
 	{
+		if (this is Plane)
+			rigidbody.isKinematic = true;
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 5 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
@@ -182,14 +184,18 @@ public abstract class UnitBase : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.075f, Screen.height - Input.mousePosition.y - Screen.height * 0.1f, Screen.width * 0.15f, Screen.height * 0.2f).FitScreen(), GUI.skin.box);
+		var heightRatio = 0.15f + (ShowMetalInfo() ? 0.05f : 0);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * heightRatio / 2, Screen.width * 0.12f, Screen.height * heightRatio).FitScreen(), GUI.skin.box);
+		GUILayout.FlexibleSpace();
 		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
-		if (float.IsInfinity(currentAmmo))
-			print(Time.time);
 		GUILayout.Label("弹药：" + (currentAmmo < 0 ? "无限" : Mathf.RoundToInt(currentAmmo).ToString()), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label("金属：" + Mathf.RoundToInt(currentMetal), Data.GUI.Label.SmallLeft);
+		if (ShowMetalInfo())
+		{
+			GUILayout.Label("金属：" + Mathf.RoundToInt(currentMetal), Data.GUI.Label.SmallLeft);
+			GUILayout.FlexibleSpace();
+		}
 		GUILayout.EndArea();
 	}
 
@@ -203,6 +209,8 @@ public abstract class UnitBase : Element
 			hbText.color = new Color(1, 1, 1, Mathf.Clamp01(4 - hbPos.z / Settings.DimensionScaleFactor / 2));
 		hbText.text = Mathf.RoundToInt(currentHP) + "/" + MaxHP();
 	}
+
+	protected abstract bool ShowMetalInfo();
 
 	protected override void Start()
 	{

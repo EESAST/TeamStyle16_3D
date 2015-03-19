@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections;
-using System.Linq;
 using HighlightingSystem;
 using JSON;
 using UnityEngine;

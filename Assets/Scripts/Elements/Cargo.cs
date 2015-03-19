@@ -21,10 +21,10 @@ public class Cargo : Ship
 		target.StartCoroutine(target.Beam(this, elapsedTime, BeamType.Collect));
 		yield return new WaitForSeconds((transform.TransformPoint(Center()) - target.transform.WorldCenterOfElement()).magnitude / Settings.Replay.BeamSpeed);
 		target.FlashingOn();
+		var score = (fuel + metal) >= Constants.Score.ValidCollectionThreshold ? Constants.Score.PerValidCollection : 0;
 		var effectedFuel = 0;
 		var effectedMetal = 0;
 		var effectedScore = 0;
-		var score = (fuel + metal) > 0 ? Constants.Score.PerValidCollection : 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
 		{
 			var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
@@ -89,6 +89,8 @@ public class Cargo : Ship
 			for (var team = 0; team < 3; team++)
 				materials[id][team].SetColor("_Color", Data.TeamColor.Current[team]);
 	}
+
+	protected override bool ShowMetalInfo() { return true; }
 
 	protected override void Start()
 	{

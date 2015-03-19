@@ -46,7 +46,7 @@ public abstract class Resource : Element
 		base.OnGUI();
 		if (!MouseOver || Screen.lockCursor)
 			return;
-		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.075f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.15f, Screen.height * 0.08f).FitScreen(), GUI.skin.box);
+		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.12f, Screen.height * 0.08f).FitScreen(), GUI.skin.box);
 		GUILayout.FlexibleSpace();
 		GUILayout.Label(StorageDescription() + '：' + (CurrentStorage() > 0 ? CurrentStorage().ToString() : "枯竭"), Data.GUI.Label.SmallLeft);
 		GUILayout.FlexibleSpace();

@@ -12,9 +12,10 @@
 
 	public static class Score
 	{
-		public const int PerValidCollection = 10;
 		public const int PerDamage = 1;
-		public const int PerFortPerRound = 10;
 		public const int PerFortCapture = 100;
+		public const int PerFortPerRound = 10;
+		public const int PerValidCollection = 10;
+		public const int ValidCollectionThreshold = 10;
 	}
 }
