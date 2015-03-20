@@ -75,7 +75,6 @@ public static class Data
 		public static int FixesLeft;
 		public static List<Fort>[] Forts;
 		public static int FrameCount;
-		public static Dictionary<int, int> InitialStorage;
 		public static Replayer Instance;
 		public static int MaxPopulation;
 		public static int MovesLeft;

@@ -26,7 +26,7 @@ public abstract class Resource : Element
 		}
 	}
 
-	public abstract int CurrentStorage();
+	protected abstract int CurrentStorage();
 
 	protected override IEnumerator FadeOut()
 	{
@@ -38,6 +38,8 @@ public abstract class Resource : Element
 			yield return new WaitForSeconds(Settings.DeltaTime);
 		}
 	}
+
+	protected abstract int InitialStorage();
 
 	protected override int Level() { return 2; }
 
@@ -58,7 +60,7 @@ public abstract class Resource : Element
 	protected override void Update()
 	{
 		base.Update();
-		var ratio = (float)CurrentStorage() / Data.Replay.InitialStorage[index];
+		var ratio = (float)CurrentStorage() / InitialStorage();
 		for (var i = 0; i < particleEmitters.Length; i++)
 		{
 			particleEmitters[i].maxEmission = initialMaxEmission[i] * ratio;

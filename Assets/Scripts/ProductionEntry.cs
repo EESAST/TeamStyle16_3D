@@ -50,7 +50,7 @@ public class ProductionEntry : MonoBehaviour
 	{
 		this.team = team;
 		this.kind = kind;
-		lifeSpan = Settings.MaxTimePerFrame * Constants.BuildRounds[kind];
+		lifeSpan = Settings.Replay.MaxTimePerFrame * Constants.BuildRounds[kind];
 		description.text = Constants.ChineseNames[kind];
 		underlay.sprite = tintedIcon.sprite = Resources.Load<Sprite>("ProductionEntryIcons/" + Constants.BaseTypeNames[kind]);
 		tintedIcon.fillAmount = 1 - (float)roundsLeft / Constants.BuildRounds[kind];

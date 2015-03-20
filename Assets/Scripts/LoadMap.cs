@@ -172,9 +172,6 @@ public class LoadMap : MonoBehaviour
 			var typeName = entry["__class__"].str;
 			var element = (Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element;
 			element.Initialize(entry);
-			var resource = element as Resource;
-			if (resource)
-				Data.Replay.InitialStorage.Add(resource.index, Mathf.Max(resource.CurrentStorage(), 1));
 		}
 	}
 

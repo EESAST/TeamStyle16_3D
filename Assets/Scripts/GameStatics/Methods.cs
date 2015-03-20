@@ -515,7 +515,6 @@ public static class Methods
 			Data.Replay.CurrentScores = new float[2];
 			Data.Replay.Elements = new Dictionary<int, Element>();
 			Data.Replay.Forts = new[] { new List<Fort>(), new List<Fort>() };
-			Data.Replay.InitialStorage = new Dictionary<int, int>();
 			Data.Replay.Populations = new int[2];
 			Data.Replay.ProductionLists = new[] { new List<ProductionEntry>(), new List<ProductionEntry>() };
 			Data.Replay.TargetScores = new int[2];

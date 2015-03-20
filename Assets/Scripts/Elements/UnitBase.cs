@@ -237,7 +237,7 @@ public abstract class UnitBase : Element
 
 	public IEnumerator Supply(UnitBase target, int fuel, int ammo, int metal)
 	{
-		var elapsedTime = Mathf.Max((fuel + ammo + metal) / Settings.Replay.SupplyRate, 0.1f);
+		var elapsedTime = Mathf.Max((fuel * Settings.Replay.FuelMultiplier + ammo * Settings.Replay.AmmoMultiplier + metal * Settings.Replay.MetalMultiplier) / Settings.Replay.SupplyRate, 0.1f);
 		StartCoroutine(Beam(target, elapsedTime, BeamType.Supply));
 		yield return new WaitForSeconds((target.transform.WorldCenterOfElement() - Beamer.position).magnitude / Settings.Replay.BeamSpeed);
 		target.FlashingOn();

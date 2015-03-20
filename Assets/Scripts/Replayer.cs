@@ -23,12 +23,6 @@ public class Replayer : MonoBehaviour
 	private bool hideFrameSlide;
 	private Rect infoAreaRect;
 	private Rect infoContentRect;
-	private bool IsAttacking;
-	private bool IsCollecting;
-	private bool IsCreating;
-	private bool IsFixing;
-	private bool IsMoving;
-	private bool IsSupplying;
 	public Texture2D panelBackground;
 	private GUIStyle panelStyle;
 	private LineChart populationChart;
@@ -48,7 +42,6 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Attacks()
 	{
-		IsAttacking = true;
 		foreach (var attack in events.list)
 			switch (attack["__class__"].str)
 			{
@@ -73,7 +66,6 @@ public class Replayer : MonoBehaviour
 			}
 		while (Data.Replay.AttacksLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsAttacking = false;
 	}
 
 	private void Awake()
@@ -84,7 +76,6 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Collects()
 	{
-		IsCollecting = true;
 		foreach (var collect in events.list.Where(collect => collect["__class__"].str == "Collect"))
 		{
 			++Data.Replay.CollectsLeft;
@@ -93,7 +84,6 @@ public class Replayer : MonoBehaviour
 		}
 		while (Data.Replay.CollectsLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsCollecting = false;
 	}
 
 	private IEnumerator Creates()
@@ -111,12 +101,10 @@ public class Replayer : MonoBehaviour
 				Data.Replay.Bases[i].targetFuel = elements[Data.Replay.Bases[i].index.ToString()]["fuel"].i;
 		while (Data.Replay.CreatesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsCreating = false;
 	}
 
 	private IEnumerator Fixes()
 	{
-		IsFixing = true;
 		foreach (var fix in events.list.Where(fix => fix["__class__"].str == "Fix"))
 		{
 			++Data.Replay.FixesLeft;
@@ -125,7 +113,6 @@ public class Replayer : MonoBehaviour
 		}
 		while (Data.Replay.FixesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsFixing = false;
 	}
 
 	private IEnumerator FortCaptureScores()
@@ -204,7 +191,6 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Moves()
 	{
-		IsMoving = true;
 		foreach (var move in events.list.Where(move => move["__class__"].str == "Move"))
 		{
 			++Data.Replay.MovesLeft;
@@ -219,7 +205,6 @@ public class Replayer : MonoBehaviour
 				plane.isHovering = true;
 		while (Data.Replay.MovesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsMoving = false;
 	}
 
 	private void OnDestroy() { Delegates.ScreenSizeChanged -= ResizeGUI; }
@@ -303,16 +288,14 @@ public class Replayer : MonoBehaviour
 			events = Data.Battle["history"]["event"][currentFrame - 1]; //e.g. events[i] is the ith event (object)
 			AddProductionEntries();
 			yield return StartCoroutine(Attacks());
-			StartCoroutine(Supplies());
-			StartCoroutine(Fixes());
-			while (IsSupplying || IsFixing)
-				yield return null;
+			yield return StartCoroutine(Supplies());
+			yield return StartCoroutine(Fixes());
 			yield return StartCoroutine(Moves());
 			yield return StartCoroutine(Collects());
 			if (Data.Replay.ProductionLists.Any(productionList => productionList.Any(productionEntry => !productionEntry.ready)))
 			{
 				Data.Replay.ProductionTimeScale = Settings.Replay.FastProductionTimeScale;
-				yield return new WaitForSeconds((startTime + Settings.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
+				yield return new WaitForSeconds((startTime + Settings.Replay.MaxTimePerFrame - Time.time) / Data.Replay.ProductionTimeScale);
 			}
 			Data.Replay.ProductionTimeScale = 0;
 			yield return StartCoroutine(Creates());
@@ -403,7 +386,6 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Supplies()
 	{
-		IsSupplying = true;
 		foreach (var supply in events.list.Where(supply => supply["__class__"].str == "Supply"))
 		{
 			Element target;
@@ -415,7 +397,6 @@ public class Replayer : MonoBehaviour
 		}
 		while (Data.Replay.SuppliesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		IsSupplying = false;
 	}
 
 	private void Update()

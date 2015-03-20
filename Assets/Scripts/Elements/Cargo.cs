@@ -17,7 +17,7 @@ public class Cargo : Ship
 	public IEnumerator Collect(Resource target, int fuel, int metal)
 	{
 		yield return AimAtPosition(target.transform.WorldCenterOfElement());
-		var elapsedTime = Mathf.Max((fuel + metal) / Settings.Replay.CollectRate, 0.1f);
+		var elapsedTime = Mathf.Max((fuel * Settings.Replay.FuelMultiplier + metal * Settings.Replay.MetalMultiplier) / Settings.Replay.CollectRate, 0.1f);
 		target.StartCoroutine(target.Beam(this, elapsedTime, BeamType.Collect));
 		yield return new WaitForSeconds((transform.TransformPoint(Center()) - target.transform.WorldCenterOfElement()).magnitude / Settings.Replay.BeamSpeed);
 		target.FlashingOn();
