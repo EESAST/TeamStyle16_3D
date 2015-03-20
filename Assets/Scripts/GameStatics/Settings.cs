@@ -149,16 +149,16 @@ public static class Settings
 	public static class Replay
 	{
 		private const float _beamSpeed = 1.5f;
-		public const float AmmoMultiplier = 5;
-		public const float CollectRate = 40;
+		public const float AmmoMultiplier = 3;
+		public const float CollectRate = 50;
 		public const float CreateTime = 3;
 		public const float FastProductionTimeScale = 10;
-		public const float FixRate = 20;
+		public const float FixRate = 25;
 		public const float FuelMultiplier = 1;
 		public const float MaxTimePerFrame = 30;
 		public const float MessageTime = 3; //corresponds to the TextFX prefab
 		public const float MetalMultiplier = 3;
-		public const float SupplyRate = 60;
+		public const float SupplyRate = 75;
 		public static float BeamSpeed { get { return _beamSpeed * DimensionScaleFactor; } }
 	}
 
