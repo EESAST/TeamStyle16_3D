@@ -36,8 +36,8 @@ public class BombManager : MonoBehaviour
 		audio.Play();
 		(Instantiate(Resources.Load("Detonator_" + level), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
 		--attacker.explosionsLeft;
-		exploded = true;
 		StartCoroutine(FadeOut());
+		exploded = true;
 	}
 
 	private IEnumerator FadeOut()

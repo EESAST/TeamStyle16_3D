@@ -62,6 +62,7 @@ public abstract class UnitBase : Element
 		hbImage = hbRect.Find("HBImage").GetComponent<RawImage>();
 		hbText = hbRect.Find("HBText").GetComponent<Text>();
 		hbHorizontalPixelNumber = Mathf.RoundToInt(Mathf.Pow(MaxHP(), 0.25f) * 10);
+		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 	}
 
 	private void Destruct()

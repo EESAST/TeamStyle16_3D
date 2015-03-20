@@ -1360,7 +1360,6 @@ MonoBehaviour:
   team: 0
   explosionsLeft: 0
   targetHP: 0
-  movementNum: 0
   isFalling: 0
   isHovering: 1
 --- !u!114 &11414596
