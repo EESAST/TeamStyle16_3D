@@ -169,6 +169,12 @@ public class Replayer : MonoBehaviour
 		}
 		foreach (var doodad in GameObject.FindGameObjectsWithTag("Doodad"))
 			Destroy(doodad);
+		foreach (var productionList in Data.Replay.ProductionLists)
+		{
+			foreach (var productionEntry in productionList)
+				Destroy(productionEntry.gameObject);
+			productionList.Clear();
+		}
 		var keyFrame = Data.Battle["key_frames"][frame]; //a key frame is the snapshot of the end state of a round, ranging from 0 to frameCount-1
 		foreach (var entry in keyFrame[0].list)
 		{
@@ -177,12 +183,6 @@ public class Replayer : MonoBehaviour
 		}
 		for (var i = 0; i < 2; ++i)
 			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = lastScores[i] = Data.Battle["history"]["score"][frame][i].i;
-		foreach (var productionList in Data.Replay.ProductionLists)
-		{
-			foreach (var productionEntry in productionList)
-				Destroy(productionEntry.gameObject);
-			productionList.Clear();
-		}
 		for (var i = 0; i < 2; ++i)
 			foreach (var productionEntry in keyFrame[1][i].list)
 				(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Initialize(i, productionEntry[0].i, productionEntry[1].i);
@@ -302,6 +302,7 @@ public class Replayer : MonoBehaviour
 			yield return StartCoroutine(FortCaptureScores());
 			Data.Replay.ProductionTimeScale = 1;
 		}
+		Data.Replay.ProductionTimeScale = 0;
 		yield return new WaitForSeconds(Settings.DeltaTime);
 		StartCoroutine(ShowSummary());
 	}
