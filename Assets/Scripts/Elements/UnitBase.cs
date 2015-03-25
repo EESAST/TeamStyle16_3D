@@ -20,7 +20,7 @@ public abstract class UnitBase : Element
 	private RectTransform hbRect;
 	private Text hbText;
 	private Texture2D hbTexture;
-	protected bool isAiming;
+	protected bool isAttacking;
 	private int lastHPIndex;
 	protected int targetAmmo;
 	public int targetHP;
@@ -31,7 +31,7 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackPosition(Vector3 targetPosition)
 	{
-		isAiming = true;
+		isAttacking = true;
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
 		yield return StartCoroutine(FireAtPosition(targetPosition));
@@ -40,7 +40,17 @@ public abstract class UnitBase : Element
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
 	{
-		isAiming = true;
+		isAttacking = true;
+		var fort = targetUnitBase as Fort;
+		if (fort)
+		{
+			var fortIndex = fort.index;
+			var fortLife = fort.rebornsLeft;
+			Element targetElement;
+			while (!Data.Replay.Elements.TryGetValue(fortIndex, out targetElement) || (targetElement as Fort).life != fortLife)
+				yield return null;
+			targetUnitBase = targetElement as UnitBase;
+		}
 		var targetPosition = targetUnitBase.transform.WorldCenterOfElement();
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
@@ -296,7 +306,7 @@ public abstract class UnitBase : Element
 			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
 		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
 			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
-		if (Mathf.RoundToInt(currentHP) == 0 && tag != "Doodad" && !isAiming)
+		if (Mathf.RoundToInt(currentHP) == 0 && tag != "Doodad" && !isAttacking)
 			Destruct();
 
 		#region Update Health Bar

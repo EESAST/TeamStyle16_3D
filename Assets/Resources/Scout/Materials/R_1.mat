@@ -19,7 +19,7 @@ Material:
         second:
           m_Texture: {fileID: 2800000, guid: 5e26160124bba7d419e050eaa43a97bf, type: 3}
           m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: .129782498}
+          m_Offset: {x: 0, y: .311709285}
       data:
         first:
           name: _Illum
@@ -36,4 +36,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0, g: .995140553, b: .995140553, a: .995140553}
+        second: {r: 0, g: .995159149, b: .995159149, a: .995159149}

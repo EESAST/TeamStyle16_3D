@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using JSON;
 using UnityEngine;
@@ -10,10 +11,12 @@ using UnityEngine;
 public class Fort : Building
 {
 	private static readonly Material[][] materials = new Material[3][];
+	public readonly List<int> targetTeams = new List<int>();
 	private Transform bomb;
 	private Transform cannon;
 	private Component[] idleFXs;
-	public int targetTeam;
+	public int life;
+	public int rebornsLeft;
 	protected override Transform Beamer { get { return cannon; } }
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
@@ -31,7 +34,6 @@ public class Fort : Building
 		cannon = transform.Find("Cannon");
 		bomb = cannon.Find("SP");
 		idleFXs = cannon.GetComponents(typeof(IIdleFX));
-		targetTeam = -1;
 		audio.volume = Settings.Audio.Volume.FortScore;
 	}
 
@@ -43,7 +45,7 @@ public class Fort : Building
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Large);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
@@ -55,7 +57,7 @@ public class Fort : Building
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), bomb.position, bomb.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Large);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
@@ -90,15 +92,17 @@ public class Fort : Building
 		base.OnDestroy();
 		if (team < 2)
 			Data.Replay.Forts[team].Remove(this);
-		if (targetTeam == -1)
+		if (targetTeams.Count == 0)
 			return;
 		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
-		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeam, targetFuel, targetAmmo, targetMetal));
+		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeams, targetFuel, targetAmmo, targetMetal, life + 1));
 	}
 
-	private IEnumerator Reborn(Vector3 internalPosition, int index, int targetTeam, int fuel, int ammo, int metal)
+	private IEnumerator Reborn(Vector3 internalPosition, int index, List<int> targetTeams, int fuel, int ammo, int metal, int life)
 	{
-		team = targetTeam;
+		team = targetTeams[0];
+		targetTeams.RemoveAt(0);
+		targetTeams.ForEach(targetTeam => this.targetTeams.Add(targetTeam));
 		Data.Replay.Elements.Add(this.index = index, this);
 		Data.Replay.Forts[team].Add(this);
 		++Data.Replay.UnitNums[team];
@@ -113,6 +117,7 @@ public class Fort : Building
 			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.deltaTime);
 			yield return null;
 		}
+		this.life = life;
 		--Data.Replay.AttacksLeft;
 	}
 

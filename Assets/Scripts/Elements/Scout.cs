@@ -17,7 +17,7 @@ public class Scout : Plane
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), transform.position, transform.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Small);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;
@@ -27,7 +27,7 @@ public class Scout : Plane
 	{
 		++explosionsLeft;
 		(Instantiate(Resources.Load("Bomb"), transform.position, transform.rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Small);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;

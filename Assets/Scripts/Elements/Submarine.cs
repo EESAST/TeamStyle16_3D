@@ -49,7 +49,7 @@ public class Submarine : Unit
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
 			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Medium);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;
@@ -60,7 +60,7 @@ public class Submarine : Unit
 		explosionsLeft += 2;
 		for (var i = 0; i < 2; ++i)
 			(Instantiate(Resources.Load("Bomb"), torpedos[i].position, torpedos[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Medium);
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		--Data.Replay.AttacksLeft;

@@ -61,11 +61,15 @@ public class Replayer : MonoBehaviour
 					break;
 				case "Capture":
 					++Data.Replay.AttacksLeft;
-					(Data.Replay.Elements[attack["index"].i] as Fort).targetTeam = attack["team"].i;
+					var fort = Data.Replay.Elements[attack["index"].i] as Fort;
+					fort.targetTeams.Add(attack["team"].i);
+					++fort.rebornsLeft;
 					break;
 			}
 		while (Data.Replay.AttacksLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
+		foreach (var fort in Data.Replay.Forts.SelectMany(fortList => fortList))
+			fort.life = 0;
 	}
 
 	private void Awake()
@@ -159,7 +163,7 @@ public class Replayer : MonoBehaviour
 			var item = Data.Replay.Elements.ElementAt(i);
 			var fort = item.Value as Fort;
 			if (fort)
-				fort.targetTeam = -1;
+				fort.targetTeams.Clear();
 			var carrier = item.Value as Carrier;
 			if (carrier)
 				carrier.DestroyInterceptors();

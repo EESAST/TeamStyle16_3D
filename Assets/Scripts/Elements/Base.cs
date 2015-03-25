@@ -58,7 +58,7 @@ public class Base : Building
 			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Large);
 			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetPosition, BombManager.Level.Small);
 		}
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
@@ -74,7 +74,7 @@ public class Base : Building
 			(Instantiate(Resources.Load("Bomb"), bigBombs[i].position, bigBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Large);
 			(Instantiate(Resources.Load("Bomb"), smallBombs[i].position, smallBombs[i].rotation) as GameObject).GetComponent<BombManager>().Initialize(this, targetUnitBase, BombManager.Level.Small);
 		}
-		isAiming = false;
+		isAttacking = false;
 		while (explosionsLeft > 0)
 			yield return null;
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
