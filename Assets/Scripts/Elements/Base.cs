@@ -14,10 +14,9 @@ public class Base : Building
 	private Transform bigGuns;
 	private Transform head;
 	private Component[] idleFXs;
-	private Transform lightPole;
 	private Transform[] smallBombs;
 	private Transform smallGuns;
-	protected override Transform Beamer { get { return lightPole; } }
+	protected override Transform Beamer { get { return transform.Find("Head/LightPole"); } }
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
 	protected override int RelativeSize { get { return 3; } }
 
@@ -40,7 +39,6 @@ public class Base : Building
 		head = transform.Find("Head");
 		bigGuns = head.Find("BigGuns");
 		smallGuns = head.Find("SmallGuns");
-		lightPole = head.Find("LightPole");
 		bigBombs = new[] { bigGuns.Find("BG_LSP"), bigGuns.Find("BG_RSP") };
 		smallBombs = new[] { smallGuns.Find("SG_LSP"), smallGuns.Find("SG_RSP") };
 		idleFXs = head.GetComponentsInChildren(typeof(IIdleFX));
@@ -92,17 +90,20 @@ public class Base : Building
 		var effectedMetal = 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
 		{
-			var deltaHP = Mathf.RoundToInt(healthIncrease * t - effectedHP);
-			if (deltaHP > 0)
+			if (!Data.GamePaused)
 			{
-				target.targetHP += deltaHP;
-				effectedHP += deltaHP;
-			}
-			var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
-			if (deltaMetal > 0)
-			{
-				targetMetal -= deltaMetal;
-				effectedMetal += deltaMetal;
+				var deltaHP = Mathf.RoundToInt(healthIncrease * t - effectedHP);
+				if (deltaHP > 0)
+				{
+					target.targetHP += deltaHP;
+					effectedHP += deltaHP;
+				}
+				var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
+				if (deltaMetal > 0)
+				{
+					targetMetal -= deltaMetal;
+					effectedMetal += deltaMetal;
+				}
 			}
 			yield return null;
 		}

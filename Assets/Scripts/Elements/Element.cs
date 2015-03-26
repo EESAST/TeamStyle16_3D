@@ -10,15 +10,21 @@ using UnityEngine.UI;
 
 public abstract class Element : MonoBehaviour
 {
+	private AudioSource beamAudio;
+	private ParticleSystem beamFX;
 	private int beamsLeft;
 	protected float currentFuel;
 	protected float currentMetal;
+	private bool firstBeam = true;
 	private bool guiInitialized;
 	protected Highlighter highlighter;
 	public int index;
+	protected bool isFlashing;
 	protected RectTransform markRect;
 	private Texture markTexture;
 	public bool MouseOver;
+	public bool shallResumeAudio;
+	private bool shallResumeBeamAudio;
 	public int targetFuel;
 	public int targetMetal;
 	public int team;
@@ -32,6 +38,7 @@ public abstract class Element : MonoBehaviour
 		Delegates.MarkSizeChanged += RefreshMarkSize;
 		Delegates.ScreenSizeChanged += RefreshMarkSize;
 		Delegates.CurrentTeamColorChanged += RefreshColor;
+		Delegates.GameStateChanged += OnGameStateChanged;
 		LoadMark();
 		markRect.name = Level().ToString();
 		markTexture = markRect.GetComponent<RawImage>().texture;
@@ -57,46 +64,57 @@ public abstract class Element : MonoBehaviour
 
 	public IEnumerator Beam(Component target, float elapsedTime, BeamType beamType)
 	{
-		var beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
-		beamFX.transform.parent = Beamer;
-		beamFX.transform.position = Beamer.GetComponent<Element>() ? Beamer.WorldCenterOfElement() : Beamer.position;
-		beamFX.startSpeed = Settings.Replay.BeamSpeed;
-		var beamAudio = beamFX.audio;
+		if (firstBeam)
+		{
+			beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
+			beamFX.transform.parent = Beamer;
+			beamFX.transform.position = Beamer.GetComponent<Element>() ? Beamer.WorldCenterOfElement() : Beamer.position;
+			beamFX.startSpeed = Settings.Replay.BeamSpeed;
+			beamAudio = beamFX.audio;
+			beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
+			beamAudio.volume = Settings.Audio.Volume.Beam;
+			firstBeam = false;
+		}
+		else
+			beamFX.gameObject.SetActive(true);
 		beamAudio.clip = Resources.Load<AudioClip>("Sounds/Beam_" + beamType);
-		beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
-		beamAudio.volume = Settings.Audio.Volume.Beam;
-		beamAudio.Play();
+		if (Data.GamePaused)
+			shallResumeBeamAudio = true;
+		else
+			beamAudio.Play();
 		beamFX.Play();
-		var element = Beamer.GetComponentInParent<Element>();
 		for (var startTime = Time.time; ((Time.time - startTime) / elapsedTime) < 1;)
 		{
-			var v = target.transform.WorldCenterOfElement() - beamFX.transform.position;
-			beamFX.transform.rotation = Quaternion.LookRotation(v);
-			beamFX.startLifetime = v.magnitude / beamFX.startSpeed;
-			if (element is Mine)
-				beamFX.startColor = new Color32(245, 245, 220, 255);
-			else if (element is Oilfield)
-				beamFX.startColor = Color.green;
-			else
-				beamFX.startColor = Data.TeamColor.Current[element.team];
+			if (!Data.GamePaused)
+			{
+				var v = target.transform.WorldCenterOfElement() - beamFX.transform.position;
+				beamFX.transform.rotation = Quaternion.LookRotation(v);
+				beamFX.startLifetime = v.magnitude / beamFX.startSpeed;
+				if (this is Mine)
+					beamFX.startColor = new Color32(245, 245, 220, 255);
+				else if (this is Oilfield)
+					beamFX.startColor = Color.green;
+				else
+					beamFX.startColor = Data.TeamColor.Current[team];
+			}
 			yield return null;
 		}
 		beamFX.Stop();
-		Destroy(beamFX.gameObject, beamFX.startLifetime);
 		var time = Time.time;
 		beamAudio.loop = false;
-		while (beamAudio && beamAudio.isPlaying)
+		while (beamAudio.isPlaying || Data.GamePaused)
 			yield return null;
-		if (!beamAudio || !beamAudio.isActiveAndEnabled)
-			yield break;
-		var loopsLeft = Mathf.FloorToInt((beamFX.startLifetime - Time.time + time) / beamAudio.clip.length);
+		var loopsLeft = Mathf.RoundToInt((beamFX.startLifetime - Time.time + time) / beamAudio.clip.length);
 		if (loopsLeft <= 0)
 			yield break;
 		beamAudio.loop = true;
-		beamAudio.Play();
+		if (Data.GamePaused)
+			shallResumeBeamAudio = true;
+		else
+			beamAudio.Play();
 		yield return new WaitForSeconds(loopsLeft * beamAudio.clip.length);
-		if (beamAudio)
-			beamAudio.Stop();
+		beamAudio.Stop();
+		beamFX.gameObject.SetActive(false);
 	}
 
 	public abstract Vector3 Center();
@@ -120,7 +138,10 @@ public abstract class Element : MonoBehaviour
 		if (this is Submarine)
 			highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, Settings.Highlighter.SubmarineFlashingRate);
 		else
+		{
 			highlighter.FlashingOff();
+			isFlashing = false;
+		}
 	}
 
 	public void FlashingOn()
@@ -129,7 +150,10 @@ public abstract class Element : MonoBehaviour
 		if (this is Submarine)
 			highlighter.FlashingParams(Data.TeamColor.Current[team], Color.clear, Settings.Highlighter.BeamFlashingRate);
 		else if (SelectionManager.LastSelectedElement != this)
+		{
 			highlighter.FlashingOn();
+			isFlashing = true;
+		}
 	}
 
 	public virtual void Initialize(JSONObject info)
@@ -164,8 +188,49 @@ public abstract class Element : MonoBehaviour
 		Delegates.MarkSizeChanged -= RefreshMarkSize;
 		Delegates.ScreenSizeChanged -= RefreshMarkSize;
 		Delegates.CurrentTeamColorChanged -= RefreshColor;
+		Delegates.GameStateChanged -= OnGameStateChanged;
 		if (markRect)
 			Destroy(markRect.gameObject);
+	}
+
+	protected virtual void OnGameStateChanged()
+	{
+		if (Data.GamePaused)
+		{
+			if (audio.isPlaying)
+			{
+				audio.Pause();
+				shallResumeAudio = true;
+			}
+			if (beamAudio && beamAudio.isPlaying)
+			{
+				beamAudio.Pause();
+				shallResumeBeamAudio = true;
+			}
+			if (isFlashing)
+			{
+				highlighter.FlashingOff();
+				highlighter.ConstantOnImmediate();
+			}
+		}
+		else
+		{
+			if (shallResumeAudio)
+			{
+				audio.Play();
+				shallResumeAudio = false;
+			}
+			if (shallResumeBeamAudio)
+			{
+				beamAudio.Play();
+				shallResumeBeamAudio = false;
+			}
+			if (isFlashing)
+			{
+				highlighter.ConstantOffImmediate();
+				highlighter.FlashingOn();
+			}
+		}
 	}
 
 	protected virtual void OnGUI()

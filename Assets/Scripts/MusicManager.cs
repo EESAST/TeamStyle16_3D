@@ -19,7 +19,7 @@ public class MusicManager : MonoBehaviour
 		audio.clip = musicList[index % musicList.Count];
 		audio.Play();
 		while (audio.isPlaying)
-			yield return new WaitForSeconds(Settings.DeltaTime);
+			yield return null;
 	}
 
 	private IEnumerator Start()

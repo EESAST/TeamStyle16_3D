@@ -29,6 +29,7 @@ public class Submarine : Unit
 		torpedos = new[] { transform.Find("Hull/LSP"), transform.Find("Hull/RSP") };
 		trails = GetComponentsInChildren<ParticleSystem>();
 		autoRotations = GetComponentsInChildren<AutoRotation>();
+		isFlashing = true;
 	}
 
 	public override Vector3 Center() { return new Vector3(-0.00f, 0.19f, 0.04f); }

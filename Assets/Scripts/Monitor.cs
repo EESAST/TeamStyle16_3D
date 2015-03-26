@@ -101,11 +101,12 @@ public class Monitor : MonoBehaviour
 
 		#region Target Team Color
 
-		if (!Data.GUI.Initialized || Methods.Array.Equals(teamColor, Data.TeamColor.Target))
-			return;
-		Methods.GUI.RefreshTeamColoredStyles();
-		for (var i = 0; i < 4; i++)
-			teamColor[i] = Data.TeamColor.Target[i];
+		if (Data.GUI.Initialized && !Methods.Array.Equals(teamColor, Data.TeamColor.Target))
+		{
+			Methods.GUI.RefreshTeamColoredStyles();
+			for (var i = 0; i < 4; i++)
+				teamColor[i] = Data.TeamColor.Target[i];
+		}
 
 		#endregion
 	}

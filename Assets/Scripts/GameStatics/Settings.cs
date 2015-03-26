@@ -130,8 +130,8 @@ public static class Settings
 
 	public static class MiniMap
 	{
-		public const int Granularity = 2; //Must be even to ensure proper display of the texture
-		public static readonly RectOffset Border = new RectOffset(19, 39, 31, 31); //Corresponds to the rect offset of the mini frame sprite
+		public const int Granularity = 2; //must be even to ensure proper display of the texture
+		public static readonly RectOffset Border = new RectOffset(19, 39, 31, 31); //corresponds to the rect offset of the mini frame sprite
 		public static Color LandColor = new Color(0, 0.8f, 0, 0.8f);
 		public static Color LineColor = Color.yellow;
 		public static Color OceanColor = new Color(0, 0, 0.6f, 0.6f);

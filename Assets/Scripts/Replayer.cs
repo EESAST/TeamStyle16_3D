@@ -127,7 +127,10 @@ public class Replayer : MonoBehaviour
 			foreach (var fort in Data.Replay.Forts[i])
 			{
 				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "PTS: +" + Constants.Score.PerFortPerRound));
-				fort.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Fort_Score"));
+				if (Data.GamePaused)
+					fort.shallResumeAudio = true;
+				else
+					fort.audio.Play();
 			}
 		}
 		if (Data.Replay.Forts.Any(fortList => fortList.Count > 0))
@@ -394,11 +397,11 @@ public class Replayer : MonoBehaviour
 		foreach (var supply in events.list.Where(supply => supply["__class__"].str == "Supply"))
 		{
 			Element target;
-			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target))
+			Element supplier;
+			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target) || !Data.Replay.Elements.TryGetValue(supply["index"].i, out supplier))
 				continue;
 			++Data.Replay.SuppliesLeft;
-			var supplier = Data.Replay.Elements[supply["index"].i] as UnitBase;
-			supplier.StartCoroutine(supplier.Supply(target as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));
+			supplier.StartCoroutine((supplier as UnitBase).Supply(target as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));
 		}
 		while (Data.Replay.SuppliesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
@@ -410,7 +413,7 @@ public class Replayer : MonoBehaviour
 			return;
 		if (currentFrame != frameSlide && !Input.GetMouseButton(0))
 		{
-			LoadFrame(currentFrame = frameSlide); //Loads the end state of the designated frame
+			LoadFrame(currentFrame = frameSlide); //loads the end state of the designated frame
 			return;
 		}
 		if (showDetail && currentFrame == Data.Replay.FrameCount && Input.GetKeyUp(KeyCode.Escape))

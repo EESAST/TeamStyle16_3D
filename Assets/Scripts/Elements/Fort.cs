@@ -17,7 +17,7 @@ public class Fort : Building
 	private Component[] idleFXs;
 	public int life;
 	public int rebornsLeft;
-	protected override Transform Beamer { get { return cannon; } }
+	protected override Transform Beamer { get { return transform.Find("Cannon"); } }
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
@@ -35,6 +35,7 @@ public class Fort : Building
 		bomb = cannon.Find("SP");
 		idleFXs = cannon.GetComponents(typeof(IIdleFX));
 		audio.volume = Settings.Audio.Volume.FortScore;
+		audio.clip = Resources.Load<AudioClip>("Sounds/Fort_Score");
 	}
 
 	public override Vector3 Center() { return new Vector3(0.05f, 0.60f, 0.05f); }

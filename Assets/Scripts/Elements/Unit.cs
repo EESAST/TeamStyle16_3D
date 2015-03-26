@@ -18,7 +18,11 @@ public abstract class Unit : UnitBase
 
 	protected virtual void Activate()
 	{
-		audio.Play();
+		audio.clip = Resources.Load<AudioClip>("Sounds/" + Constants.TypeNames[Kind()] + "_Launching");
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		isActive = true;
 	}
 
@@ -41,7 +45,6 @@ public abstract class Unit : UnitBase
 	protected override void Awake()
 	{
 		base.Awake();
-		audio.clip = Resources.Load<AudioClip>("Sounds/" + Constants.TypeNames[Kind()] + "_Launching");
 		audio.volume = Settings.Audio.Volume.Unit;
 	}
 
@@ -49,7 +52,11 @@ public abstract class Unit : UnitBase
 	{
 		Initialize(info);
 		StartCoroutine(ShowCreateFX());
-		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Create_" + team));
+		audio.clip = Resources.Load<AudioClip>("Sounds/Create_" + team);
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(this, "Created!"));
 		--Data.Replay.CreatesLeft;
 	}
@@ -99,8 +106,11 @@ public abstract class Unit : UnitBase
 				++movementNum;
 				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time / 2) < 1 - Time.deltaTime / time / 4;)
 				{
-					targetPosition = o + Vector3.Slerp(-b, a, t);
-					transform.rotation = Quaternion.Slerp(p, q, t);
+					if (!Data.GamePaused)
+					{
+						targetPosition = o + Vector3.Slerp(-b, a, t);
+						transform.rotation = Quaternion.Slerp(p, q, t);
+					}
 					yield return null;
 				}
 				targetPosition = w;
@@ -114,7 +124,8 @@ public abstract class Unit : UnitBase
 				++movementNum;
 				for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time) < 1 - Time.deltaTime / time / 2;)
 				{
-					targetPosition = Vector3.Lerp(u, v, t);
+					if (!Data.GamePaused)
+						targetPosition = Vector3.Lerp(u, v, t);
 					yield return null;
 				}
 				targetPosition = v;
@@ -133,7 +144,8 @@ public abstract class Unit : UnitBase
 			++movementNum;
 			for (float t, startTime = Time.time; (t = (Time.time - startTime + Time.deltaTime) / time) < 1 - Time.deltaTime / time / 2;)
 			{
-				targetPosition = Vector3.Lerp(u, v, t);
+				if (!Data.GamePaused)
+					targetPosition = Vector3.Lerp(u, v, t);
 				yield return null;
 			}
 			targetPosition = v;
@@ -160,8 +172,11 @@ public abstract class Unit : UnitBase
 		var maxEnergy = particleEmitters.Max(emitter => emitter.maxEnergy);
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / (Settings.Replay.CreateTime - maxEnergy)) < 1;)
 		{
-			var theta = 3 * Mathf.PI * t;
-			createFX.transform.position = center + radius * new Vector3(Mathf.Cos(theta), 2 * t, Mathf.Sin(theta));
+			if (!Data.GamePaused)
+			{
+				var theta = 3 * Mathf.PI * t;
+				createFX.transform.position = center + radius * new Vector3(Mathf.Cos(theta), 2 * t, Mathf.Sin(theta));
+			}
 			yield return null;
 		}
 		foreach (var emitter in particleEmitters)

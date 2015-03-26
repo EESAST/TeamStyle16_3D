@@ -17,11 +17,13 @@ public class BombManager : MonoBehaviour
 	private UnitBase attacker;
 	private bool exploded;
 	private Level level;
+	private bool shallResumeAudio;
 	private Vector3 targetPosition;
 	private UnitBase targetUnitBase;
 
 	private void Awake()
 	{
+		Delegates.GameStateChanged += OnGameStateChanged;
 		foreach (var childCollider in GetComponentsInChildren<Collider>())
 			childCollider.gameObject.layer = LayerMask.NameToLayer("Bomb");
 		audio.maxDistance = Settings.Audio.MaxAudioDistance;
@@ -33,7 +35,10 @@ public class BombManager : MonoBehaviour
 	private void Explode()
 	{
 		audio.clip = Resources.Load<AudioClip>("Sounds/Impact_" + level);
-		audio.Play();
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		(Instantiate(Resources.Load("Detonator_" + level), transform.position, Quaternion.identity) as GameObject).GetComponent<Detonator>().size = ((float)level + 1) / 2 * Settings.DimensionScaleFactor;
 		--attacker.explosionsLeft;
 		StartCoroutine(FadeOut());
@@ -65,6 +70,24 @@ public class BombManager : MonoBehaviour
 		level = bombLevel;
 	}
 
+	private void OnDestroy() { Delegates.GameStateChanged -= OnGameStateChanged; }
+
+	private void OnGameStateChanged()
+	{
+		if (Data.GamePaused)
+		{
+			if (!audio.isPlaying)
+				return;
+			audio.Pause();
+			shallResumeAudio = true;
+		}
+		else if (shallResumeAudio)
+		{
+			audio.Play();
+			shallResumeAudio = false;
+		}
+	}
+
 	private void OnTriggerEnter(Component other)
 	{
 		if (exploded)
@@ -77,7 +100,11 @@ public class BombManager : MonoBehaviour
 
 	private IEnumerator Start()
 	{
-		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Launcher_" + level));
+		audio.clip = Resources.Load<AudioClip>("Sounds/Launcher_" + level);
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		transform.localScale = Vector3.one * ((int)level + 1) * 0.1f * Settings.DimensionScaleFactor / ((Dimensions().x + Dimensions().z));
 		while (!exploded && (targetPosition - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Bomb.Speed)
 		{

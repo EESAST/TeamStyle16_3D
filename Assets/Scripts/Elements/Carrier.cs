@@ -108,6 +108,7 @@ public class Carrier : Ship
 	{
 		base.Start();
 		transform.Find("Hull").GetComponent<MeshRenderer>().material = materials[0][team];
+		transform.Find("Hull/Radar").GetComponent<MeshRenderer>().material = materials[0][team];
 		foreach (var interceptor in interceptors)
 			interceptor.GetComponentInChildren<MeshRenderer>().material = materials[1][team];
 	}

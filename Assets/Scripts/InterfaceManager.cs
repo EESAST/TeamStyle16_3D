@@ -41,7 +41,6 @@ public class InterfaceManager : MonoBehaviour
 	private void Awake()
 	{
 		Delegates.ScreenSizeChanged += OnScreenSizeChanged;
-		Methods.Game.Resume();
 		Data.Replay.TeamNames = new[] { "队伍1", "队伍2", "中立" };
 		for (var i = 0; i < clouds.Length; i++)
 		{

@@ -265,12 +265,6 @@ public static class Methods
 
 	public static class Game
 	{
-		public static void Pause()
-		{
-			Data.GamePaused = true;
-			Time.timeScale = 0;
-		}
-
 		public static void Quit()
 		{
 #if UNITY_EDITOR
@@ -280,10 +274,12 @@ public static class Methods
 #endif
 		}
 
-		public static void Resume()
+		public static void SwitchState()
 		{
-			Data.GamePaused = false;
-			Time.timeScale = 1;
+			Data.GamePaused = !Data.GamePaused;
+			Time.timeScale = Data.GamePaused ? 0 : 1;
+			if (Delegates.GameStateChanged != null)
+				Delegates.GameStateChanged();
 		}
 	}
 

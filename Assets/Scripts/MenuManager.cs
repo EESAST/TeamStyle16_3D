@@ -115,7 +115,10 @@ public class MenuManager : MonoBehaviour
 				break;
 			case MenuState.Back:
 				if (Confirm("回到主界面"))
+				{
+					Methods.Game.SwitchState();
 					Application.LoadLevel("MainInterface");
+				}
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
@@ -140,19 +143,13 @@ public class MenuManager : MonoBehaviour
 
 	private void SwitchGameState()
 	{
-		stagedState = stagedState == MenuState.None ? MenuState.Default : MenuState.None;
-		if (stagedState == MenuState.None)
-		{
-			if (!Methods.Array.Equals(lastTargetTeamColor, Data.TeamColor.Target.Take(2).ToArray()))
-				Data.Replay.Instance.chartsReady = false;
-			Methods.Game.Resume();
-		}
-		else
-		{
+		Methods.Game.SwitchState();
+		stagedState = Data.GamePaused ? MenuState.Default : MenuState.None;
+		if (Data.GamePaused)
 			for (var i = 0; i < 2; ++i)
 				lastTargetTeamColor[i] = Data.TeamColor.Target[i];
-			Methods.Game.Pause();
-		}
+		else if (!Methods.Array.Equals(lastTargetTeamColor, Data.TeamColor.Target.Take(2).ToArray()))
+			Data.Replay.Instance.chartsReady = false;
 		Camera.main.GetComponent<Blur>().enabled = Data.GamePaused;
 		GetComponent<SelectionManager>().enabled = !Data.GamePaused;
 	}

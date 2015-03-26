@@ -9,10 +9,13 @@ using UnityEngine;
 public class Interceptor : MonoBehaviour
 {
 	private const float relativeSize = 0.4f;
+	private AudioSource dummyAudio;
 	private Transform[] missiles;
 	private Carrier owner;
 	public IEnumerator returnTrip;
 	private Transform seat;
+	private bool shallResumeAudio;
+	private bool shallResumeDummyAudio;
 	private ParticleSystem[] trails;
 
 	private IEnumerator AdjustOrientation(Vector3 targetOrientation)
@@ -28,7 +31,11 @@ public class Interceptor : MonoBehaviour
 		var localTarget = Vector3.forward * Settings.DimensionScaleFactor / 3;
 		foreach (var trail in trails)
 			trail.Play();
-		audio.Play();
+		audio.clip = Resources.Load<AudioClip>("Sounds/Interceptor_Launching");
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		while (Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, localTarget, Settings.Interceptor.Speed * Time.deltaTime), localTarget) > Settings.DimensionalTolerance)
 			yield return null;
 		transform.parent.DetachChildren();
@@ -45,12 +52,12 @@ public class Interceptor : MonoBehaviour
 
 	private void Awake()
 	{
+		Delegates.GameStateChanged += OnGameStateChanged;
 		owner = transform.GetComponentInParent<Carrier>();
 		seat = transform.parent;
 		missiles = new[] { transform.Find("Airframe/LSP"), transform.Find("Airframe/RSP") };
 		trails = GetComponentsInChildren<ParticleSystem>();
 		gameObject.AddComponent<AudioSource>();
-		audio.clip = Resources.Load<AudioClip>("Sounds/Interceptor_Launching");
 		audio.dopplerLevel = 0;
 		audio.maxDistance = Settings.Audio.MaxAudioDistance;
 		audio.rolloffMode = AudioRolloffMode.Linear;
@@ -62,6 +69,7 @@ public class Interceptor : MonoBehaviour
 	private IEnumerator Explode()
 	{
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
+		dummyAudio = dummy.audio;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 5 * relativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
@@ -102,15 +110,21 @@ public class Interceptor : MonoBehaviour
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
-		dummy.audio.maxDistance = Settings.Audio.MaxAudioDistance;
-		dummy.audio.volume = Settings.Audio.Volume.Death1;
-		dummy.audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Death_1"));
+		dummyAudio.maxDistance = Settings.Audio.MaxAudioDistance;
+		dummyAudio.volume = Settings.Audio.Volume.Death1;
+		dummyAudio.clip = Resources.Load<AudioClip>("Sounds/Death_1");
+		if (Data.GamePaused)
+			shallResumeDummyAudio = true;
+		else
+			dummyAudio.Play();
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = relativeSize * Settings.DimensionScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(relativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
 		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
 			meshRenderer.collider.enabled = meshRenderer.enabled = false;
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
+		while (dummyAudio.isPlaying || Data.GamePaused)
+			yield return null;
 		Destroy(gameObject);
 	}
 
@@ -132,10 +146,46 @@ public class Interceptor : MonoBehaviour
 		StartCoroutine(Explode());
 	}
 
+	private void OnDestroy() { Delegates.GameStateChanged -= OnGameStateChanged; }
+
+	private void OnGameStateChanged()
+	{
+		if (Data.GamePaused)
+		{
+			if (audio.isPlaying)
+			{
+				audio.Pause();
+				shallResumeAudio = true;
+			}
+			if (dummyAudio && dummyAudio.isPlaying)
+			{
+				dummyAudio.Pause();
+				shallResumeDummyAudio = true;
+			}
+		}
+		else
+		{
+			if (shallResumeAudio)
+			{
+				audio.Play();
+				shallResumeAudio = false;
+			}
+			if (shallResumeDummyAudio)
+			{
+				dummyAudio.Play();
+				shallResumeDummyAudio = false;
+			}
+		}
+	}
+
 	public IEnumerator Return()
 	{
 		++owner.movingInterceptorsLeft;
-		audio.PlayOneShot(Resources.Load<AudioClip>("Sounds/Interceptor_Returning"));
+		audio.clip = Resources.Load<AudioClip>("Sounds/Interceptor_Returning");
+		if (Data.GamePaused)
+			shallResumeAudio = true;
+		else
+			audio.Play();
 		while ((seat.position - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
 		{
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(seat.position - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);

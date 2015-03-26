@@ -27,25 +27,28 @@ public class Cargo : Ship
 		var effectedScore = 0;
 		for (float t, startTime = Time.time; (t = (Time.time - startTime) / elapsedTime) < 1;)
 		{
-			var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
-			if (deltaFuel > 0)
+			if (!Data.GamePaused)
 			{
-				targetFuel += deltaFuel;
-				target.targetFuel -= deltaFuel;
-				effectedFuel += deltaFuel;
-			}
-			var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
-			if (deltaMetal > 0)
-			{
-				targetMetal += deltaMetal;
-				target.targetMetal -= deltaMetal;
-				effectedMetal += deltaMetal;
-			}
-			var deltaScore = Mathf.RoundToInt(score * t - effectedScore);
-			if (deltaScore > 0)
-			{
-				Data.Replay.TargetScores[team] += deltaScore;
-				effectedScore += deltaScore;
+				var deltaFuel = Mathf.RoundToInt(fuel * t - effectedFuel);
+				if (deltaFuel > 0)
+				{
+					targetFuel += deltaFuel;
+					target.targetFuel -= deltaFuel;
+					effectedFuel += deltaFuel;
+				}
+				var deltaMetal = Mathf.RoundToInt(metal * t - effectedMetal);
+				if (deltaMetal > 0)
+				{
+					targetMetal += deltaMetal;
+					target.targetMetal -= deltaMetal;
+					effectedMetal += deltaMetal;
+				}
+				var deltaScore = Mathf.RoundToInt(score * t - effectedScore);
+				if (deltaScore > 0)
+				{
+					Data.Replay.TargetScores[team] += deltaScore;
+					effectedScore += deltaScore;
+				}
 			}
 			yield return null;
 		}
