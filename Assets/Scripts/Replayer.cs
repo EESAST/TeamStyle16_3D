@@ -43,7 +43,7 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Attacks()
 	{
-		var capturedFortIndices = new List<int>();
+		var capturedForts = new List<int>();
 		foreach (var attack in events.list)
 			switch (attack["__class__"].str)
 			{
@@ -67,13 +67,13 @@ public class Replayer : MonoBehaviour
 					var fort = Data.Replay.Elements[fortIndex] as Fort;
 					fort.targetTeams.Add(attack["team"].i);
 					++fort.rebornsLeft;
-					capturedFortIndices.Add(fortIndex);
+					capturedForts.Add(fortIndex);
 					break;
 			}
 		while (Data.Replay.AttacksLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		foreach (var capturedFortIndex in capturedFortIndices)
-			(Data.Replay.Elements[capturedFortIndex] as Fort).life = 0;
+		foreach (var fortIndex in capturedForts)
+			(Data.Replay.Elements[fortIndex] as Fort).life = 0;
 	}
 
 	private void Awake()
@@ -96,25 +96,24 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Creates()
 	{
+		bool[] hasCreates = { false, false };
 		foreach (var create in events.list.Where(create => create["__class__"].str == "Create"))
 		{
 			var info = elements[create["index"].i.ToString()];
-			var _base = Data.Replay.Bases[info["team"].i];
-			if (!_base || _base.tag == "Doodad")
+			var team = info["team"].i;
+			var _base = Data.Replay.Bases[team];
+			if (!_base || _base.targetHP == 0)
 				continue;
 			++Data.Replay.CreatesLeft;
 			var typeName = Constants.TypeNames[create["kind"].i];
 			var unit = ((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Unit);
 			unit.StartCoroutine(unit.Create(info));
+			hasCreates[team] = true;
 			yield return null;
 		}
-		if (Data.Replay.CreatesLeft > 0)
-			for (var i = 0; i < 2; ++i)
-			{
-				var _base = Data.Replay.Bases[i];
-				if (_base && _base.tag != "Doodad")
-					_base.targetFuel = elements[_base.index.ToString()]["fuel"].i;
-			}
+		for (var i = 0; i < 2; ++i)
+			if (hasCreates[i])
+				Data.Replay.Bases[i].targetFuel = elements[Data.Replay.Bases[i].index.ToString()]["fuel"].i;
 		while (Data.Replay.CreatesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 	}
@@ -124,7 +123,7 @@ public class Replayer : MonoBehaviour
 		foreach (var fix in events.list.Where(fix => fix["__class__"].str == "Fix"))
 		{
 			Element fixer;
-			if (!Data.Replay.Elements.TryGetValue(fix["index"].i, out fixer) || fixer.tag == "Doodad")
+			if (!Data.Replay.Elements.TryGetValue(fix["index"].i, out fixer) || (fixer as UnitBase).targetHP == 0)
 				continue;
 			++Data.Replay.FixesLeft;
 			fixer.StartCoroutine((fixer as Base).Fix(Data.Replay.Elements[fix["target"].i] as Unit, fix["metal"].i, fix["health_increase"].i));
@@ -135,11 +134,11 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator FortCaptureScores()
 	{
-		var scored = false;
+		var scoring = false;
 		for (var i = 0; i < 2; ++i)
-			foreach (var fort in Data.Replay.Forts[i].Where(fort => fort.tag != "Doodad"))
+			foreach (var fort in Data.Replay.Forts[i].Where(fort => fort.targetHP != 0))
 			{
-				scored = true;
+				scoring = true;
 				Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound;
 				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "PTS: +" + Constants.Score.PerFortPerRound));
 				if (Data.GamePaused)
@@ -147,7 +146,7 @@ public class Replayer : MonoBehaviour
 				else
 					fort.audio.Play();
 			}
-		if (scored)
+		if (scoring)
 			yield return new WaitForSeconds(Settings.Replay.MessageTime);
 	}
 
@@ -366,7 +365,7 @@ public class Replayer : MonoBehaviour
 
 	public IEnumerator ShowMessageAt(Element element, string message) { yield return StartCoroutine(ShowMessageAt(element.TopCenter() + Settings.MessagePositionOffset, message)); }
 
-	public IEnumerator ShowMessageAt(Vector3 position, string message)
+	public static IEnumerator ShowMessageAt(Vector3 position, string message)
 	{
 		var textFX = (Instantiate(Resources.Load("TextFX")) as GameObject).GetComponent<EffectManager>();
 		textFX.transform.position = position;
@@ -410,7 +409,7 @@ public class Replayer : MonoBehaviour
 		{
 			Element target;
 			Element supplier;
-			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target) || !Data.Replay.Elements.TryGetValue(supply["index"].i, out supplier) || supplier.tag == "Doodad")
+			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target) || !Data.Replay.Elements.TryGetValue(supply["index"].i, out supplier) || (supplier as UnitBase).targetHP == 0)
 				continue;
 			++Data.Replay.SuppliesLeft;
 			supplier.StartCoroutine((supplier as UnitBase).Supply(target as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));

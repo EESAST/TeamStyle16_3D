@@ -35,7 +35,7 @@ public abstract class UnitBase : Element
 		yield return StartCoroutine(AimAtPosition(targetPosition));
 		targetAmmo -= AmmoOnce();
 		yield return StartCoroutine(FireAtPosition(targetPosition));
-		yield return StartCoroutine(Data.Replay.Instance.ShowMessageAt(targetPosition + Settings.MessagePositionOffset, "Miss..."));
+		yield return StartCoroutine(Replayer.ShowMessageAt(targetPosition + Settings.MessagePositionOffset, "Miss..."));
 	}
 
 	public IEnumerator AttackUnitBase(UnitBase targetUnitBase, int damage)
