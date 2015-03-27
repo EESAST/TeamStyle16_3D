@@ -78,7 +78,7 @@ public class ProductionEntry : MonoBehaviour
 
 	private IEnumerator Progress()
 	{
-		while ((tintedIcon.fillAmount += Time.deltaTime * Data.Replay.ProductionTimeScale / lifeSpan) < 1)
+		while (Data.GamePaused || (tintedIcon.fillAmount += Time.deltaTime * Data.Replay.ProductionTimeScale / lifeSpan) < 1)
 			yield return null;
 		ready = true;
 	}

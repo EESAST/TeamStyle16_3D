@@ -35,7 +35,7 @@ public abstract class Unit : UnitBase
 		if (!ship)
 			++movementNum;
 		var targetRotation = Quaternion.LookRotation(targetOrientation);
-		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, AngularSpeed * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, AngularSpeed * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 		if (!ship)
 			--movementNum;
@@ -51,6 +51,11 @@ public abstract class Unit : UnitBase
 	public IEnumerator Create(JSONObject info)
 	{
 		Initialize(info);
+		foreach (var productionEntry in Data.Replay.ProductionLists[team].Where(productionEntry => productionEntry.kind == Kind()))
+		{
+			productionEntry.StartCoroutine(productionEntry.Done());
+			break;
+		}
 		StartCoroutine(ShowCreateFX());
 		audio.clip = Resources.Load<AudioClip>("Sounds/Create_" + team);
 		if (Data.GamePaused)
@@ -71,11 +76,6 @@ public abstract class Unit : UnitBase
 	{
 		base.Initialize(info);
 		Data.Replay.Populations[team] += Population();
-		foreach (var productionEntry in Data.Replay.ProductionLists[team].Where(productionEntry => productionEntry.kind == Kind()))
-		{
-			productionEntry.StartCoroutine(productionEntry.Done());
-			break;
-		}
 	}
 
 	public IEnumerator Move(JSONObject nodes)

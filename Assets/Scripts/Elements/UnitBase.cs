@@ -12,7 +12,6 @@ public abstract class UnitBase : Element
 {
 	private float currentAmmo;
 	private float currentHP;
-	private AudioSource dummyAudio;
 	public int explosionsLeft;
 	private Canvas hbCanvas;
 	private int hbHorizontalPixelNumber;
@@ -23,7 +22,6 @@ public abstract class UnitBase : Element
 	private Texture2D hbTexture;
 	protected bool isAttacking;
 	private int lastHPIndex;
-	private bool shallResumeDummyAudio;
 	protected int targetAmmo;
 	public int targetHP;
 
@@ -49,7 +47,7 @@ public abstract class UnitBase : Element
 			var fortIndex = fort.index;
 			var fortLife = fort.rebornsLeft;
 			Element targetElement;
-			while (!Data.Replay.Elements.TryGetValue(fortIndex, out targetElement) || (targetElement as Fort).life != fortLife)
+			while (Data.GamePaused || !Data.Replay.Elements.TryGetValue(fortIndex, out targetElement) || (targetElement as Fort).life != fortLife)
 				yield return null;
 			targetUnitBase = targetElement as UnitBase;
 		}
@@ -77,7 +75,7 @@ public abstract class UnitBase : Element
 		gameObject.AddComponent<Rigidbody>().isKinematic = true;
 	}
 
-	private void Destruct()
+	protected virtual void Destruct()
 	{
 		Data.Replay.Elements.Remove(index);
 		tag = "Doodad";
@@ -93,7 +91,6 @@ public abstract class UnitBase : Element
 		if (this is Plane)
 			rigidbody.isKinematic = true;
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
-		dummyAudio = dummy.audio;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 5 * RelativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
@@ -125,6 +122,8 @@ public abstract class UnitBase : Element
 					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
 					if (++count % 10 == 0)
 						yield return null;
+					while (Data.GamePaused)
+						yield return null;
 				}
 			}
 		}
@@ -134,25 +133,30 @@ public abstract class UnitBase : Element
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
-		dummyAudio.maxDistance = Settings.Audio.MaxAudioDistance;
-		dummyAudio.volume = RelativeSize == 3 ? Settings.Audio.Volume.Death3 : Settings.Audio.Volume.Death1;
-		dummyAudio.clip = Resources.Load<AudioClip>("Sounds/Death_" + RelativeSize);
+		audio.volume = RelativeSize == 3 ? Settings.Audio.Volume.Death3 : Settings.Audio.Volume.Death1;
+		audio.clip = Resources.Load<AudioClip>("Sounds/Death_" + RelativeSize);
 		if (Data.GamePaused)
-			shallResumeDummyAudio = true;
+			shallResumeAudio = true;
 		else
-			dummyAudio.Play();
+			audio.Play();
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = RelativeSize * Settings.DimensionScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(RelativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
 		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
 			meshRenderer.collider.enabled = meshRenderer.enabled = false;
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
+		var thisFort = this as Fort;
+		if (thisFort)
+		{
+			var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
+			fort.StartCoroutine(fort.Reborn(transform.position, index, thisFort.targetTeams, targetFuel, targetAmmo, targetMetal, thisFort.life + 1));
+		}
 		while (explosionsLeft > 0)
 			yield return null;
 		var carrier = this as Carrier;
 		if (carrier && carrier.movingInterceptorsLeft > 0)
 			carrier.ForceDestructReturningInterceptors();
-		while (dummyAudio.isPlaying || Data.GamePaused)
+		while (Data.GamePaused || audio.isPlaying)
 			yield return null;
 		Destroy(gameObject);
 	}
@@ -197,23 +201,6 @@ public abstract class UnitBase : Element
 			--Data.Replay.UnitNums[team];
 		if (hbRect)
 			Destroy(hbRect.gameObject);
-	}
-
-	protected override void OnGameStateChanged()
-	{
-		base.OnGameStateChanged();
-		if (Data.GamePaused)
-		{
-			if (!dummyAudio || !dummyAudio.isPlaying)
-				return;
-			dummyAudio.Pause();
-			shallResumeDummyAudio = true;
-		}
-		else if (shallResumeDummyAudio)
-		{
-			dummyAudio.Play();
-			shallResumeDummyAudio = false;
-		}
 	}
 
 	protected override void OnGUI()

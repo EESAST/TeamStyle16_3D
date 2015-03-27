@@ -17,14 +17,14 @@ public class Fort : Building
 	private Component[] idleFXs;
 	public int life;
 	public int rebornsLeft;
-	protected override Transform Beamer { get { return transform.Find("Cannon"); } }
+	protected override Transform Beamer { get { return cannon; } }
 
 	protected override IEnumerator AimAtPosition(Vector3 targetPosition)
 	{
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - cannon.position);
-		while (Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -93,13 +93,9 @@ public class Fort : Building
 		base.OnDestroy();
 		if (team < 2)
 			Data.Replay.Forts[team].Remove(this);
-		if (targetTeams.Count == 0)
-			return;
-		var fort = (Instantiate(Resources.Load("Fort/Fort")) as GameObject).GetComponent<Fort>();
-		fort.StartCoroutine(fort.Reborn(transform.position, index, targetTeams, targetFuel, targetAmmo, targetMetal, life + 1));
 	}
 
-	private IEnumerator Reborn(Vector3 internalPosition, int index, List<int> targetTeams, int fuel, int ammo, int metal, int life)
+	public IEnumerator Reborn(Vector3 internalPosition, int index, List<int> targetTeams, int fuel, int ammo, int metal, int life)
 	{
 		team = targetTeams[0];
 		targetTeams.RemoveAt(0);
@@ -113,9 +109,10 @@ public class Fort : Building
 		targetAmmo = ammo;
 		targetMetal = metal;
 		transform.position = internalPosition - Vector3.up * RelativeSize * Settings.DimensionScaleFactor;
-		while ((internalPosition - transform.position).y > Settings.DimensionalTolerance)
+		while (Data.GamePaused || (internalPosition - transform.position).y > Settings.DimensionalTolerance)
 		{
-			transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.deltaTime);
+			if (!Data.GamePaused)
+				transform.position = Vector3.Lerp(transform.position, internalPosition, Settings.TransitionRate * Time.deltaTime);
 			yield return null;
 		}
 		this.life = life;

@@ -9,19 +9,17 @@ using UnityEngine;
 public class Interceptor : MonoBehaviour
 {
 	private const float relativeSize = 0.4f;
-	private AudioSource dummyAudio;
 	private Transform[] missiles;
 	private Carrier owner;
 	public IEnumerator returnTrip;
 	private Transform seat;
 	private bool shallResumeAudio;
-	private bool shallResumeDummyAudio;
 	private ParticleSystem[] trails;
 
 	private IEnumerator AdjustOrientation(Vector3 targetOrientation)
 	{
 		var targetRotation = Quaternion.LookRotation(targetOrientation);
-		while (Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -36,14 +34,17 @@ public class Interceptor : MonoBehaviour
 			shallResumeAudio = true;
 		else
 			audio.Play();
-		while (Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, localTarget, Settings.Interceptor.Speed * Time.deltaTime), localTarget) > Settings.DimensionalTolerance)
+		while (Data.GamePaused || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, localTarget, Settings.Interceptor.Speed * Time.deltaTime), localTarget) > Settings.DimensionalTolerance)
 			yield return null;
 		transform.parent.DetachChildren();
 		var target = targetPosition + ((transform.position + Vector3.up * (Settings.Map.HeightOfLevel[3] - Settings.Map.HeightOfLevel[1]) * 0.8f - targetPosition).normalized * 2.5f + Random.insideUnitSphere) * Settings.DimensionScaleFactor;
-		while ((target - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
+		while (Data.GamePaused || (target - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(target - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
-			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
+			if (!Data.GamePaused)
+			{
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(target - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
+				transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
+			}
 			yield return null;
 		}
 		yield return StartCoroutine(AdjustOrientation(targetPosition - transform.position));
@@ -69,7 +70,6 @@ public class Interceptor : MonoBehaviour
 	private IEnumerator Explode()
 	{
 		var dummy = Instantiate(Resources.Load("Dummy"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
-		dummyAudio = dummy.audio;
 		var meshFilters = GetComponentsInChildren<MeshFilter>();
 		var threshold = 5 * relativeSize / Mathf.Pow(meshFilters.Sum(meshFilter => meshFilter.mesh.triangles.Length), 0.6f);
 		var count = 0;
@@ -101,6 +101,8 @@ public class Interceptor : MonoBehaviour
 					smokeTrail.maxSize = smokeTrail.minSize = thickness * 3;
 					if (++count % 10 == 0)
 						yield return null;
+					while (Data.GamePaused)
+						yield return null;
 				}
 			}
 		}
@@ -110,20 +112,19 @@ public class Interceptor : MonoBehaviour
 			fragmentManager.rigidbody.mass *= ratio;
 			fragmentManager.enabled = true;
 		}
-		dummyAudio.maxDistance = Settings.Audio.MaxAudioDistance;
-		dummyAudio.volume = Settings.Audio.Volume.Death1;
-		dummyAudio.clip = Resources.Load<AudioClip>("Sounds/Death_1");
+		audio.volume = Settings.Audio.Volume.Death1;
+		audio.clip = Resources.Load<AudioClip>("Sounds/Death_1");
 		if (Data.GamePaused)
-			shallResumeDummyAudio = true;
+			shallResumeAudio = true;
 		else
-			dummyAudio.Play();
+			audio.Play();
 		var detonator = Instantiate(Resources.Load("Detonator_Death"), transform.TransformPoint(Center()), Quaternion.identity) as GameObject;
 		detonator.GetComponent<Detonator>().size = relativeSize * Settings.DimensionScaleFactor;
 		detonator.GetComponent<DetonatorForce>().power = Mathf.Pow(relativeSize, 2.5f) * Mathf.Pow(Settings.DimensionScaleFactor, 3);
 		foreach (var meshRenderer in GetComponentsInChildren<MeshRenderer>())
 			meshRenderer.collider.enabled = meshRenderer.enabled = false;
 		Destroy(dummy, Settings.Fragment.MaxLifeSpan * 2);
-		while (dummyAudio.isPlaying || Data.GamePaused)
+		while (Data.GamePaused || audio.isPlaying)
 			yield return null;
 		Destroy(gameObject);
 	}
@@ -152,29 +153,15 @@ public class Interceptor : MonoBehaviour
 	{
 		if (Data.GamePaused)
 		{
-			if (audio.isPlaying)
-			{
-				audio.Pause();
-				shallResumeAudio = true;
-			}
-			if (dummyAudio && dummyAudio.isPlaying)
-			{
-				dummyAudio.Pause();
-				shallResumeDummyAudio = true;
-			}
+			if (!audio.isPlaying)
+				return;
+			audio.Pause();
+			shallResumeAudio = true;
 		}
-		else
+		else if (shallResumeAudio)
 		{
-			if (shallResumeAudio)
-			{
-				audio.Play();
-				shallResumeAudio = false;
-			}
-			if (shallResumeDummyAudio)
-			{
-				dummyAudio.Play();
-				shallResumeDummyAudio = false;
-			}
+			audio.Play();
+			shallResumeAudio = false;
 		}
 	}
 
@@ -186,16 +173,19 @@ public class Interceptor : MonoBehaviour
 			shallResumeAudio = true;
 		else
 			audio.Play();
-		while ((seat.position - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
+		while (Data.GamePaused || (seat.position - transform.position).magnitude > Settings.DimensionalTolerancePerUnitSpeed * Settings.Interceptor.Speed)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(seat.position - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
-			transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
+			if (!Data.GamePaused)
+			{
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(seat.position - transform.position), Time.deltaTime * Settings.Interceptor.AngularCorrectionRate);
+				transform.Translate(Vector3.forward * Settings.Interceptor.Speed * Time.deltaTime);
+			}
 			yield return null;
 		}
 		transform.parent = seat;
 		foreach (var trail in trails)
 			trail.Stop();
-		while (Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.deltaTime), Vector3.zero) > Settings.DimensionalTolerance)
+		while (Data.GamePaused || Quaternion.Angle(transform.localRotation = Quaternion.RotateTowards(transform.localRotation, Quaternion.identity, Settings.Interceptor.AngularCorrectionRate * Time.deltaTime), Quaternion.identity) > Settings.AngularTolerance || Vector3.Distance(transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero, Settings.Interceptor.Speed * Time.deltaTime), Vector3.zero) > Settings.DimensionalTolerance)
 			yield return null;
 		--owner.movingInterceptorsLeft;
 	}

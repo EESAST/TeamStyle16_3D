@@ -38,8 +38,12 @@ public abstract class Plane : Unit
 		isFalling = true;
 		rigidbody.isKinematic = false;
 		rigidbody.WakeUp();
-		while (--targetHP > 0)
+		while (targetHP > 0)
+		{
+			if (!Data.GamePaused)
+				--targetHP;
 			yield return null;
+		}
 	}
 
 	protected override int Level() { return 3; }

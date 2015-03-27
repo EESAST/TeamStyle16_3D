@@ -102,7 +102,7 @@ public abstract class Element : MonoBehaviour
 		beamFX.Stop();
 		var time = Time.time;
 		beamAudio.loop = false;
-		while (beamAudio.isPlaying || Data.GamePaused)
+		while (Data.GamePaused || beamAudio.isPlaying)
 			yield return null;
 		var loopsLeft = Mathf.RoundToInt((beamFX.startLifetime - Time.time + time) / beamAudio.clip.length);
 		if (loopsLeft <= 0)
@@ -193,7 +193,7 @@ public abstract class Element : MonoBehaviour
 			Destroy(markRect.gameObject);
 	}
 
-	protected virtual void OnGameStateChanged()
+	private void OnGameStateChanged()
 	{
 		if (Data.GamePaused)
 		{

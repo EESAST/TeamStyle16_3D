@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using JSON;
 using UnityEngine;
@@ -42,6 +43,7 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator Attacks()
 	{
+		var capturedFortIndices = new List<int>();
 		foreach (var attack in events.list)
 			switch (attack["__class__"].str)
 			{
@@ -61,15 +63,17 @@ public class Replayer : MonoBehaviour
 					break;
 				case "Capture":
 					++Data.Replay.AttacksLeft;
-					var fort = Data.Replay.Elements[attack["index"].i] as Fort;
+					var fortIndex = attack["index"].i;
+					var fort = Data.Replay.Elements[fortIndex] as Fort;
 					fort.targetTeams.Add(attack["team"].i);
 					++fort.rebornsLeft;
+					capturedFortIndices.Add(fortIndex);
 					break;
 			}
 		while (Data.Replay.AttacksLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
-		foreach (var fort in Data.Replay.Forts.SelectMany(fortList => fortList))
-			fort.life = 0;
+		foreach (var capturedFortIndex in capturedFortIndices)
+			(Data.Replay.Elements[capturedFortIndex] as Fort).life = 0;
 	}
 
 	private void Awake()
@@ -94,15 +98,23 @@ public class Replayer : MonoBehaviour
 	{
 		foreach (var create in events.list.Where(create => create["__class__"].str == "Create"))
 		{
+			var info = elements[create["index"].i.ToString()];
+			var _base = Data.Replay.Bases[info["team"].i];
+			if (!_base || _base.tag == "Doodad")
+				continue;
 			++Data.Replay.CreatesLeft;
 			var typeName = Constants.TypeNames[create["kind"].i];
 			var unit = ((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Unit);
-			unit.StartCoroutine(unit.Create(elements[create["index"].i.ToString()]));
+			unit.StartCoroutine(unit.Create(info));
 			yield return null;
 		}
 		if (Data.Replay.CreatesLeft > 0)
 			for (var i = 0; i < 2; ++i)
-				Data.Replay.Bases[i].targetFuel = elements[Data.Replay.Bases[i].index.ToString()]["fuel"].i;
+			{
+				var _base = Data.Replay.Bases[i];
+				if (_base && _base.tag != "Doodad")
+					_base.targetFuel = elements[_base.index.ToString()]["fuel"].i;
+			}
 		while (Data.Replay.CreatesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
 	}
@@ -111,9 +123,11 @@ public class Replayer : MonoBehaviour
 	{
 		foreach (var fix in events.list.Where(fix => fix["__class__"].str == "Fix"))
 		{
+			Element fixer;
+			if (!Data.Replay.Elements.TryGetValue(fix["index"].i, out fixer) || fixer.tag == "Doodad")
+				continue;
 			++Data.Replay.FixesLeft;
-			var fixer = Data.Replay.Elements[fix["index"].i] as Base;
-			fixer.StartCoroutine(fixer.Fix(Data.Replay.Elements[fix["target"].i] as Unit, fix["metal"].i, fix["health_increase"].i));
+			fixer.StartCoroutine((fixer as Base).Fix(Data.Replay.Elements[fix["target"].i] as Unit, fix["metal"].i, fix["health_increase"].i));
 		}
 		while (Data.Replay.FixesLeft > 0)
 			yield return new WaitForSeconds(Settings.DeltaTime);
@@ -121,19 +135,19 @@ public class Replayer : MonoBehaviour
 
 	private IEnumerator FortCaptureScores()
 	{
+		var scored = false;
 		for (var i = 0; i < 2; ++i)
-		{
-			Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound * Data.Replay.Forts[i].Count;
-			foreach (var fort in Data.Replay.Forts[i])
+			foreach (var fort in Data.Replay.Forts[i].Where(fort => fort.tag != "Doodad"))
 			{
+				scored = true;
+				Data.Replay.TargetScores[i] += Constants.Score.PerFortPerRound;
 				StartCoroutine(ShowMessageAt(fort.TopCenter() + Settings.MessagePositionOffset, "PTS: +" + Constants.Score.PerFortPerRound));
 				if (Data.GamePaused)
 					fort.shallResumeAudio = true;
 				else
 					fort.audio.Play();
 			}
-		}
-		if (Data.Replay.Forts.Any(fortList => fortList.Count > 0))
+		if (scored)
 			yield return new WaitForSeconds(Settings.Replay.MessageTime);
 	}
 
@@ -164,9 +178,6 @@ public class Replayer : MonoBehaviour
 		for (var i = 0; i < Data.Replay.Elements.Count; ++i)
 		{
 			var item = Data.Replay.Elements.ElementAt(i);
-			var fort = item.Value as Fort;
-			if (fort)
-				fort.targetTeams.Clear();
 			var carrier = item.Value as Carrier;
 			if (carrier)
 				carrier.DestroyInterceptors();
@@ -189,10 +200,10 @@ public class Replayer : MonoBehaviour
 			((Instantiate(Resources.Load(typeName + '/' + typeName)) as GameObject).GetComponent(typeName) as Element).Initialize(entry);
 		}
 		for (var i = 0; i < 2; ++i)
-			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = lastScores[i] = Data.Battle["history"]["score"][frame][i].i;
-		for (var i = 0; i < 2; ++i)
 			foreach (var productionEntry in keyFrame[1][i].list)
 				(Instantiate(Resources.Load("ProductionEntry")) as GameObject).GetComponent<ProductionEntry>().Initialize(i, productionEntry[0].i, productionEntry[1].i);
+		for (var i = 0; i < 2; ++i)
+			Data.Replay.CurrentScores[i] = Data.Replay.TargetScores[i] = lastScores[i] = Data.Battle["history"]["score"][frame][i].i;
 		StartCoroutine(replay = Replay());
 	}
 
@@ -363,7 +374,8 @@ public class Replayer : MonoBehaviour
 		textFX.PlayAnimation();
 		while (textFX)
 		{
-			textFX.transform.rotation = Quaternion.LookRotation(position - Camera.main.transform.position);
+			if (!Data.GamePaused)
+				textFX.transform.rotation = Quaternion.LookRotation(position - Camera.main.transform.position);
 			yield return null;
 		}
 	}
@@ -398,7 +410,7 @@ public class Replayer : MonoBehaviour
 		{
 			Element target;
 			Element supplier;
-			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target) || !Data.Replay.Elements.TryGetValue(supply["index"].i, out supplier))
+			if (!Data.Replay.Elements.TryGetValue(supply["target"].i, out target) || !Data.Replay.Elements.TryGetValue(supply["index"].i, out supplier) || supplier.tag == "Doodad")
 				continue;
 			++Data.Replay.SuppliesLeft;
 			supplier.StartCoroutine((supplier as UnitBase).Supply(target as UnitBase, supply["fuel"].i, supply["ammo"].i, supply["metal"].i));

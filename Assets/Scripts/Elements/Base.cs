@@ -14,9 +14,10 @@ public class Base : Building
 	private Transform bigGuns;
 	private Transform head;
 	private Component[] idleFXs;
+	private Transform lightPole;
 	private Transform[] smallBombs;
 	private Transform smallGuns;
-	protected override Transform Beamer { get { return transform.Find("Head/LightPole"); } }
+	protected override Transform Beamer { get { return lightPole; } }
 	protected override Quaternion DefaultRotation { get { return Quaternion.identity; } }
 	protected override int RelativeSize { get { return 3; } }
 
@@ -25,11 +26,11 @@ public class Base : Building
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - head.position);
-		while (Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, Settings.SteeringRate.Base_Head * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(head.rotation = Quaternion.RotateTowards(head.rotation, targetRotation, Settings.SteeringRate.Base_Head * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 		var targetRotation_BG = Quaternion.LookRotation(targetPosition - bigGuns.position);
 		var targetRotation_SG = Quaternion.LookRotation(targetPosition - smallGuns.position);
-		while (Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, Settings.SteeringRate.Base_BigGuns * Time.deltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, Settings.SteeringRate.Base_SmallGuns * Time.deltaTime), targetRotation_SG) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(bigGuns.rotation = Quaternion.RotateTowards(bigGuns.rotation, targetRotation_BG, Settings.SteeringRate.Base_BigGuns * Time.deltaTime), targetRotation_BG) > Settings.AngularTolerance || Quaternion.Angle(smallGuns.rotation = Quaternion.RotateTowards(smallGuns.rotation, targetRotation_SG, Settings.SteeringRate.Base_SmallGuns * Time.deltaTime), targetRotation_SG) > Settings.AngularTolerance)
 			yield return null;
 	}
 
@@ -39,12 +40,21 @@ public class Base : Building
 		head = transform.Find("Head");
 		bigGuns = head.Find("BigGuns");
 		smallGuns = head.Find("SmallGuns");
+		lightPole = head.Find("LightPole");
 		bigBombs = new[] { bigGuns.Find("BG_LSP"), bigGuns.Find("BG_RSP") };
 		smallBombs = new[] { smallGuns.Find("SG_LSP"), smallGuns.Find("SG_RSP") };
 		idleFXs = head.GetComponentsInChildren(typeof(IIdleFX));
 	}
 
 	public override Vector3 Center() { return new Vector3(0.01f, 2.55f, -0.01f); }
+
+	protected override void Destruct()
+	{
+		base.Destruct();
+		foreach (var productionEntry in Data.Replay.ProductionLists[team])
+			Destroy(productionEntry.gameObject);
+		Data.Replay.ProductionLists[team].Clear();
+	}
 
 	protected override Vector3 Dimensions() { return new Vector3(6.23f, 5.25f, 6.23f); }
 
