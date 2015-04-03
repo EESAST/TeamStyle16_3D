@@ -140,14 +140,14 @@ public class FileBrowser
 
 	private void DrawSearchBar()
 	{
+		GUILayout.BeginVertical(GUILayout.MaxHeight(Data.GUI.Label.SmallMiddle.CalcHeight(GUIContent.none, 0) * 2));
+		GUILayout.FlexibleSpace();
 		if (isSearching)
-			GUILayout.Label("正在搜索：\"" + searchString + "\"");
+			GUILayout.Label("正在搜索\"" + searchString + "\"", Data.GUI.Label.SmallMiddle, GUILayout.Width(Screen.width * 0.25f));
 		else
 		{
-			GUI.SetNextControlName("SearchBar");
-			GUILayout.BeginVertical(GUILayout.MaxHeight(Data.GUI.Label.SmallMiddle.CalcHeight(GUIContent.none, 0) * 2));
-			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
+			GUI.SetNextControlName("SearchBar");
 			searchString = GUILayout.TextField(searchString, Data.GUI.TextField, GUILayout.MinWidth(Screen.width * 0.2f));
 			GUILayout.Space(Screen.width * 0.01f);
 			if (GUILayout.Button("搜索", Data.GUI.Button.Small) || GUI.GetNameOfFocusedControl() == "SearchBar" && Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
@@ -157,9 +157,9 @@ public class FileBrowser
 			}
 			GUILayout.Space(Screen.width * 0.01f);
 			GUILayout.EndHorizontal();
-			GUILayout.FlexibleSpace();
-			GUILayout.EndVertical();
 		}
+		GUILayout.FlexibleSpace();
+		GUILayout.EndVertical();
 	}
 
 	private void DrawSearchMessage()
@@ -167,23 +167,23 @@ public class FileBrowser
 		var elapsedTime = Time.time - searchStartTime;
 		searchScroll = GUILayout.BeginScrollView(searchScroll);
 		if (elapsedTime > 1)
-			GUILayout.Button("正在");
+			GUILayout.Button("正在", Data.GUI.Button.Small);
 		if (elapsedTime > 2)
-			GUILayout.Button("搜索");
+			GUILayout.Button("搜索", Data.GUI.Button.Small);
 		if (elapsedTime > 3)
-			GUILayout.Button("\"" + searchString + "\"");
+			GUILayout.Button("\"" + searchString + "\"", Data.GUI.Button.Small);
 		if (elapsedTime > 4)
-			GUILayout.Button("……");
+			GUILayout.Button("……", Data.GUI.Button.Small);
 		if (elapsedTime > 5)
-			GUILayout.Button("这将");
+			GUILayout.Button("这将", Data.GUI.Button.Small);
 		if (elapsedTime > 6)
-			GUILayout.Button("花费");
+			GUILayout.Button("花费", Data.GUI.Button.Small);
 		if (elapsedTime > 7)
-			GUILayout.Button("一点");
+			GUILayout.Button("一点", Data.GUI.Button.Small);
 		if (elapsedTime > 8)
-			GUILayout.Button("时间");
+			GUILayout.Button("时间", Data.GUI.Button.Small);
 		if (elapsedTime > 9)
-			GUILayout.Button("……");
+			GUILayout.Button("……", Data.GUI.Button.Small);
 		GUILayout.EndScrollView();
 	}
 
