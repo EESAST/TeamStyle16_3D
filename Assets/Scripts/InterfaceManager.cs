@@ -27,14 +27,14 @@ public class InterfaceManager : MonoBehaviour
 	private MenuState stagedState = MenuState.Default;
 	private MenuState state;
 
-	private void AboutWindow(int windowID)
+	private void AboutWindow(int windowId)
 	{
 		GUILayout.Label("深 蓝", Data.GUI.Label.HugeMiddle);
 		Methods.GUI.DrawAbout(ref stagedState);
 		GUI.DragWindow();
 		if (!shallFocusWindow)
 			return;
-		GUI.FocusWindow(windowID);
+		GUI.FocusWindow(windowId);
 		shallFocusWindow = false;
 	}
 
