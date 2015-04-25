@@ -650,7 +650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableInParentSpace: 0
   enableInSelfSpace: 1
-  omega: {x: 0, y: 100, z: 0}
+  omega: {x: 0, y: 80, z: 0}
 --- !u!114 &11419740
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -733,6 +733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   index: 0
   MouseOver: 0
+  shallResumeAudio: 0
   targetFuel: 0
   targetMetal: 0
   team: 0

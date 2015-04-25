@@ -57,7 +57,6 @@ public class BombManager : MonoBehaviour
 	public void Initialize(UnitBase attacker, Vector3 targetPosition, Level bombLevel)
 	{
 		this.attacker = attacker;
-		targetUnitBase = null;
 		this.targetPosition = targetPosition;
 		level = bombLevel;
 	}

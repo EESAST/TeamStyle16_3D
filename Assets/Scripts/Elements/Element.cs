@@ -129,8 +129,6 @@ public abstract class Element : MonoBehaviour
 
 	protected abstract Vector3 Dimensions();
 
-	protected abstract IEnumerator FadeOut();
-
 	public void FlashingOff()
 	{
 		if (--beamsLeft > 0)

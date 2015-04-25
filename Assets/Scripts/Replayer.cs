@@ -247,7 +247,7 @@ public class Replayer : MonoBehaviour
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal(GUILayout.Height(Data.GUI.Label.HugeMiddle.CalcHeight(GUIContent.none, 0)));
 		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[0]).ToString(), new GUIStyle(Data.GUI.Label.TeamColored[0]) { fontSize = Mathf.RoundToInt(scoreFontSize[0]) }, GUILayout.Width(infoContentRect.width * 0.35f), GUILayout.ExpandHeight(true));
-		GUILayout.Label("积分", Data.GUI.Label.SmallMiddle, GUILayout.ExpandHeight(true));
+		GUILayout.Label("积分", Data.GUI.Label.MediumMiddle, GUILayout.ExpandHeight(true));
 		GUILayout.Label(Mathf.RoundToInt(Data.Replay.CurrentScores[1]).ToString(), new GUIStyle(Data.GUI.Label.TeamColored[1]) { fontSize = Mathf.RoundToInt(scoreFontSize[1]) }, GUILayout.Width(infoContentRect.width * 0.35f), GUILayout.ExpandHeight(true));
 		GUILayout.EndHorizontal();
 		if (showDetail)
@@ -266,12 +266,12 @@ public class Replayer : MonoBehaviour
 			{
 				GUILayout.BeginHorizontal();
 				GUILayout.Label(Data.Replay.Populations[0] + " / " + Data.Replay.MaxPopulation, Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
-				GUILayout.Label("人口", Data.GUI.Label.SmallMiddle);
+				GUILayout.Label("人口", Data.GUI.Label.MediumMiddle);
 				GUILayout.Label(Data.Replay.Populations[1] + " / " + Data.Replay.MaxPopulation, Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
 				GUILayout.EndHorizontal();
 				GUILayout.BeginHorizontal();
 				GUILayout.Label(Data.Replay.UnitNums[0].ToString(), Data.GUI.Label.TeamColored[0], GUILayout.Width(infoContentRect.width * 0.35f));
-				GUILayout.Label("单位", Data.GUI.Label.SmallMiddle);
+				GUILayout.Label("单位", Data.GUI.Label.MediumMiddle);
 				GUILayout.Label(Data.Replay.UnitNums[1].ToString(), Data.GUI.Label.TeamColored[1], GUILayout.Width(infoContentRect.width * 0.35f));
 				GUILayout.EndHorizontal();
 			}

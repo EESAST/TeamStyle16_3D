@@ -1,8 +1,6 @@
 ﻿#region
 
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 #endregion
 
@@ -28,17 +26,6 @@ public abstract class Resource : Element
 
 	protected abstract int CurrentStorage();
 
-	protected override IEnumerator FadeOut()
-	{
-		var markImage = markRect.GetComponent<RawImage>();
-		var c = markImage.color;
-		while ((c.a *= Settings.FastAttenuation) > Mathf.Epsilon)
-		{
-			markImage.color = c;
-			yield return new WaitForSeconds(Settings.DeltaTime);
-		}
-	}
-
 	protected abstract int InitialStorage();
 
 	protected override int Level() { return 2; }
@@ -50,7 +37,7 @@ public abstract class Resource : Element
 			return;
 		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * 0.04f, Screen.width * 0.12f, Screen.height * 0.08f).FitScreen(), GUI.skin.box);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(StorageDescription() + '：' + (CurrentStorage() > 0 ? CurrentStorage().ToString() : "枯竭"), Data.GUI.Label.SmallLeft);
+		GUILayout.Label(StorageDescription() + '：' + (CurrentStorage() > 0 ? CurrentStorage().ToString() : "枯竭"), Data.GUI.Label.MediumLeft);
 		GUILayout.FlexibleSpace();
 		GUILayout.EndArea();
 	}

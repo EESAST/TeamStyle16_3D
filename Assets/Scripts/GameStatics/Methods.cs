@@ -306,16 +306,16 @@ public static class Methods
 		{
 			GUILayout.BeginVertical("box");
 			Data.GUI.AboutScroll = GUILayout.BeginScrollView(Data.GUI.AboutScroll);
-			GUILayout.Label("第十六届电子系队式程序设计大赛3D回放引擎", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("第十六届电子系队式程序设计大赛3D回放引擎", Data.GUI.Label.MediumMiddle);
 			GUILayout.FlexibleSpace();
-			GUILayout.Label("电子系科协软件部队式开发3D组出品", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("电子系科协软件部队式开发3D组出品", Data.GUI.Label.MediumMiddle);
 			GUILayout.FlexibleSpace();
 			GUILayout.Label("开发者：", Data.GUI.Label.LargeLeft);
-			GUILayout.Label("林圣杰", Data.GUI.Label.SmallMiddle);
-			GUILayout.Label("钟元熠", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("林圣杰", Data.GUI.Label.MediumMiddle);
+			GUILayout.Label("钟元熠", Data.GUI.Label.MediumMiddle);
 			GUILayout.FlexibleSpace();
 			GUILayout.Label("鸣谢：", Data.GUI.Label.LargeLeft);
-			GUILayout.Label("队式开发组全体成员", Data.GUI.Label.SmallMiddle);
+			GUILayout.Label("队式开发组全体成员", Data.GUI.Label.MediumMiddle);
 			GUILayout.EndScrollView();
 			GUILayout.EndVertical();
 			GUILayout.FlexibleSpace();
@@ -367,7 +367,7 @@ public static class Methods
 					GUILayout.Label("尺寸", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(Data.MiniMap.MarkScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
+					GUILayout.Label(Data.MiniMap.MarkScaleFactor.ToString("F"), Data.GUI.Label.MediumMiddle);
 					Data.MiniMap.MarkScaleFactor = GUILayout.HorizontalSlider(Data.MiniMap.MarkScaleFactor, 1, 10);
 					GUILayout.EndHorizontal();
 					GUILayout.EndVertical();
@@ -385,7 +385,7 @@ public static class Methods
 					GUILayout.Label("尺寸", Data.GUI.Label.LargeLeft);
 					GUILayout.FlexibleSpace();
 					GUILayout.BeginHorizontal();
-					GUILayout.Label(Data.GUI.FontSizeScaleFactor.ToString("F"), Data.GUI.Label.SmallMiddle);
+					GUILayout.Label(Data.GUI.FontSizeScaleFactor.ToString("F"), Data.GUI.Label.MediumMiddle);
 					Data.GUI.FontSizeScaleFactor = GUILayout.HorizontalSlider(Data.GUI.FontSizeScaleFactor, 0.75f, 1.5f);
 					GUILayout.EndHorizontal();
 					GUILayout.EndVertical();
@@ -428,7 +428,8 @@ public static class Methods
 			Data.GUI.Label.HugeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.LargeLeft = new GUIStyle("label");
 			Data.GUI.Label.LargeMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
-			Data.GUI.Label.SmallLeft = new GUIStyle("label");
+			Data.GUI.Label.MediumLeft = new GUIStyle("label");
+			Data.GUI.Label.MediumMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.SmallMiddle = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter };
 			Data.GUI.Label.RGB[0] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.red } };
 			Data.GUI.Label.RGB[1] = new GUIStyle("label") { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.green } };
@@ -476,7 +477,8 @@ public static class Methods
 			Data.GUI.Button.Small.fontSize = baseFontSize * 3;
 			Data.GUI.Label.HugeMiddle.fontSize = baseFontSize * 8;
 			Data.GUI.Label.LargeMiddle.fontSize = Data.GUI.Label.LargeLeft.fontSize = baseFontSize * 5;
-			Data.GUI.Label.SmallMiddle.fontSize = Data.GUI.Label.SmallLeft.fontSize = baseFontSize * 4;
+			Data.GUI.Label.MediumMiddle.fontSize = Data.GUI.Label.MediumLeft.fontSize = baseFontSize * 4;
+			Data.GUI.Label.SmallMiddle.fontSize = baseFontSize * 3;
 			for (var i = 0; i < 3; i++)
 				Data.GUI.Label.RGB[i].fontSize = baseFontSize * 3;
 			Data.GUI.TextField.fontSize = baseFontSize * 3;

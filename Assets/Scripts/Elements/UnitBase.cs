@@ -161,7 +161,7 @@ public abstract class UnitBase : Element
 		Destroy(gameObject);
 	}
 
-	protected override IEnumerator FadeOut()
+	private IEnumerator FadeOut()
 	{
 		var markImage = markRect.GetComponent<RawImage>();
 		var c1 = markImage.color;
@@ -211,13 +211,13 @@ public abstract class UnitBase : Element
 		var heightRatio = 0.15f + (ShowMetalInfo() ? 0.05f : 0);
 		GUILayout.BeginArea(new Rect(Input.mousePosition.x - Screen.width * 0.06f, Screen.height - Input.mousePosition.y - Screen.height * heightRatio / 2, Screen.width * 0.12f, Screen.height * heightRatio).FitScreen(), GUI.skin.box);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.SmallLeft);
+		GUILayout.Label("燃料：" + Mathf.RoundToInt(currentFuel), Data.GUI.Label.MediumLeft);
 		GUILayout.FlexibleSpace();
-		GUILayout.Label("弹药：" + (currentAmmo < 0 ? "无限" : Mathf.RoundToInt(currentAmmo).ToString()), Data.GUI.Label.SmallLeft);
+		GUILayout.Label("弹药：" + (currentAmmo < 0 ? "无限" : Mathf.RoundToInt(currentAmmo).ToString()), Data.GUI.Label.MediumLeft);
 		GUILayout.FlexibleSpace();
 		if (ShowMetalInfo())
 		{
-			GUILayout.Label("金属：" + Mathf.RoundToInt(currentMetal), Data.GUI.Label.SmallLeft);
+			GUILayout.Label("金属：" + Mathf.RoundToInt(currentMetal), Data.GUI.Label.MediumLeft);
 			GUILayout.FlexibleSpace();
 		}
 		GUILayout.EndArea();

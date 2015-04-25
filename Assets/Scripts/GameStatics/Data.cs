@@ -46,8 +46,9 @@ public static class Data
 			public static GUIStyle HugeMiddle;
 			public static GUIStyle LargeLeft;
 			public static GUIStyle LargeMiddle;
+			public static GUIStyle MediumLeft;
+			public static GUIStyle MediumMiddle;
 			public static readonly GUIStyle[] RGB = new GUIStyle[3];
-			public static GUIStyle SmallLeft;
 			public static GUIStyle SmallMiddle;
 			public static readonly GUIStyle[] TeamColored = new GUIStyle[3];
 		}

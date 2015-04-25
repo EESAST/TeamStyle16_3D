@@ -1,4 +1,6 @@
-﻿#region
+﻿//#define FINAL
+
+#region
 
 using System.IO;
 using JSON;
@@ -9,6 +11,12 @@ using UnityEngine;
 public class InterfaceManager : MonoBehaviour
 {
 	private readonly Cloud[] clouds = new Cloud[Settings.MainInterface_CloudNum];
+#if FINAL
+	private readonly string[] teamNames = { "", "" };
+	private Rect teamStipulatorRect = new Rect(Screen.width * 0.3f, Screen.height * 0.3f, Screen.width * 0.4f, Screen.height * 0.4f);
+#else
+	private FileBrowser fileBrowser;
+#endif
 	private Rect aboutRect = new Rect(Screen.width * 0.35f, Screen.height * 0.2f, Screen.width * 0.3f, Screen.height * 0.6f);
 	public Texture back;
 	public Texture background;
@@ -17,7 +25,6 @@ public class InterfaceManager : MonoBehaviour
 	public Texture directory;
 	public Texture drive;
 	public Texture file;
-	private FileBrowser fileBrowser;
 	private bool guiInitialized;
 	public Texture logo;
 	public Material logoMaterial;
@@ -80,8 +87,19 @@ public class InterfaceManager : MonoBehaviour
 	{
 		GUILayout.BeginArea(defaultRect);
 		GUILayout.FlexibleSpace();
+#if FINAL
+		if (GUILayout.Button("对  战", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		{
+			stagedState = MenuState.StipulateTeams;
+			shallFocusWindow = true;
+		}
+#else
 		if (GUILayout.Button("回  放", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		{
+			fileBrowser.Refresh();
 			stagedState = MenuState.BrowsingFile;
+		}
+#endif
 		GUILayout.FlexibleSpace();
 		if (GUILayout.Button("选  项", Data.GUI.Button.Medium))
 		{
@@ -101,6 +119,47 @@ public class InterfaceManager : MonoBehaviour
 		GUILayout.EndArea();
 	}
 
+#if FINAL
+	private void TeamStipulatorWindow(int windowId)
+	{
+		var battleFileName = "";
+		GUILayout.Label("指定对战双方", Data.GUI.Label.LargeMiddle);
+		GUILayout.FlexibleSpace();
+		GUILayout.BeginHorizontal();
+		GUILayout.FlexibleSpace();
+		teamNames[0] = GUILayout.TextField(teamNames[0], Data.GUI.TextField, GUILayout.MinWidth(Screen.width * 0.1f));
+		GUILayout.FlexibleSpace();
+		GUILayout.Label("VS", Data.GUI.Label.SmallMiddle, GUILayout.Width(Screen.width * 0.1f));
+		GUILayout.FlexibleSpace();
+		teamNames[1] = GUILayout.TextField(teamNames[1], Data.GUI.TextField, GUILayout.MinWidth(Screen.width * 0.1f));
+		GUILayout.FlexibleSpace();
+		GUILayout.EndHorizontal();
+		GUILayout.FlexibleSpace();
+		GUILayout.BeginHorizontal();
+		GUILayout.FlexibleSpace();
+		if (GUILayout.Button("确定", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return)
+		{
+			battleFileName = teamNames[0] + "-" + teamNames[1] + ".battle";
+			stagedState = MenuState.Default;
+		}
+		GUILayout.FlexibleSpace();
+		if (GUILayout.Button("取消", Data.GUI.Button.Medium) || Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape)
+			stagedState = MenuState.Default;
+		GUILayout.FlexibleSpace();
+		GUILayout.EndHorizontal();
+		GUILayout.FlexibleSpace();
+		GUI.DragWindow();
+		if (shallFocusWindow)
+		{
+			GUI.FocusWindow(windowId);
+			shallFocusWindow = false;
+		}
+		if (!File.Exists(battleFileName = Directory.GetCurrentDirectory() + '\\' + battleFileName))
+			return;
+		Data.Battle = new JSONObject(File.ReadAllText(battleFileName).Replace("\"{", "{").Replace("}\"", "}").Replace("\\", ""));
+		Application.LoadLevel("BattleField");
+	}
+#else
 	private void DrawFileBrowser()
 	{
 		if (!fileBrowser.Draw())
@@ -111,6 +170,7 @@ public class InterfaceManager : MonoBehaviour
 		Data.Battle = new JSONObject(File.ReadAllText(fileBrowser.outputFile.FullName).Replace("\"{", "{").Replace("}\"", "}").Replace("\\", ""));
 		Application.LoadLevel("BattleField");
 	}
+#endif
 
 	private void DrawOptions()
 	{
@@ -122,7 +182,9 @@ public class InterfaceManager : MonoBehaviour
 	private void InitializeGUI()
 	{
 		Methods.GUI.InitializeStyles();
-		(fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file, confirmStyle = Data.GUI.Button.Small, cancelStyle = Data.GUI.Button.Small }).Refresh();
+#if !FINAL
+		fileBrowser = new FileBrowser { backTexture = back, directoryTexture = directory, driveTexture = drive, fileTexture = file, confirmStyle = Data.GUI.Button.Small, cancelStyle = Data.GUI.Button.Small };
+#endif
 		guiInitialized = true;
 	}
 
@@ -140,14 +202,20 @@ public class InterfaceManager : MonoBehaviour
 			case MenuState.Default:
 				DrawDefaultInterface();
 				break;
+#if FINAL
+			case MenuState.StipulateTeams:
+				teamStipulatorRect = GUILayout.Window(0, teamStipulatorRect, TeamStipulatorWindow, "");
+				break;
+#else
 			case MenuState.BrowsingFile:
 				DrawFileBrowser();
 				break;
+#endif
 			case MenuState.Options:
 				DrawOptions();
 				break;
 			case MenuState.About:
-				aboutRect = GUILayout.Window(0, aboutRect, AboutWindow, "");
+				aboutRect = GUILayout.Window(1, aboutRect, AboutWindow, "");
 				break;
 			case MenuState.Quit:
 				if (Confirm("退出"))
@@ -163,6 +231,9 @@ public class InterfaceManager : MonoBehaviour
 		defaultRect = new Rect(Screen.width * 0.75f, Screen.height * 0.6f, Screen.width * 0.1f, Screen.height * 0.3f);
 		optionsRect = new Rect(Screen.width * 0.15f, Screen.height * 0.1f, Screen.width * 0.7f, Screen.height * 0.8f);
 		aboutRect = new Rect(Screen.width * 0.3f, Screen.height * 0.2f, Screen.width * 0.4f, Screen.height * 0.6f);
+#if FINAL
+		teamStipulatorRect = new Rect(Screen.width * 0.3f, Screen.height * 0.3f, Screen.width * 0.4f, Screen.height * 0.4f);
+#endif
 	}
 
 	private void Update()
