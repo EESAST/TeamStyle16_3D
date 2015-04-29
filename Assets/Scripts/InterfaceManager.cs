@@ -1,4 +1,4 @@
-﻿//#define FINAL
+﻿#define FINAL
 
 #region
 
@@ -48,6 +48,7 @@ public class InterfaceManager : MonoBehaviour
 	private void Awake()
 	{
 		Delegates.ScreenSizeChanged += OnScreenSizeChanged;
+		Time.timeScale = 1;
 		Data.Replay.TeamNames = new[] { "队伍1", "队伍2", "中立" };
 		for (var i = 0; i < clouds.Length; i++)
 		{

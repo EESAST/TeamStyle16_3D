@@ -24,7 +24,7 @@ public class Fort : Building
 		foreach (var idleFX in idleFXs.Cast<IIdleFX>())
 			idleFX.Disable();
 		var targetRotation = Quaternion.LookRotation(targetPosition - cannon.position);
-		while (Data.GamePaused || Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.Fort_Cannon * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
+		while (Data.GamePaused || Quaternion.Angle(cannon.rotation = Quaternion.RotateTowards(cannon.rotation, targetRotation, Settings.SteeringRate.FortCannon * Time.deltaTime), targetRotation) > Settings.AngularTolerance)
 			yield return null;
 	}
 

@@ -1,4 +1,5 @@
-//#define FINAL
+
+#define FINAL
 
 public enum MenuState
 {

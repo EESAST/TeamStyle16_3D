@@ -277,7 +277,7 @@ public static class Methods
 		public static void SwitchState()
 		{
 			Data.GamePaused = !Data.GamePaused;
-			Time.timeScale = Data.GamePaused ? 0 : 1;
+			Time.timeScale = Data.GamePaused ? 0 : Data.Replay.TimeScale;
 			if (Delegates.GameStateChanged != null)
 				Delegates.GameStateChanged();
 		}
@@ -448,7 +448,7 @@ public static class Methods
 			var bl = Coordinates.ExternalToMiniMapBasedScreen(Vector2.right * Data.MapSize.x - Vector2.one * 0.5f);
 			var tr = Coordinates.ExternalToMiniMapBasedScreen(Vector2.up * Data.MapSize.y - Vector2.one * 0.5f);
 			Data.MiniMap.MapRect = new Rect(bl.x, bl.y, (tr - bl).x, (tr - bl).y);
-			Data.GUI.ProductionEntrySize = Mathf.Sqrt(screenArea) / 10;
+			Data.GUI.ProductionEntrySize = Mathf.Sqrt(screenArea) / (Settings.GUI.MaxProductionEntryNumPerRow * 1.5f);
 			Data.GUI.LineThickness = Settings.GUI.LineThickness * Mathf.Sqrt(screenArea) / 1000;
 			Data.GUI.Dice = Object.Instantiate(Resources.Load("Dice")) as Texture2D;
 			TextureScale.Bilinear(Data.GUI.Dice, Screen.height / 8, Screen.height / 8);

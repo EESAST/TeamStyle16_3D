@@ -90,7 +90,7 @@ public static class Settings
 	public static class GUI
 	{
 		public const float LineThickness = 3;
-		public const int MaxProductionEntryNumPerRow = 5;
+		public const int MaxProductionEntryNumPerRow = 8;
 		public const int TextGranularity = 5;
 	}
 
@@ -164,12 +164,12 @@ public static class Settings
 
 	public static class SteeringRate
 	{
-		public const float Base_BigGuns = 10;
-		public const float Base_Head = 100;
-		public const float Base_SmallGuns = 10;
-		public const float Destroyer_Barrel = 20;
-		public const float Destroyer_Swivel = 100;
-		public const float Fort_Cannon = 100;
+		public const float BaseBigGuns = 10;
+		public const float BaseHead = 100;
+		public const float BaseSmallGuns = 10;
+		public const float DestroyerBarrel = 20;
+		public const float DestroyerSwivel = 100;
+		public const float FortCannon = 100;
 	}
 
 	public static class Terrain

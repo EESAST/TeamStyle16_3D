@@ -86,6 +86,7 @@ public static class Data
 		public static int SuppliesLeft;
 		public static int[] TargetScores;
 		public static string[] TeamNames;
+		public static float TimeScale = 1;
 		public static int[] UnitNums;
 	}
 

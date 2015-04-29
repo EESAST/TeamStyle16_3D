@@ -277,9 +277,11 @@ public abstract class Element : MonoBehaviour
 		if (MouseOver)
 			highlighter.On(Data.TeamColor.Current[team]);
 		markRect.anchoredPosition = Vector2.Scale(new Vector2(Data.MapSize.y, Data.MapSize.x) * Data.MiniMap.ScaleFactor, Methods.Coordinates.InternalToMiniMapRatios(transform.position));
+		if (Data.GamePaused)
+			return;
 		if (Mathf.Abs(targetFuel - currentFuel) > Settings.Tolerance)
-			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.deltaTime);
+			currentFuel = Mathf.Lerp(currentFuel, targetFuel, Settings.TransitionRate * Time.unscaledDeltaTime);
 		if (Mathf.Abs(targetMetal - currentMetal) > Settings.Tolerance)
-			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.deltaTime);
+			currentMetal = Mathf.Lerp(currentMetal, targetMetal, Settings.TransitionRate * Time.unscaledDeltaTime);
 	}
 }

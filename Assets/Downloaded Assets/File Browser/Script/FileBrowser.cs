@@ -1,6 +1,4 @@
-﻿//#define FINAL
-
-#region
+﻿#region
 
 using System.IO;
 using System.Linq;

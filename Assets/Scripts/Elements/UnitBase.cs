@@ -318,12 +318,15 @@ public abstract class UnitBase : Element
 	protected override void Update()
 	{
 		base.Update();
-		if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
-			currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.deltaTime);
-		if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
-			currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.deltaTime);
-		if (Mathf.RoundToInt(currentHP) == 0 && tag != "Doodad" && !isAttacking)
-			Destruct();
+		if (!Data.GamePaused)
+		{
+			if (Mathf.Abs(targetAmmo - currentAmmo) > Settings.Tolerance)
+				currentAmmo = Mathf.Lerp(currentAmmo, targetAmmo, Settings.TransitionRate * Time.unscaledDeltaTime);
+			if (Mathf.Abs(targetHP - currentHP) > Settings.Tolerance)
+				currentHP = Mathf.Lerp(currentHP, targetHP, Settings.TransitionRate * Time.unscaledDeltaTime);
+			if (Mathf.RoundToInt(currentHP) == 0 && tag != "Doodad" && !isAttacking)
+				Destruct();
+		}
 
 		#region Update Health Bar
 

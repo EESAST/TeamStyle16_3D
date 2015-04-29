@@ -16,12 +16,10 @@ public class Monitor : MonoBehaviour
 
 	private void Awake()
 	{
-		if (Data.GlobalMonitor)
-		{
+		if (!Data.GlobalMonitor)
+			DontDestroyOnLoad(Data.GlobalMonitor = gameObject);
+		else
 			Destroy(gameObject);
-			return;
-		}
-		DontDestroyOnLoad(Data.GlobalMonitor = gameObject);
 	}
 
 	private void OnApplicationFocus(bool focus)
@@ -36,18 +34,18 @@ public class Monitor : MonoBehaviour
 	{
 		#region Current Scores
 
-		if (!Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))
+		if (!Data.GamePaused && !Equals(Data.Replay.CurrentScores, Data.Replay.TargetScores))
 			for (var i = 0; i < 2; i++)
-				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.deltaTime);
+				Data.Replay.CurrentScores[i] = Mathf.Lerp(Data.Replay.CurrentScores[i], Data.Replay.TargetScores[i], Settings.TransitionRate * Time.unscaledDeltaTime);
 
 		#endregion
 
 		#region Current Team Color
 
-		if (!Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
+		if (!Data.GamePaused && !Methods.Array.Equals(Data.TeamColor.Current, Data.TeamColor.Target))
 		{
 			for (var i = 0; i < 4; i++)
-				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TransitionRate * Time.smoothDeltaTime);
+				Data.TeamColor.Current[i] = Color.Lerp(Data.TeamColor.Current[i], Data.TeamColor.Target[i], Settings.TransitionRate * Time.unscaledDeltaTime);
 			if (Delegates.CurrentTeamColorChanged != null)
 				Delegates.CurrentTeamColorChanged();
 		}

@@ -81,7 +81,7 @@ public class Moba_Camera : MonoBehaviour
 		if (isForcedMoving)
 		{
 			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.smoothDeltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.unscaledDeltaTime);
 		}
 		else if (settings.lockTargetTransform != null && (settings.cameraLocked || (inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.characterFocus) : Input.GetButton(inputs.axis.button_char_focus))))
 		{
@@ -89,7 +89,7 @@ public class Moba_Camera : MonoBehaviour
 			if (!settings.movement.useLockTargetHeight)
 				target.y = settings.movement.useDefaultHeight ? settings.movement.defaultHeight : requirements.pivot.position.y;
 			if ((target - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.smoothDeltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, target, settings.movement.transitionRate * Time.unscaledDeltaTime);
 			_forceDestination = Vector3.zero;
 		}
 		else
@@ -105,11 +105,11 @@ public class Moba_Camera : MonoBehaviour
 				movementVector -= requirements.pivot.transform.forward;
 			if (movementVector != Vector3.zero)
 			{
-				requirements.pivot.position += movementVector.normalized * settings.movement.cameraMovementRate * Time.smoothDeltaTime;
+				requirements.pivot.position += movementVector.normalized * settings.movement.cameraMovementRate * Time.unscaledDeltaTime;
 				_forceDestination = Vector3.zero;
 			}
 			if ((ForceDestination - requirements.pivot.position).magnitude > settings.tolerance)
-				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.smoothDeltaTime);
+				requirements.pivot.position = Vector3.Lerp(requirements.pivot.position, ForceDestination, settings.movement.transitionRate * Time.unscaledDeltaTime);
 		}
 	}
 
@@ -118,8 +118,8 @@ public class Moba_Camera : MonoBehaviour
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Camera rotate
 		if (inputs.useKeyCodeInputs ? Input.GetKeyDown(inputs.keycodes.RotateCamera) : Input.GetButtonDown(inputs.axis.button_rotate_camera))
-			mouseWheelDownTime = Time.time;
-		if ((inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.RotateCamera) : (Input.GetButton(inputs.axis.button_rotate_camera))) && Time.time - mouseWheelDownTime > settings.rotation.thresholdTime)
+			mouseWheelDownTime = Time.unscaledTime;
+		if ((inputs.useKeyCodeInputs ? Input.GetKey(inputs.keycodes.RotateCamera) : (Input.GetButton(inputs.axis.button_rotate_camera))) && Time.unscaledTime - mouseWheelDownTime > settings.rotation.thresholdTime)
 		{
 			float changeInRotationX = 0;
 			float changeInRotationY = 0;
@@ -143,7 +143,7 @@ public class Moba_Camera : MonoBehaviour
 					else
 						changeInRotationY = deltaMouseHorizontal;
 			}
-			var deltaCameraRotation = Vector2.Scale(new Vector2(changeInRotationX, changeInRotationY), settings.rotation.cameraRotationRate) * Time.smoothDeltaTime;
+			var deltaCameraRotation = Vector2.Scale(new Vector2(changeInRotationX, changeInRotationY), settings.rotation.cameraRotationRate) * Time.unscaledDeltaTime;
 			if (deltaCameraRotation.magnitude > settings.tolerance)
 				currentCameraRotation += deltaCameraRotation;
 		}
@@ -151,7 +151,7 @@ public class Moba_Camera : MonoBehaviour
 		{
 			Screen.lockCursor = false;
 			if (settings.rotation.cameraRotationAutoRevert && (settings.rotation.defaultRotation - _currentCameraRotation).magnitude > settings.tolerance)
-				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.smoothDeltaTime);
+				currentCameraRotation = Vector2.Lerp(_currentCameraRotation, settings.rotation.defaultRotation, settings.rotation.transitionRate * Time.unscaledDeltaTime);
 		}
 	}
 
@@ -205,7 +205,7 @@ public class Moba_Camera : MonoBehaviour
 	private void CalculateCameraZoom()
 	{
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		if ((inputs.useKeyCodeInputs ? Input.GetKeyUp(inputs.keycodes.RotateCamera) : Input.GetButtonUp(inputs.axis.button_rotate_camera)) && Time.time - mouseWheelDownTime < settings.zoom.thresholdTime)
+		if ((inputs.useKeyCodeInputs ? Input.GetKeyUp(inputs.keycodes.RotateCamera) : Input.GetButtonUp(inputs.axis.button_rotate_camera)) && Time.unscaledTime - mouseWheelDownTime < settings.zoom.thresholdTime)
 			shallRevertZoom = true;
 		// Camera Zoom In/Out
 		var inverted = 1;
@@ -226,15 +226,15 @@ public class Moba_Camera : MonoBehaviour
 			if (!settings.zoom.invertZoom)
 				inverted = -1;
 
-			targetZoomAmount += zoomChange * settings.zoom.zoomRate * inverted * Time.smoothDeltaTime;
+			targetZoomAmount += zoomChange * settings.zoom.zoomRate * inverted * Time.unscaledDeltaTime;
 		}
 		if (shallRevertZoom)
 		{
 			if (Math.Abs(settings.zoom.defaultZoom - _currentZoomAmount) > settings.tolerance)
-				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.smoothDeltaTime);
+				targetZoomAmount = currentZoomAmount = Mathf.Lerp(_currentZoomAmount, settings.zoom.defaultZoom, settings.zoom.transitionRate * Time.unscaledDeltaTime);
 		}
 		else if (Mathf.Abs(targetZoomAmount - _currentZoomAmount) > settings.tolerance)
-			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.smoothDeltaTime);
+			currentZoomAmount = Mathf.Lerp(_currentZoomAmount, targetZoomAmount, settings.zoom.transitionRate * Time.unscaledDeltaTime);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -243,6 +243,8 @@ public class Moba_Camera : MonoBehaviour
 
 	private void LateUpdate()
 	{
+		if (Data.GamePaused)
+			return;
 		CalculateCameraZoom();
 		CalculateCameraRotation();
 		CalculateCameraMovement();

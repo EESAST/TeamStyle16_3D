@@ -18,10 +18,10 @@ public class Replayer : MonoBehaviour
 	private int currentRectId;
 	private JSONObject elements;
 	private JSONObject events;
-	private int frameSlide;
-	private Rect frameSlideRect;
+	private Rect frameSliderRect;
+	private int frameSliderValue;
 	private bool guiInitialized;
-	private bool hideFrameSlide;
+	private bool hideFrameSlider;
 	private Rect infoAreaRect;
 	private Rect infoContentRect;
 	public Texture2D panelBackground;
@@ -80,6 +80,7 @@ public class Replayer : MonoBehaviour
 	{
 		Delegates.ScreenSizeChanged += ResizeGUI;
 		Data.Replay.Instance = this;
+		Time.timeScale = Data.Replay.TimeScale;
 	}
 
 	private IEnumerator Collects()
@@ -235,7 +236,7 @@ public class Replayer : MonoBehaviour
 		GUILayout.BeginArea(infoAreaRect, panelStyle);
 		GUILayout.BeginArea(infoContentRect);
 		GUILayout.BeginHorizontal(GUILayout.Height(Data.GUI.Label.LargeMiddle.CalcHeight(GUIContent.none, 0)));
-		GUILayout.Label(frameSlide == Data.Replay.FrameCount ? "比赛结束" : "第 " + frameSlide + " 回合", Data.GUI.Label.LargeMiddle);
+		GUILayout.Label(frameSliderValue == Data.Replay.FrameCount ? "比赛结束" : "第 " + frameSliderValue + " 回合", Data.GUI.Label.LargeMiddle);
 		if (resizingInfoRect || Data.GamePaused)
 			GUILayout.Button("…", Data.GUI.Button.Large, GUILayout.Width(Screen.width * 0.03f));
 		else if (GUILayout.Button(showDetail ? "-" : "+", Data.GUI.Button.Large, GUILayout.Width(Screen.width * 0.03f)))
@@ -277,11 +278,11 @@ public class Replayer : MonoBehaviour
 			}
 		GUILayout.EndArea();
 		GUILayout.EndArea();
-		if (hideFrameSlide = currentFrame == Data.Replay.FrameCount && (resizingInfoRect || currentRectId == 2))
+		if (hideFrameSlider = currentFrame == Data.Replay.FrameCount && (resizingInfoRect || currentRectId == 2))
 			return;
-		frameSlideRect = new Rect(infoAreaRect.xMin, infoAreaRect.yMax, infoAreaRect.width, GUI.skin.horizontalSlider.CalcHeight(GUIContent.none, 0) * 2);
-		GUILayout.BeginArea(frameSlideRect, GUI.skin.box);
-		frameSlide = Mathf.RoundToInt(GUILayout.HorizontalSlider(frameSlide, 0, Data.Replay.FrameCount - 1));
+		frameSliderRect = new Rect(infoAreaRect.xMin, infoAreaRect.yMax, infoAreaRect.width, GUI.skin.horizontalSlider.CalcHeight(GUIContent.none, 0) * 2);
+		GUILayout.BeginArea(frameSliderRect, GUI.skin.box);
+		frameSliderValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(frameSliderValue, 0, Data.Replay.FrameCount - 1));
 		GUILayout.EndArea();
 	}
 
@@ -298,7 +299,7 @@ public class Replayer : MonoBehaviour
 	private IEnumerator Replay()
 	{
 		yield return new WaitForSeconds(1);
-		while ((frameSlide = ++currentFrame) < Data.Replay.FrameCount)
+		while ((frameSliderValue = ++currentFrame) < Data.Replay.FrameCount)
 		{
 			var startTime = Time.time;
 			elements = Data.Battle["key_frames"][currentFrame][0]; //an object within which lie a list of key-vals, i.e elements[i] is the ith element (key-val pair)
@@ -420,34 +421,42 @@ public class Replayer : MonoBehaviour
 
 	private void Update()
 	{
+		if (Input.GetKey(KeyCode.Alpha0))
+			Data.Replay.TimeScale = 1;
+		if (Input.GetKey(KeyCode.Equals))
+			Data.Replay.TimeScale = Mathf.Min(Data.Replay.TimeScale * 1.1f, 3);
+		if (Input.GetKey(KeyCode.Minus))
+			Data.Replay.TimeScale = Mathf.Max(Data.Replay.TimeScale * 0.9f, 0.3f);
+		if (!Data.GamePaused)
+			Time.timeScale = Data.Replay.TimeScale;
 		if (!guiInitialized)
 			return;
-		if (currentFrame != frameSlide && !Input.GetMouseButton(0))
+		if (currentFrame == frameSliderValue || Input.GetMouseButton(0))
 		{
-			LoadFrame(currentFrame = frameSlide); //loads the end state of the designated frame
-			return;
-		}
-		if (showDetail && currentFrame == Data.Replay.FrameCount && Input.GetKeyUp(KeyCode.Escape))
-			cancelDetail = true;
-		if (cancelDetail && !resizingInfoRect)
-		{
-			stagedShowDetail = false;
-			StartCoroutine(ResizeInfoRect());
-			cancelDetail = false;
-		}
-		for (var i = 0; i < 2; ++i)
-		{
-			if (lastScores[i] != Mathf.RoundToInt(Data.Replay.CurrentScores[i]))
+			if (showDetail && currentFrame == Data.Replay.FrameCount && Input.GetKeyUp(KeyCode.Escape))
+				cancelDetail = true;
+			if (cancelDetail && !resizingInfoRect)
 			{
-				scoreFontSize[i] = Data.GUI.Label.HugeMiddle.fontSize;
-				lastScores[i] = Mathf.RoundToInt(Data.Replay.CurrentScores[i]);
+				stagedShowDetail = false;
+				StartCoroutine(ResizeInfoRect());
+				cancelDetail = false;
 			}
-			if (Mathf.Abs(Data.GUI.Label.TeamColored[i].fontSize - scoreFontSize[i]) > Settings.Tolerance)
-				scoreFontSize[i] = Mathf.Lerp(scoreFontSize[i], Data.GUI.Label.TeamColored[i].fontSize, Settings.TransitionRate * Time.deltaTime);
+			for (var i = 0; i < 2; ++i)
+			{
+				if (lastScores[i] != Mathf.RoundToInt(Data.Replay.CurrentScores[i]))
+				{
+					scoreFontSize[i] = Data.GUI.Label.HugeMiddle.fontSize;
+					lastScores[i] = Mathf.RoundToInt(Data.Replay.CurrentScores[i]);
+				}
+				if (!Data.GamePaused && Mathf.Abs(Data.GUI.Label.TeamColored[i].fontSize - scoreFontSize[i]) > Settings.Tolerance)
+					scoreFontSize[i] = Mathf.Lerp(scoreFontSize[i], Data.GUI.Label.TeamColored[i].fontSize, Settings.TransitionRate * Time.unscaledDeltaTime);
+			}
+			Data.GUI.OccupiedRects.Add(infoAreaRect);
+			if (!hideFrameSlider)
+				Data.GUI.OccupiedRects.Add(frameSliderRect);
 		}
-		Data.GUI.OccupiedRects.Add(infoAreaRect);
-		if (!hideFrameSlide)
-			Data.GUI.OccupiedRects.Add(frameSlideRect);
+		else
+			LoadFrame(currentFrame = frameSliderValue); //loads the end state of the designated frame
 	}
 
 	private struct LineChart
