@@ -128,6 +128,7 @@ public class InterfaceManager : MonoBehaviour
 		GUILayout.FlexibleSpace();
 		GUILayout.BeginHorizontal();
 		GUILayout.FlexibleSpace();
+		GUI.SetNextControlName("TeamNameInput");
 		teamNames[0] = GUILayout.TextField(teamNames[0], Data.GUI.TextField, GUILayout.MinWidth(Screen.width * 0.1f));
 		GUILayout.FlexibleSpace();
 		GUILayout.Label("VS", Data.GUI.Label.SmallMiddle, GUILayout.Width(Screen.width * 0.1f));
@@ -153,6 +154,7 @@ public class InterfaceManager : MonoBehaviour
 		if (shallFocusWindow)
 		{
 			GUI.FocusWindow(windowId);
+			GUI.FocusControl("TeamNameInput");
 			shallFocusWindow = false;
 		}
 		if (!File.Exists(battleFileName = Directory.GetCurrentDirectory() + '\\' + battleFileName))

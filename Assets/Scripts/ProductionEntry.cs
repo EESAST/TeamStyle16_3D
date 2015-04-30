@@ -103,8 +103,8 @@ public class ProductionEntry : MonoBehaviour
 		if (!Data.GamePaused && Mathf.Abs(targetPos - currentPos) > Settings.Tolerance)
 			currentPos = Mathf.Lerp(currentPos, targetPos, Settings.TransitionRate * Time.unscaledDeltaTime);
 		var t = currentPos % Settings.GUI.MaxProductionEntryNumPerRow;
-		entry.anchoredPosition = t < Settings.GUI.MaxProductionEntryNumPerRow - 1 ? Data.GUI.ProductionEntrySize * new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow)) : Data.GUI.ProductionEntrySize * new Vector2((Settings.GUI.MaxProductionEntryNumPerRow - 1) * (Settings.GUI.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow) + t + 1 - Settings.GUI.MaxProductionEntryNumPerRow));
-		if (team == 1)
-			entry.anchoredPosition -= Vector2.up * Data.GUI.ProductionEntrySize * Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.GUI.MaxProductionEntryNumPerRow);
+		entry.anchoredPosition = Data.GUI.ProductionEntrySize * ((t < Settings.GUI.MaxProductionEntryNumPerRow - 1 ? new Vector2(t, currentPos < 0 ? 0 : -Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow)) : new Vector2((Settings.GUI.MaxProductionEntryNumPerRow - 1) * (Settings.GUI.MaxProductionEntryNumPerRow - t), -(Mathf.Floor(currentPos / Settings.GUI.MaxProductionEntryNumPerRow) + t + 1 - Settings.GUI.MaxProductionEntryNumPerRow))) - Vector2.up * 0.1f);
+		if (team == 1 && Data.Replay.ProductionLists[0].Count > 0)
+			entry.anchoredPosition -= Data.GUI.ProductionEntrySize * Vector2.up * (Mathf.Ceil((float)Data.Replay.ProductionLists[0].Count / Settings.GUI.MaxProductionEntryNumPerRow) + 0.2f);
 	}
 }
