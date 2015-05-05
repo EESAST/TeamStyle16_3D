@@ -1,6 +1,8 @@
 ﻿#region
 
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using HighlightingSystem;
 using JSON;
 using UnityEngine;
@@ -10,12 +12,11 @@ using UnityEngine.UI;
 
 public abstract class Element : MonoBehaviour
 {
-	private AudioSource beamAudio;
-	private ParticleSystem beamFX;
+	private readonly List<AudioSource> beamAudios = new List<AudioSource>();
+	private readonly List<ParticleSystem> beamFXs = new List<ParticleSystem>();
 	private int beamsLeft;
 	protected float currentFuel;
 	protected float currentMetal;
-	private bool firstBeam = true;
 	private bool guiInitialized;
 	protected Highlighter highlighter;
 	public int index;
@@ -24,7 +25,6 @@ public abstract class Element : MonoBehaviour
 	private Texture markTexture;
 	public bool MouseOver;
 	public bool shallResumeAudio;
-	private bool shallResumeBeamAudio;
 	public int targetFuel;
 	public int targetMetal;
 	public int team;
@@ -64,22 +64,17 @@ public abstract class Element : MonoBehaviour
 
 	public IEnumerator Beam(Component target, float elapsedTime, BeamType beamType)
 	{
-		if (firstBeam)
-		{
-			beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
-			beamFX.transform.parent = Beamer;
-			beamFX.transform.position = Beamer.GetComponent<Element>() ? Beamer.WorldCenterOfElement() : Beamer.position;
-			beamFX.startSpeed = Settings.Replay.BeamSpeed;
-			beamAudio = beamFX.audio;
-			beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
-			beamAudio.volume = Settings.Audio.Volume.Beam;
-			firstBeam = false;
-		}
-		else
-			beamFX.gameObject.SetActive(true);
+		var beamFX = (Instantiate(Resources.Load("Beam")) as GameObject).particleSystem;
+		beamFXs.Add(beamFX);
+		beamFX.transform.parent = Beamer;
+		beamFX.transform.position = Beamer.GetComponent<Element>() ? Beamer.WorldCenterOfElement() : Beamer.position;
+		beamFX.startSpeed = Settings.Replay.BeamSpeed;
+		var beamAudio = beamFX.audio;
+		beamAudio.maxDistance = Settings.Audio.MaxAudioDistance;
+		beamAudio.volume = Settings.Audio.Volume.Beam;
 		beamAudio.clip = Resources.Load<AudioClip>("Sounds/Beam_" + beamType);
 		if (Data.GamePaused)
-			shallResumeBeamAudio = true;
+			beamAudios.Add(beamAudio);
 		else
 			beamAudio.Play();
 		beamFX.Play();
@@ -109,12 +104,13 @@ public abstract class Element : MonoBehaviour
 			yield break;
 		beamAudio.loop = true;
 		if (Data.GamePaused)
-			shallResumeBeamAudio = true;
+			beamAudios.Add(beamAudio);
 		else
 			beamAudio.Play();
 		yield return new WaitForSeconds(loopsLeft * beamAudio.clip.length);
 		beamAudio.Stop();
-		beamFX.gameObject.SetActive(false);
+		beamFXs.Remove(beamFX);
+		Destroy(beamFX.gameObject);
 	}
 
 	public abstract Vector3 Center();
@@ -200,10 +196,10 @@ public abstract class Element : MonoBehaviour
 				audio.Pause();
 				shallResumeAudio = true;
 			}
-			if (beamAudio && beamAudio.isPlaying)
+			foreach (var beamFX in beamFXs.Where(beamFX => beamFX.audio.isPlaying))
 			{
-				beamAudio.Pause();
-				shallResumeBeamAudio = true;
+				beamFX.audio.Pause();
+				beamAudios.Add(beamFX.audio);
 			}
 			if (isFlashing)
 			{
@@ -218,11 +214,9 @@ public abstract class Element : MonoBehaviour
 				audio.Play();
 				shallResumeAudio = false;
 			}
-			if (shallResumeBeamAudio)
-			{
+			foreach (var beamAudio in beamAudios)
 				beamAudio.Play();
-				shallResumeBeamAudio = false;
-			}
+			beamAudios.Clear();
 			if (isFlashing)
 			{
 				highlighter.ConstantOffImmediate();
